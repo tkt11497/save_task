@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>USDC Transfer</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+</head>
+<body>
+<h1>USDC Transfer</h1>
+<button id="connectButton">Connect MetaMask</button>
+<button id="transferButton" disabled>Approve and Transfer USDC</button>
+
+<script>
+    let web3;
+    let accounts;
+
+    // MetaMask 连接函数
+    async function connectMetaMask() {
+        if (typeof window.ethereum !== 'undefined') {
+            try {
+                accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                web3 = new Web3(window.ethereum);
+                document.getElementById('transferButton').disabled = false;
+                alert('Connected to MetaMask');
+            } catch (error) {
+                console.error('User denied account access', error);
+                alert('User denied account access');
+            }
+        } else {
+            alert('MetaMask is not installed. Please install MetaMask and try again.');
+        }
+    }
+
+    document.getElementById('connectButton').onclick = connectMetaMask;
+
+    document.getElementById('transferButton').onclick = async () => {
+        if (!web3 || !accounts) {
+            alert('Please connect to MetaMask first');
+            return;
+        }
+
+        // usdc 代币合约地址
+        const usdcAddress = '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238';
+        // 自己的合约地址
+        const transferAuthAddress = '0xf7fAC81cd9BBc2aD85a680354fA3189F25597884';
+
+        // Updated USDC ABI with the correct ERC-20 functions
+        const usdcAbi = [
+            {
+                "constant": false,
+                "inputs": [
+                    {
+                        "name": "_spender",
+                        "type": "address"
+                    },
+                    {
+                        "name": "_value",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "approve",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "bool"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [
+                    {
+                        "name": "_owner",
+                        "type": "address"
+                    },
+                    {
+                        "name": "_spender",
+                        "type": "address"
+                    }
+                ],
+                "name": "allowance",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": false,
+                "inputs": [
+                    {
+                        "name": "_to",
+                        "type": "address"
+                    },
+                    {
+                        "name": "_value",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "transfer",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "bool"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [
+                    {
+                        "name": "_owner",
+                        "type": "address"
+                    }
+                ],
+                "name": "balanceOf",
+                "outputs": [
+                    {
+                        "name": "balance",
+                        "type": "uint256"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            }
+        ];
+
+        const transferAuthAbi = [
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "trader",
+                        "type": "address"
+                    }
+                ],
+                "name": "authorize",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "from",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "to",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "amount",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "transferUSDC",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "stateMutability": "nonpayable",
+                "type": "constructor"
+            },
+            {
+                "inputs": [],
+                "name": "authorizedTrader",
+                "outputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "usdcToken",
+                "outputs": [
+                    {
+                        "internalType": "contract IERC20",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            }
+        ];
+
+        const usdcContract = new web3.eth.Contract(usdcAbi, usdcAddress);
+        const transferAuthContract = new web3.eth.Contract(transferAuthAbi, transferAuthAddress);
+
+        const A = accounts[0];
+        const amount = web3.utils.toWei('10', 'mwei'); // 1 USDC
+
+        try {
+            // 检查账户余额
+            const balance = await usdcContract.methods.balanceOf(A).call();
+            console.log('Balance:', balance);
+
+            // if (balance < amount) {
+            //     alert('Insufficient USDC balance');
+            //     return;
+            // }
+
+            // 先批准合约使用from地址的USDC
+            const allowance = await usdcContract.methods.allowance(A, transferAuthAddress).call();
+            console.log('Allowance:', allowance);
+
+            // if (allowance < amount) {
+                const gasEstimateApprove = await usdcContract.methods.approve(transferAuthAddress, amount).estimateGas({ from: A });
+                console.log('Gas Estimate for Approve:', gasEstimateApprove);
+
+                let newVar = await usdcContract.methods.approve(transferAuthAddress, amount)
+                    .send({ from: A, gas: gasEstimateApprove });
+                console.info(newVar);
+                alert('Approval successful');
+            // }
+
+            // // 转账USDC从A地址到B地址
+            // const gasEstimateTransfer = await transferAuthContract.methods.transferUSDC(A, B, amount).estimateGas({ from: A });
+            // console.log('Gas Estimate for Transfer:', gasEstimateTransfer);
+            //
+            // await transferAuthContract.methods.transferUSDC(A, B, amount).send({ from: A, gas: gasEstimateTransfer });
+            // alert('Transfer successful');
+        } catch (error) {
+            console.error('Transaction failed', error);
+            alert('Transaction failed: ' + error.message);
+        }
+    };
+</script>
+</body>
+</html>

@@ -1,0 +1,992 @@
+<template>
+	<div class="home_container">
+		<!-- header -->
+		<!-- 钱包地址 -->
+		<div class="header">
+			<img src="./assets/calendar.png" alt="calendar" class="logo" />
+
+			<div class="title">Saving</div>
+			<div class="input" @click="currencyPopup = true">
+				{{ address.slice(-10) }}
+			</div>
+		</div>
+
+		<!-- 当前钱包 -->
+		<div class="top_detail" :style="backgroundImage">
+			<img src="./assets/bank.png" alt="bank" class="bank" />
+
+			<div class="top">
+				<div class="img">
+					<img :src="$imgpath + currentCurrency.picUrl" alt="" />
+				</div>
+				<div class="title">{{ currentCurrency.currency || '' }}</div>
+			</div>
+			<div class="content">
+				<div class="title2">{{ currentCurrency.currency || '' }} {{ t('余额') }}</div>
+				<div class="number ellipsis-col ellipsis-col2">
+					{{ plusDecimal(tokenBalance) }} <span class="unit">{{ currentCurrency.currency || '' }}</span>
+				</div>
+				<!-- <div class="precentage">
+                    <img src="../../assets/images/user/up2.png" alt="" />
+                    {{ '0.00%' }}
+                </div> -->
+			</div>
+			<div class="bottom">
+				<div class="trend">
+					<img src="@/assets/images/home/trends2.png" alt="trends" />
+				</div>
+				<div>
+					<span class="trends">{{ plusDecimal(accountFundTransaction.todayIncome || 0) }}</span>
+					<span class="trends">{{ accountFundTransaction.baseSymbol }}</span>
+					<span class="trends day">{{ t('今日盈利') }}</span>
+				</div>
+			</div>
+			<div class="total">
+				<div>{{ t('总收入') }}</div>
+				<div class="number">{{ plusDecimal(accountFundTransaction.totalIncome || 0) }} {{ accountFundTransaction.baseSymbol || 'ETH' }}</div>
+			</div>
+		</div>
+		<!-- 当前钱包 -->
+		<SmartContract />
+		<div class="list">
+			<div class="top">
+				<div class="title">{{ t('投资组合') }}</div>
+				<div class="all" @click="goMarket">{{ t('查看全部') }}</div>
+			</div>
+			<div class="list_info">
+				<div class="item" v-for="(item, index) in listComputed" :key="item.id">
+					<div class="item_img">
+						<img :src="$imgpath + item.productLogPath" alt="" />
+					</div>
+					<div class="coin">
+						<div class="name">{{ item.productName }}</div>
+						<div>{{ item.productFullname }}</div>
+					</div>
+					<div class="echarts">
+						<!-- <img src="../../assets/images/home/echarts.png" alt="echarts"> -->
+						<EchartsLine :line-id="item.productName || `line-${index}`" :row-data="item" />
+					</div>
+					<MarketLatestData :row-data="item" />
+					<!-- <div class="num">
+                        <div class="price">{{ item.contractPricePoints }}</div>
+                        <div class="trend" :class="{ 'red': item.randomRange < 0 }">{{ item.randomRange > 0 ? '+' : '-'
+                            }}{{ item.randomRange }}%
+                        </div>
+                    </div> -->
+				</div>
+			</div>
+		</div>
+		<div class="info">
+			<van-swipe class="my-swipe" :loop="false" :show-indicators="false" indicator-color="white">
+				<van-swipe-item class="info_box" v-for="(item, index) in infoList" :key="index">
+					<div class="icon">
+						<img :src="item.icon" alt="" />
+					</div>
+					<div class="content">{{ t(item.content) }}</div>
+				</van-swipe-item>
+			</van-swipe>
+		</div>
+		<div class="rate">
+			<div class="rate_title">
+				<div class="img">
+					<img src="../../assets/images/home/rate.png" alt="rate" />
+				</div>
+				<span>{{ t('回报率') }}</span>
+			</div>
+			<div class="rate_content" v-for="(item, index) in clientList" :key="index">
+				<div class="left">
+					<div class="img">
+						<img src="../../assets/images/home/circle.png" alt="" />
+					</div>
+					<span>{{ item.minAmount }}-{{ item.maxAmount }}</span>
+				</div>
+				<div class="right">
+					<div class="dot">
+						<!-- <img src="../../assets/images/home/circle.png" alt="circle"> -->
+					</div>
+					<span>{{ timesForValueDecimal(item.minInterest, 100) }}%-{{ timesForValueDecimal(item.maxInterest, 100) }}%</span>
+				</div>
+			</div>
+		</div>
+
+		<!--<WalletConnect ref="walletConnectRef" @close="walletConnectClose" />-->
+		<AnnouncementPop v-if="address" ref="announcementPopRef" />
+
+		<van-popup v-model:show="currencyPopup" position="bottom" class="currency-popup">
+			<div class="currency-currency">
+				<div class="line"></div>
+
+				<div class="currency-currency-title">
+					<h5>{{ t('更改连接网络') }}</h5>
+					<p>{{ t('更改您的货币类型以访问') }}</p>
+				</div>
+
+				<div class="currency-currency-label">{{ t('当前选择') }}</div>
+
+				<div class="currency-currency-selected" v-if="currentCurrency.currency">
+					<img class="icon" :src="$imgpath + currentCurrency.picUrl" alt="" />
+
+					<span class="text">{{ currentCurrency.currency }}</span>
+
+					<button>
+						{{ t('已连接') }}
+					</button>
+				</div>
+			</div>
+			<div class="currency-currency-label title2">{{ t('选择新类型') }}</div>
+			<CurrencyList hide-selected @signed="changeWallet" />
+		</van-popup>
+	</div>
+</template>
+
+<script setup name="Home">
+import { useRequest } from '@/hooks/fetch.js'
+import { useUserStore } from '@/store/modules/user.js'
+import { ref, onMounted, onBeforeMount, onUnmounted, computed, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { postData, fetchUserInfo, getIncomeconfigClientList, getCoinList, accountFundTransactionRecordApi } from '@/apiService' // Import your API service
+import { authStore, userStore, navStore, useWeb3accountStroe, useWeb3Store } from '@/store'
+import { storeToRefs } from 'pinia'
+import SmartContract from './smartContract.vue'
+// import WalletConnect from './walletConnect.vue'
+import AnnouncementPop from './announcementPop.vue'
+import EchartsLine from '@/views/market/echartsLine.vue'
+import CurrencyList from '@/views/noWallet/components/CurrencyList.vue'
+import MarketLatestData from '@/views/market/marketLatestData.vue'
+import Web3 from 'web3'
+import { showToast } from 'vant'
+// import { useWeb3Wallet } from '@/hooks/useWeb3Wallet'
+import { useI18n } from 'vue-i18n'
+import { getImageUrl, plusDecimal, timesForValueDecimal } from '@/utils'
+import useLoading from '@/hooks/useLoading.js'
+import { useToken } from '@/hooks/useToken'
+
+const web3Store = useWeb3Store()
+const { currentCurrency, address } = storeToRefs(web3Store)
+
+const { balance, getBalance } = useToken(currentCurrency.value.currency)
+const currencyPopup = ref(false)
+
+// 初始化仓库
+const { t } = useI18n()
+const auStore = authStore()
+const usersStore = userStore()
+const navStore2 = navStore()
+const web3accountStroe = useWeb3accountStroe()
+const { checkedCurrency, transaction, tokenContractInfo } = storeToRefs(web3accountStroe)
+// const { events, addEvent, removeEvent } = useWeb3Wallet()
+const loading2 = useLoading()
+
+// 引入静态资源
+import ATOM from '@/assets/images/home/ATOM.png'
+import info1 from '@/assets/images/home/info1.png'
+import info2 from '@/assets/images/home/info2.png'
+import info3 from '@/assets/images/home/info3.png'
+
+// 变量区
+const router = useRouter()
+const route = useRoute()
+// const clientList = ref([])
+
+const { response: clientList } = useRequest({
+	url: '/system/incomeconfig/clientList',
+	method: 'get',
+	initialValues: [],
+})
+
+const backgroundImage = computed(() => {
+	let currency = currentCurrency.value?.currency.toLowerCase()
+	currency = ['aave', 'bnb', 'dai', 'renbtc', 'steth', 'stkaave', 'uni', 'usdc', 'usdt', 'xaut'].includes(currency) ? currency : 'usdc'
+	// console.log('ddd', currency)
+	return {
+		'background-image': `url(${getImageUrl(`home/card_${currency}.png`)})`,
+		'background-size': '100% 100%',
+		'background-repeat': 'no-repeat',
+		// 'background-position': "0 0",
+	}
+})
+
+// 搜索参数
+const walletAddress = ref('')
+const token = ref([])
+const error = ref(null)
+const loading = ref(true)
+
+const loginData = ref({
+	address: '0x5773f09e8B21d8081267FF52628C1EE9B4fC915D',
+	chain: 'eth',
+	tokenType: 'USDC',
+	invitationCode: '',
+	hash: '',
+})
+// 比率
+const { response: list } = useRequest({
+	url: '/system/coin/clientList',
+	method: 'get',
+	initialValues: [],
+})
+const listComputed = computed(() => {
+	return list.value.filter((item) => item.isfrontPage === 1)
+})
+const tokenBalance = ref('0')
+const changeWallet = (currency) => {
+	currencyPopup.value = false
+	// const { balance, getBalance } = useToken(currency.currency)
+	getBalance(currency.currency, (bal) => {
+		console.log('changeWallet', currency.currency, bal, balance.value)
+		tokenBalance.value = balance.value
+	})
+}
+// const list = ref([
+//     {
+//         title: 'BTC/USD',
+//         text: 'Bitcoin',
+//         img: BTC
+//     },
+//     {
+//         title: 'ETH/USD',
+//         text: 'Bitcoin',
+//         img: BTC
+//     },
+//     {
+//         title: 'ATOM/USD',
+//         text: 'Bitcoin',
+//         img: BTC
+//     },
+//     {
+//         title: 'LTC/USD',
+//         text: 'Bitcoin',
+//         img: BTC
+//     },
+//     {
+//         title: 'BTC/USD',
+//         text: 'Bitcoin',
+//         img: BTC
+//     },
+//     {
+//         title: 'ETH/USD',
+//         text: 'Bitcoin',
+//         img: BTC
+//     },
+//     {
+//         title: 'ATOM/USD',
+//         text: 'Bitcoin',
+//         img: BTC
+//     },
+//     {
+//         title: '123',
+//         text: '123',
+//         img: BTC
+//     }
+// ])
+// scroll
+const infoList = ref([
+	{
+		icon: info1,
+		content: '可靠的安全保障',
+	},
+	{
+		icon: info2,
+		content: '稳定可靠的投资回报',
+	},
+	{
+		icon: info3,
+		content: '方便易操作',
+	},
+])
+
+// 代码区
+const clientUserLogin = async () => {
+	try {
+		loginData.value.address = web3account.value.currentProvider.selectedAddress
+		loginData.value.tokenType = checkedCurrency.value || 'USDC'
+		loginData.value.hash = transaction.value.transactionHash
+		const response = await postData(loginData.value)
+		token.value = response.token
+		auStore.SET_TOKEN_DATA(token.value)
+		getUserInfo()
+	} catch (err) {
+		error.value = err
+	} finally {
+		loading.value = false
+	}
+}
+
+// const userInfo = ref({})
+const getUserInfo = async () => {
+	try {
+		loading2.loading()
+		const res = await usersStore.fetchUserInfoAction()
+		loading2.clearLoading()
+		// userInfo.value = temp
+		if (res.data) {
+			accountFundTransactionRecord(res.data.id)
+		}
+	} catch (err) {
+		console.log(error)
+	} finally {
+		loading.value = false
+	}
+}
+const accountFundTransaction = ref({
+	changeAmount: '',
+	baseSymbol: '',
+	totalRevenue: '',
+})
+const accountFundTransactionRecord = async (userid) => {
+	try {
+		const params = {
+			coinSymbol: currentCurrency.value.currency,
+			userId: userid,
+		}
+		loading2.loading()
+		const res = await accountFundTransactionRecordApi(params)
+		console.log(`账户今日盈利：${res.data.todayIncome}，总收入：${res.data.totalIncome}`)
+		// if (res?.rows.length > 0) {
+		// 	accountFundTransaction.value = res.rows[0]
+		// }
+		accountFundTransaction.value = res.data
+		loading2.clearLoading()
+	} catch (err) {
+		console.log(err)
+	}
+}
+
+// const getIncomeconfigClient = async () => {
+//     try {
+//         const response = await getIncomeconfigClientList() // Fetch data from API
+//         clientList.value = response.data
+//     } catch (err) {
+//         error.value = err // Handle errors
+//     } finally {
+//         loading.value = false // Set loading to false
+//     }
+// }
+
+// 市场
+// const getMarketList = async () => {
+//     try {
+//         const response = await getCoinList() // Fetch data from API
+//         list.value = response.data.filter((item) => item.isfrontPage === 1)
+//     } catch (err) {
+//         // Handle errors
+//     } finally {
+//         loading.value = false // Set loading to false
+//     }
+// }
+
+const goMarket = () => {
+	router.replace('/market')
+	navStore2.SET_NAV_DATA(1)
+}
+// 钱包连接
+const walletConnectRef = ref(null)
+const walletAddressSelect = () => {
+	walletConnectRef.value.showPopType = 'select'
+	walletConnectRef.value.showTop = true
+}
+const web3account = ref(null)
+const web3accountBalance = ref(null)
+const walletConnectClose = async () => {
+	if (typeof window.ethereum !== 'undefined') {
+		web3account.value = new Web3(window.ethereum)
+		if (web3account.value) {
+			const accountArr = await web3account.value.eth.getAccounts()
+			walletAddress.value = accountArr[0]
+			// walletAddress.value = web3account.value.currentProvider.selectedAddress
+
+			if (walletAddress.value) {
+				web3account.value.eth.getBalance(walletAddress.value).then((balance) => {
+					const etherBalance = web3account.value.utils.fromWei(balance, 'ether')
+					// web3accountBalance.value = etherBalance
+					// web3accountBalance.value = format2Balance(balance, 18)
+					web3accountBalance.value = tokenContractInfo.value.balance
+					console.log('ssss', tokenContractInfo.value)
+				})
+				// console.log('ddd', web3account.value, web3account.value.currentProvider.selectedAddress)
+
+				clientUserLogin()
+				getIncomeconfigClient()
+				getMarketList()
+				// marketInterval()
+				announcementPopShow()
+			} else {
+				walletConnectRef.value.showPopType = 'select2'
+				walletConnectRef.value.showTop = true
+				showToast('未选择钱包地址')
+			}
+		} else {
+			walletConnectRef.value.showPopType = 'select2'
+			walletConnectRef.value.showTop = true
+			showToast('请正确连接钱包')
+		}
+	} else {
+		showToast('Wallet is not installed. Please install Wallet and try again.')
+	}
+}
+
+// 公告通知
+const announcementPopRef = ref(null)
+const announcementPopShow = () => {
+	if (address.value && announcementPopRef.value) announcementPopRef.value.showPop = true
+}
+const marketTimer = ref(null)
+const marketInterval = () => {
+	if (marketTimer.value) clearInterval(marketTimer.value)
+	marketTimer.value = setInterval(() => {
+		getMarketList()
+	}, 3000)
+}
+const balanceTimer = ref(null)
+const balanceInterval = () => {
+	if (balanceTimer.value) clearInterval(balanceTimer.value)
+	balanceTimer.value = setInterval(() => {
+		getBalance(currentCurrency.value.currency, (bal) => {
+			console.log('balanceInterval定时器获取余额', currentCurrency.value.currency, bal, balance.value)
+			tokenBalance.value = bal
+		})
+	}, 5000)
+}
+
+watch(
+	() => currentCurrency.value.currency,
+	(val) => {
+		console.log('watch---', currentCurrency.value.currency)
+		if (val) {
+			getUserInfo()
+			balanceInterval()
+		}
+	},
+	{ immediate: true }
+)
+
+onBeforeMount(() => {
+	if (marketTimer.value) clearInterval(marketTimer.value)
+})
+
+onMounted(() => {
+	// walletConnectClose()
+	// addEvent()
+	getUserInfo()
+	getBalance(currentCurrency.value.currency, (bal) => {
+		console.log('onMounted', currentCurrency.value.currency, bal)
+		tokenBalance.value = bal
+	})
+	balanceInterval()
+})
+
+onUnmounted(() => {
+	// removeEvent()
+	if (balanceTimer.value) clearInterval(balanceTimer.value)
+})
+
+// 将组件中的数据进行暴露出去
+defineExpose({})
+</script>
+
+<style lang="scss" scoped>
+.home_container {
+	overflow: hidden;
+	padding-top: 40px;
+	background: #fafafa;
+
+	.header {
+		width: 100%;
+		padding: 0 48px;
+		height: 98px;
+		line-height: 98px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		z-index: 9;
+		margin-bottom: 36px;
+
+		.logo {
+			width: 44px;
+			height: 48px;
+			border-radius: 50%;
+
+			img {
+				width: 100%;
+				height: 100%;
+			}
+		}
+
+		.title {
+			font-size: 42px;
+			font-weight: 700;
+			margin-left: -220px;
+			line-height: 48px;
+			margin-top: -2px;
+			color: #000;
+		}
+
+		.input {
+			width: 196px;
+			height: 64px;
+			line-height: 64px;
+			background: #fff;
+			border-radius: 64px;
+			box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.13);
+			padding: 0 24px;
+			font-size: 26px;
+			color: #000;
+			font-weight: 500;
+			text-align: center;
+		}
+	}
+
+	.top_detail {
+		height: 378px;
+		// background: url('./assets/card.png') no-repeat;
+		// background-size: 100% 100%;
+		//pointer-events: none;
+		margin: 0 48px 85px;
+		padding: 24px 40px 0;
+		position: relative;
+		color: #fff;
+
+		.top {
+			height: 40px;
+			display: flex;
+			align-items: center;
+			font-size: 28px;
+			margin-bottom: 28px;
+
+			img {
+				width: 32px;
+				height: 32px;
+				margin-right: 8px;
+			}
+
+			.title {
+				font-weight: 400;
+				font-size: 28px;
+				color: #fff;
+			}
+		}
+
+		.bank {
+			position: absolute;
+			width: 64px;
+			height: 64px;
+			right: 32px;
+			top: 32px;
+		}
+
+		.content {
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+
+			.title2 {
+				color: #fff;
+				font-size: 26px;
+				font-weight: 500;
+			}
+
+			.number {
+				font-size: 62px;
+				height: 86px;
+				font-weight: 600;
+				color: #fefefe;
+				font-family: Poppins;
+
+				.unit {
+					font-size: 30px;
+					color: #fff;
+					font-weight: 700;
+				}
+			}
+
+			.precentage {
+				display: flex;
+				align-items: center;
+				width: 150px;
+				height: 70px;
+				line-height: 70px;
+				text-align: center;
+				background: #99bbfb;
+				font-size: 28px;
+				font-weight: 700;
+				color: #fff;
+				border-radius: 36px;
+				padding-left: 4px;
+				padding-right: 4px;
+
+				img {
+					width: 40px;
+					height: 40px;
+				}
+			}
+		}
+
+		.bottom {
+			height: 48px;
+			display: flex;
+			font-size: 24px;
+			align-items: center;
+
+			.trend {
+				width: 35px;
+				height: 35px;
+
+				img {
+					width: 100%;
+					height: 100%;
+				}
+			}
+
+			.trends {
+				color: #fff;
+				font-size: 24px;
+				margin-left: 16px;
+				font-weight: 700;
+			}
+
+			.day {
+				color: #fff;
+				font-size: 24px;
+				font-weight: normal;
+				margin-left: 10px;
+			}
+		}
+
+		.total {
+			background: linear-gradient(360deg, rgba(252, 252, 252, 0.5) 80.98%, rgba(255, 255, 255, 0.5) 100%);
+			backdrop-filter: blur(24px);
+			width: calc(100% + 80px);
+			margin-left: -40px;
+			height: 130px;
+			transform: translateY(10px);
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			font-size: 24px;
+			color: #676767;
+			font-weight: 700;
+			padding: 0 46px;
+
+			.number {
+				color: #333;
+				font-size: 28px;
+				font-weight: 600;
+			}
+		}
+	}
+
+	.list {
+		padding: 0px 24px;
+
+		.top {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			height: 48px;
+			margin-bottom: 10px;
+			padding-left: 24px;
+			padding-right: 24px;
+
+			.title {
+				font-size: 36px;
+				font-weight: 700;
+				color: #121212;
+			}
+
+			.all {
+				font-size: 28px;
+				color: #7ba9ff;
+				font-weight: 500;
+				line-height: 40px;
+			}
+		}
+
+		.list_info {
+			border-radius: 32px;
+			background: #fff;
+			padding: 0 24px;
+			overflow: hidden;
+
+			.item {
+				display: flex;
+				border-bottom: 1px solid rgba($color: #b9c1d9, $alpha: 0.2);
+				font-size: 25px;
+				padding-bottom: 20px;
+				margin-top: 30px;
+
+				.item_img {
+					flex: 0 0 96px;
+					width: 96px;
+					height: 96px;
+					border-radius: 50%;
+					margin-right: 32px;
+					overflow: hidden;
+
+					img {
+						width: 100%;
+						height: 100%;
+					}
+				}
+
+				.coin {
+					flex: 0 0 140px;
+					color: #b8b8b8;
+					font-size: 24px;
+					margin-right: 52px;
+
+					.name {
+						font-size: 28px;
+						font-weight: 700;
+						color: #121212;
+						margin-top: 8px;
+					}
+				}
+
+				.echarts {
+					width: 150px;
+					height: 80px;
+
+					img {
+						width: 100%;
+						height: 100%;
+					}
+				}
+
+				.num {
+					flex: 1 1 auto;
+					margin-left: 40px;
+					max-width: 140px;
+					text-align: right;
+
+					div {
+						width: 100%;
+						overflow: hidden;
+						text-overflow: ellipsis;
+						white-space: nowrap;
+					}
+
+					.price {
+						font-size: 32px;
+						color: #121212;
+						font-weight: 700;
+					}
+
+					.trend {
+						color: #7ba9ff;
+						font-size: 24px;
+						font-weight: 400;
+					}
+
+					.red {
+						color: #ff6464;
+					}
+				}
+			}
+		}
+	}
+
+	.info {
+		padding: 40px 24px 40px;
+		display: flex;
+		justify-content: space-between;
+
+		.info_box {
+			width: 220px !important;
+			height: 224px;
+			background: #fff;
+			border-radius: 24px;
+			padding-top: 32px;
+			padding-bottom: 32px;
+			margin-right: 20px;
+			display: flex;
+			flex-direction: column;
+
+			.icon {
+				display: flex;
+				width: 48px;
+				height: 48px;
+				margin-left: 20px;
+				margin-bottom: 30px;
+
+				> img {
+					width: 100%;
+					height: 100%;
+				}
+			}
+
+			.content {
+				padding: 0 20px;
+				font-weight: 700;
+				line-height: 1.5;
+				font-size: 28px;
+				color: #000;
+			}
+		}
+	}
+
+	.rate {
+		background: #fff;
+		margin: 0 24px 48px;
+		padding: 32px 22px;
+		border-radius: 32px;
+
+		.rate_title {
+			display: flex;
+			height: 52px;
+			align-items: center;
+			margin-bottom: 30px;
+
+			.img {
+				display: flex;
+				align-items: center;
+
+				img {
+					width: 70px;
+					height: 50px;
+				}
+			}
+
+			span {
+				font-size: 26px;
+				color: #000;
+				font-weight: 700;
+			}
+		}
+
+		.rate_content {
+			display: flex;
+			justify-content: space-between;
+			margin: 0px;
+			height: 90px;
+			padding-left: 20px;
+			line-height: 30px;
+			background: transparent;
+			border-top: 1px dashed rgba(185, 193, 217, 0.2);
+			border-bottom: 1px dashed rgba(185, 193, 217, 0.2);
+
+			.left,
+			.right {
+				.img {
+					width: 14px;
+					height: 14px;
+
+					img {
+						width: 100%;
+						height: 100%;
+						vertical-align: sub;
+					}
+				}
+
+				span {
+					font-size: 26px;
+					font-weight: 500;
+					color: #000;
+					margin-left: 28px;
+				}
+			}
+
+			.right {
+				display: flex;
+				align-items: center;
+
+				.dot {
+					width: 14px;
+					height: 12px;
+					background-color: #a9aaac;
+					border-radius: 50%;
+				}
+
+				span {
+					margin-left: 20px;
+				}
+			}
+		}
+	}
+}
+
+.currency-popup {
+	max-height: 80%;
+	padding: 24px 46px;
+	border-top-left-radius: 32px;
+	border-top-right-radius: 32px;
+
+	.title2 {
+		font-size: 28px;
+		font-weight: 500;
+		text-align: left;
+		color: #000;
+		margin-top: 36px;
+	}
+}
+
+.currency-currency {
+	font-size: 28px;
+
+	.line {
+		background: rgba(0, 0, 0, 0.1);
+		height: 8px;
+		width: 212px;
+		border-radius: 8px;
+		margin: 0 auto;
+	}
+
+	.currency-currency-title {
+		text-align: center;
+
+		h5 {
+			margin-top: 30px;
+			font-size: 32px;
+			font-weight: 600;
+			line-height: 50px;
+			color: #000;
+		}
+
+		p {
+			line-height: 44px;
+			color: #8d8d8d;
+			font-size: 24px;
+		}
+	}
+
+	.currency-currency-label {
+		line-height: 44px;
+		margin-top: 72px;
+		font-size: 25px;
+		font-weight: 500;
+		color: #000;
+	}
+
+	.currency-currency-selected {
+		height: 120px;
+		display: flex;
+		align-items: center;
+		border-top: 1px solid rgba(185, 193, 217, 0.2);
+
+		.icon {
+			flex: 0 0 60px;
+			width: 60px;
+			border-radius: 50%;
+			margin-right: 18px;
+		}
+
+		.text {
+			font-size: 28px;
+			color: #000;
+			font-weight: 400;
+		}
+
+		button {
+			background: #80a9f5;
+			margin-left: auto;
+			height: 54px;
+			color: #fff;
+			font-weight: 500;
+			font-size: 24px;
+			padding: 0 32px;
+			border-radius: 54px;
+			border: none;
+			outline: none;
+		}
+	}
+}
+</style>

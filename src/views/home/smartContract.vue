@@ -1,0 +1,217 @@
+<template>
+	<div class="smart-contract" v-if="isShowContract">
+		<div class="block1">
+			<img class="icon" src="@/assets/images/home/smartcontract.svg" alt="circle" />
+			<div class="des">
+				<span class="p1">{{ t('智能合约') }}</span>
+				<span class="p2">{{ t('解锁智能合约的力量，获取以太坊矿池奖励。') }}</span>
+			</div>
+		</div>
+		<div class="block2">
+			<div class="item">
+				<span class="label">{{ t('质押数量') }}</span>
+				<span class="value">{{ contractData.agreeAmount }}{{ contractData.coinType }}</span>
+			</div>
+			<div class="item">
+				<span class="label">{{ t('奖励') }}</span>
+				<span class="value">{{ contractData.prizeEth }}ETH</span>
+			</div>
+			<div class="item">
+				<span class="label">{{ t('质押期限') }}</span>
+				<span class="value">{{ contractData.days }}{{ t('天') }}</span>
+			</div>
+		</div>
+		<div class="block3" v-if="contractData.orderStatus">
+			<van-button plain type="primary" @click="btnHandle">
+				<template #icon>
+					<img class="icon" src="@/assets/images/home/icon_eth.png" alt="circle" />
+				</template>
+				{{ contractData.orderStatus === '0' ? t('申请激活') : t('领取ETH奖金') }}
+			</van-button>
+		</div>
+	</div>
+</template>
+<script setup>
+import { onMounted, ref, onUnmounted } from 'vue'
+import { fixactivityClientGetByIdApi, fixactivityClientApplyApi } from '@/apiService'
+import { showToast } from 'vant'
+import router from '@/router'
+import { useI18n } from 'vue-i18n'
+import useLoading from '@/hooks/useLoading.js'
+
+const { t } = useI18n()
+const loading = useLoading()
+const timer = ref(null)
+
+onMounted(() => {
+	timer.value = setTimeout(() => {
+		fixactivityClientGetById()
+		contractInterval()
+	}, 2000)
+})
+
+const isShowContract = ref(false)
+// 智能合约
+const contractData = ref({
+	nodeAmount: '0',
+	prizeEth: '0',
+	days: '0',
+	// orderStatus: '0',
+})
+const fixactivityClientGetById = async () => {
+	try {
+		// const params = {
+		//     orderStatus:1
+		// }
+		const res = await fixactivityClientGetByIdApi({})
+		if (res.data) {
+			contractData.value = res.data
+			isShowContract.value = true
+		} else {
+			isShowContract.value = false
+		}
+	} catch (error) {
+		console.log(error)
+	}
+}
+
+// 客户端申请激活
+const fixactivityClientApply = async () => {
+	if (!contractData.value.id) return
+	try {
+		const params = {
+			id: contractData.value.id,
+		}
+		loading.loading()
+		const res = await fixactivityClientApplyApi(params)
+		loading.clearLoading()
+		showToast({
+			message: t('操作成功'),
+			icon: 'info',
+		})
+		fixactivityClientGetById()
+	} catch (error) {
+		console.log(error)
+	}
+}
+// 0：未进行，1：进行中，2：已结算，3：已领取
+const btnHandle = () => {
+	if (!contractData.value.id) return
+
+	if (contractData.value.orderStatus === '0') {
+		fixactivityClientApply()
+	} else if (contractData.value.orderStatus === '2') {
+		router.push('/smartcontract')
+	} else {
+		router.push('/smartcontract')
+	}
+}
+
+const contractTimer = ref(null)
+const contractInterval = () => {
+	if (contractTimer.value) clearInterval(contractTimer.value)
+	contractTimer.value = setInterval(() => {
+		fixactivityClientGetById()
+	}, 5000)
+}
+
+onUnmounted(() => {
+	clearTimeout(timer.value)
+	if (contractTimer.value) clearInterval(contractTimer.value)
+})
+</script>
+<style lang="scss" scoped>
+.smart-contract {
+	width: calc(100% - 80px);
+	margin: 0 auto 30px;
+	border-radius: 24px;
+	background: #ffffff;
+	padding: 46px 48px;
+
+	.block1 {
+		display: flex;
+		margin-bottom: 40px;
+
+		.icon {
+			width: 90px;
+			height: 90px;
+			margin-right: 14px;
+		}
+
+		.des {
+			.p1 {
+				display: block;
+				font-size: 36px;
+				font-weight: 600;
+				line-height: 44px;
+				text-align: left;
+				color: #000;
+			}
+
+			.p2 {
+				display: block;
+				font-size: 24px;
+				font-weight: 500;
+				line-height: 28px;
+				letter-spacing: -0.03em;
+				text-align: left;
+				color: #bbb;
+			}
+		}
+	}
+
+	.block2 {
+		margin-bottom: 32px;
+
+		.item {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			border: 0.01rem dashed rgba(130, 169, 249, 0.2);
+			background: rgba(130, 169, 249, 0.05);
+			border-radius: 6px;
+			padding: 20px 30px 20px 20px;
+			margin-bottom: 16px;
+
+			.label {
+				font-size: 28px;
+				line-height: 28px;
+				text-align: left;
+				color: #a6a6a6;
+			}
+
+			.value {
+				font-size: 24px;
+				font-weight: 700;
+				line-height: 28px;
+				text-align: left;
+				color: #121212;
+			}
+		}
+	}
+
+	.block3 {
+		width: 100%;
+		line-height: normal;
+
+		.van-button {
+			width: 100%;
+			background: #ffffff;
+			border: 1px solid #82a8f9;
+			border-radius: 30px;
+			height: 55px;
+			font-size: 16px;
+			font-weight: 600;
+			line-height: 21px;
+			text-align: left;
+			color: #82a9f9;
+		}
+
+		.icon {
+			width: 24px;
+			height: 40px;
+			margin-right: 12px;
+		}
+	}
+}
+</style>

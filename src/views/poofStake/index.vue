@@ -1,0 +1,913 @@
+<template>
+	<div class="poof_stake_container">
+		<!-- Proof of Stake -->
+		<div class="header">
+			<div class="left">
+				<div class="time">{{ t('过去24小时') }}</div>
+				<div class="title">{{ t('权益证明') }}</div>
+			</div>
+			<div class="right">
+				<span>{{ '+0.00%' }}</span>
+				<div class="img">
+					<img src="../../assets/images/home/moving.png" alt="trends" />
+				</div>
+			</div>
+		</div>
+		<!-- Card -->
+		<div class="account">
+			<div class="title">{{ t('权益证明 账户') }}</div>
+			<div class="money">
+				{{ plusDecimal(poofStakeAccountInfo.pledgeAmount || '0') }}
+				<span>ETH</span>
+			</div>
+			<!-- ETH Today's Profit-->
+			<div class="introduce">
+				<div class="trend">
+					<img src="../../assets/images/home/trends.png" alt="trends" />
+				</div>
+				<span class="trends">{{ plusDecimal(poofStakeAccountInfo.todayProfit || '0') }} </span>
+				<span class="trends"> ETH </span>
+				<span class="day"> {{ t('今日盈利') }}</span>
+			</div>
+			<!-- Center Card -->
+			<div class="range">
+				<div class="icon">
+					<!-- <img src="../../assets/images/earn/range_icon.png" alt="range_icon" /> -->
+					<img src="../../assets/images/earn/earnIntersetTrading.svg" alt="range_icon" />
+				</div>
+				<div class="right_font" @click="handleRouter">
+					<div class="divider"></div>
+					<div class="question">{{ t('什么是权益证明？') }}</div>
+					<div class="info">{{ t('了解权益证明的运作方式') }}</div>
+				</div>
+				<div class="next" @click="handleRouter">
+					<img src="../../assets/images/earn/next.png" alt="next" />
+				</div>
+			</div>
+		</div>
+		<div class="scroll_title">{{ t('质押') }}<span>ETH</span></div>
+		<div class="footer">
+			<!-- Button -->
+			<div class="buttons">
+				<div class="btn">
+					<div :class="['pledge', selectedPledge === '0' ? 'selectPledge' : 'unselectePledge']" @click="pledgeFunc('0')">
+						{{ t('联合质押') }}
+					</div>
+					<div :class="['pledge', selectedPledge === '1' ? 'selectPledge' : 'unselectePledge']" @click="pledgeFunc('1')">
+						{{ t('个人质押') }}
+					</div>
+				</div>
+				<div v-if="selectedPledge === '0'" class="introduce">{{ t('通过智能合约匹配参与者来实现联合质押，总质押金额达到32') }} ETH.</div>
+				<div v-else class="introduce">
+					{{ t('独立质押不需要通过智能合约匹配参与者，只要质押金额达到32ETH即可完成个人质押。') }}
+				</div>
+			</div>
+			<!-- Yield -->
+			<div class="rate">
+				<div class="yield">
+					<div class="title">{{ t('收益') }}:</div>
+					<div v-if="massList && massList[selectedDay]" class="title_value">
+						<div>
+							{{ timesForValueDecimal(massList[selectedDay].minRatio, 100) }}-{{ timesForValueDecimal(massList[selectedDay].maxRatio, 100) }}%
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- Days Select -->
+			<div class="select">
+				<van-dropdown-menu :overlay="false">
+					<van-dropdown-item :placeholder="t('选择天数')" ref="selectedDayDropdownItemRef">
+						<template #title>
+							<span v-if="massList[selectedDay]"> {{ massList[selectedDay].massDays }} {{ t('天') }}</span>
+						</template>
+						<template #default>
+							<div
+								v-for="item in massList"
+								:key="item.value"
+								@click="onConfirmMassDays(item)"
+								:class="[
+									'van-cell van-cell--clickable van-dropdown-item__option dropdown-text',
+									{ 'van-dropdown-item__option--active': item.value === selectedDay },
+								]"
+							>
+								<div class="van-cell__title left-align">{{ item.massDays }} {{ t('天') }}</div>
+								<!-- <br /> -->
+								<div class="van-cell__value right-align">
+									{{ timesForValueDecimal(item.minRatio, 100) }}-{{ timesForValueDecimal(item.maxRatio, 100) }}%
+								</div>
+							</div>
+						</template>
+					</van-dropdown-item>
+				</van-dropdown-menu>
+			</div>
+			<div class="stepper">
+				<van-cell-group inset>
+					<van-field v-model="stepper" :disabled="selectedPledge === '1'" type="number" center :clearable="false" label="" placeholder="">
+						<template #left-icon>
+							<img src="@/assets/images/poofStake/minus.svg" @click="minusStepper" alt="minus" />
+						</template>
+						<template #right-icon>
+							<img src="@/assets/images/poofStake/plus.svg" @click="plusStepper" alt="plus" />
+						</template>
+					</van-field>
+				</van-cell-group>
+
+				<!--				<van-stepper v-model="stepper" />-->
+			</div>
+			<!-- Stake Button -->
+			<div class="stake">
+				<van-button type="primary" @click="showPopupFunc">{{ t('质押') }}</van-button>
+			</div>
+			<div>
+				<el-dialog v-model="centerDialogVisible" width="calc(100vw - 30px)" align-center class="popup-css poofstake-order" z-index="2000">
+					<template #header>
+						<div class="dialog-title">
+							<img src="@/assets/images/poofStake/icon.png" alt="Custom Title" class="popup-image" />
+						</div>
+					</template>
+					<div class="order_status">{{ t('订单状态') }}</div>
+					<div class="order_info">{{ t('这是您的订单信息') }}</div>
+					<div class="content">
+						<div class="each-row">
+							<p class="left-text">{{ t('数量') }}:</p>
+							<p class="right-text">{{ stepper }} ETH</p>
+						</div>
+						<div class="each-row">
+							<p class="left-text">{{ t('收益') }}:</p>
+							<div class="right-text" v-if="massList && massList[selectedDay]">
+								<div>
+									{{ timesForValueDecimal(massList[selectedDay].minRatio, 100) }}-{{ timesForValueDecimal(massList[selectedDay].maxRatio, 100) }}%
+								</div>
+							</div>
+						</div>
+						<div class="each-row">
+							<p class="left-text">{{ t('质押期限') }}:</p>
+							<p class="right-text">{{ daysList[selectedDay].massDays }} {{ t('天') }}</p>
+						</div>
+					</div>
+					<template #footer>
+						<div class="dialog-footer">
+							<el-button :plain="true" @click="updateData()" class="confirm1-btn">{{ t('确认') }}</el-button>
+						</div>
+					</template>
+				</el-dialog>
+			</div>
+		</div>
+	</div>
+</template>
+
+<script setup name="PoofStake">
+import { ref, computed, onMounted, watch, onUnmounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { userStore } from '@/store'
+import { fetchMassClientList, addPledgeOrderData, fetchPoofStakeAccountInfoApi } from '@/apiService'
+import { showToast } from 'vant'
+import { useI18n } from 'vue-i18n'
+import useLoading from '@/hooks/useLoading.js'
+import { minusForValueDecimal, plusDecimal, plusForValueDecimal, timesForValueDecimal } from '@/utils'
+
+// 初始化仓库
+const usersStore = userStore()
+const { t } = useI18n()
+const loading = useLoading()
+// 变量区
+const router = useRouter()
+const route = useRoute()
+
+const error = ref(null)
+const selectedPledge = ref('0')
+const centerDialogVisible = ref(false)
+// 日期下拉参数
+const selectedDay = ref(0)
+
+// 联合质押递增 1，个人质押递增 32
+const currentBase = computed(() => {
+	if (selectedPledge.value === '0') {
+		return 1
+	} else {
+		return 32
+	}
+})
+
+const BASE = {
+	personal: 32, // 个人质押基数
+	joint: 1, // 联合质押基数
+}
+// 计数器
+const stepper = ref(0)
+watch(
+	() => selectedPledge.value,
+	(val) => {
+		selectedDay.value = 0
+		stepper.value = val === '1' ? BASE.personal : 0
+	},
+	{
+		immediate: true,
+	}
+)
+
+const showPopupFunc = () => {
+	if (!stepper.value) {
+		showToast({ message: t('请输入质押数量'), icon: 'info' })
+		return
+	}
+	if (!parseInt(stepper.value)) {
+		showToast({ message: t('请输入有效的质押数量'), icon: 'info' })
+		return
+	}
+	centerDialogVisible.value = true
+}
+
+const updateData = async () => {
+	insertPledge()
+}
+
+const insertPledge = async () => {
+	let temp = daysList.value[selectedDay.value]
+	let data = {
+		posMassId: temp.id,
+		pledgeAmount: stepper.value,
+		baseSymbol: 'ETH',
+		userId: usersStore.userId,
+		pledgeType: selectedPledge.value,
+	}
+
+	try {
+		loading.loading()
+		const res = await addPledgeOrderData(data)
+		loading.clearLoading()
+		// showToast('staking successful.')
+		showToast({ message: t('质押成功'), icon: 'info' })
+		stepper.value = currentBase.value
+		centerDialogVisible.value = false
+		let timeout = setTimeout(() => {
+			getPoofStakeAccountInfo(true)
+			clearTimeout(timeout)
+		}, 2000)
+	} catch (err) {
+		console.log(err)
+	} finally {
+	}
+}
+
+const selectedDayDropdownItemRef = ref(null)
+const daysList = ref([])
+
+const massList = computed(() => {
+	const isJoint = selectedPledge.value === '0'
+	return daysList.value.map((item, index) => ({
+		...item,
+		value: index,
+		text: item.massDays + `  ${t('天')}`,
+
+		minRatio: isJoint ? item.minUnionMassInterestRatio : item.minMassInterestRatio,
+		maxRatio: isJoint ? item.maxUnionMassInterestRatio : item.maxMassInterestRatio,
+	}))
+})
+function onConfirmMassDays(item) {
+	selectedDayDropdownItemRef.value?.toggle()
+	selectedDay.value = item.value
+}
+function minusStepper() {
+	if (parseFloat(stepper.value) > currentBase.value) {
+		stepper.value = minusForValueDecimal(stepper.value, currentBase.value)
+	} else {
+		if (selectedPledge.value === '1') {
+			stepper.value = currentBase.value
+		} else {
+			stepper.value = 0
+		}
+	}
+}
+function plusStepper() {
+	if (parseFloat(stepper.value)) {
+		stepper.value = plusForValueDecimal(stepper.value, currentBase.value)
+	} else {
+		stepper.value = currentBase.value
+	}
+}
+// 代码区
+
+// 路由跳转
+const handleRouter = () => {
+	usersStore.SET_PATH_DATA('no')
+	router.push('/stake')
+}
+
+const pledgeFunc = (val) => {
+	selectedPledge.value = val
+}
+
+const getMassList = async () => {
+	try {
+		loading.loading()
+		const res = await fetchMassClientList()
+		loading.clearLoading()
+		daysList.value = res.data
+	} catch (err) {
+		console.log(err)
+	} finally {
+	}
+}
+
+const poofStakeAccountInfo = ref({
+	todayProfit: 0, // 今日收益
+	pledgeAmount: 0, // 质押金额
+})
+const getPoofStakeAccountInfo = async (isLoading) => {
+	try {
+		isLoading && loading.loading()
+		const res = await fetchPoofStakeAccountInfoApi()
+		isLoading && loading.clearLoading()
+		poofStakeAccountInfo.value = res.data
+	} catch (err) {
+		console.log(err)
+	}
+}
+
+const loopTimer = ref(null)
+const loopInterval = () => {
+	clearLoopInterval()
+	loopTimer.value = setTimeout(() => {
+		getPoofStakeAccountInfo().finally(loopInterval)
+	}, 5000)
+}
+const clearLoopInterval = () => {
+	if (loopTimer.value) clearTimeout(loopTimer.value)
+}
+
+onMounted(() => {
+	getMassList()
+	getPoofStakeAccountInfo(true)
+	loopInterval()
+})
+
+onUnmounted(() => {
+	clearLoopInterval()
+})
+
+// 将组件中的数据进行暴露出去
+defineExpose({})
+</script>
+
+<style lang="scss" scoped>
+.poof_stake_container {
+	padding: 48px;
+	position: relative;
+
+	.header {
+		display: flex;
+		justify-content: space-between;
+
+		.left {
+			.time {
+				font-size: 24px;
+				color: #aaa5a5;
+			}
+
+			.title {
+				font-size: 40px;
+				color: #000;
+				font-weight: bold;
+				margin-top: 30px;
+				position: relative;
+				//height: 28px;
+				line-height: 68px;
+				//padding-left: 10px;
+				// margin-bottom: 18px;
+
+				// &::after {
+				// 	position: absolute;
+				// 	content: '';
+				// 	width: 4px;
+				// 	height: 28px;
+				// 	left: 0;
+				// 	top: 0;
+				// 	background: #7BA9FF;
+				// }
+			}
+		}
+
+		.right {
+			display: flex;
+			justify-content: space-between;
+
+			span {
+				font-weight: 700;
+				font-size: 28px;
+				margin-top: 20px;
+				color: #7ba9ff;
+			}
+
+			.img {
+				width: 88px;
+				height: 88px;
+				margin-left: 10px;
+
+				img {
+					width: 100%;
+					height: 100%;
+					vertical-align: super;
+				}
+			}
+		}
+	}
+
+	.account {
+		width: 100%;
+		height: 440px;
+		background: url('../../assets/images/earn/earnAccount.png') no-repeat;
+		background-size: 100%;
+		color: #fff;
+		position: relative;
+		margin-top: 30px;
+		padding: 48px;
+
+		.title {
+			font-weight: 500;
+			font-size: 28px;
+		}
+
+		.money {
+			font-size: 50px;
+			font-weight: bold;
+			margin-top: 30px;
+			margin-bottom: 30px;
+		}
+
+		.introduce {
+			display: flex;
+			align-items: center;
+			font-size: 24px;
+			font-weight: bold;
+
+			.trend {
+				width: 35px;
+				height: 35px;
+				margin-right: 10px;
+
+				img {
+					width: 100%;
+					height: 100%;
+					vertical-align: middle;
+				}
+			}
+
+			.trends {
+				margin-left: 3px;
+				margin-right: 3px;
+				//font-weight: 700;
+			}
+		}
+
+		.range {
+			position: relative;
+			display: flex;
+			align-items: center;
+			background: #fff;
+			border-radius: 0.33333rem;
+			padding: 25px;
+			z-index: 100;
+			margin-top: 30px;
+
+			.icon {
+				width: 40px;
+				margin-right: 30px;
+
+				img {
+					width: 100%;
+				}
+			}
+
+			.right_font {
+				padding-left: 30px;
+				color: #000;
+				flex: 1;
+				position: relative;
+				margin-right: 30px;
+				//padding-right: 30px;
+
+				//   &:before{
+				//     content: '';
+				//     position: absolute;
+				//     top: -30px;
+				//     bottom: -30px;
+				//     width: 1px;
+				//     background-color: #E2E2E2;
+				//     left: 0;
+				//   }
+
+				.question {
+					font-weight: 590;
+					font-size: 24px;
+					color: #000;
+					line-height: normal;
+				}
+
+				.info {
+					color: #cbcbcb;
+					font-size: 20px;
+				}
+			}
+
+			.next {
+				position: absolute;
+				right: 40px;
+				top: 50%;
+				transform: translateY(-50%);
+				display: inline-flex;
+				width: 30px;
+				height: 30px;
+
+				img {
+					width: 100%;
+					height: 100%;
+				}
+			}
+		}
+	}
+
+	.scroll_title {
+		height: 80px;
+		font-size: 30px;
+		font-weight: 700;
+		margin-top: 60px;
+		margin-bottom: 28px;
+		position: relative;
+		height: 28px;
+		line-height: 28px;
+		padding-left: 10px;
+
+		// &::after {
+		// 	position: absolute;
+		// 	content: '';
+		// 	width: 4px;
+		// 	height: 28px;
+		// 	left: 0;
+		// 	top: 0;
+		// 	background: #7BA9FF;
+		// }
+	}
+
+	.footer {
+		border-radius: 32px;
+		background: #fff;
+		padding: 44px;
+
+
+		.buttons {
+			.btn {
+				width: 100%;
+				display: flex;
+				border-radius: 60px;
+				// background: #E5EBF6;
+				//padding: 12px 16px;
+				margin: 0 -10px 48px;
+
+				.pledge {
+					flex: 1;
+					cursor: pointer;
+					padding: 22px 1px;
+					min-height: 80px;
+					font-size: 26px;
+					text-align: center;
+					color: #000;
+					border-radius: 60px;
+					box-shadow: 0 0.02rem #00000008;
+					letter-spacing: -0.08px;
+					margin: 0 10px;
+
+					&.selectPledge {
+						background: #82a9f94d;
+						color: #7ba9ff;
+					}
+				}
+			}
+
+			.introduce {
+				background: #d8e4fc;
+				margin-top: 30px;
+				font-size: 20px;
+				padding: 20px;
+				color: #9b9b9b;
+				border-radius: 20px;
+				border: 1px dashed #8df;
+			}
+		}
+
+		.rate {
+			font-size: 25px;
+			padding-top: 48px;
+
+			.yield {
+				display: flex;
+				justify-content: space-between;
+				margin-bottom: 30px;
+			}
+
+			.title {
+				color: #999;
+			}
+
+			.title_value {
+				color: #409eff;
+			}
+		}
+
+		.select {
+			margin-bottom: 48px;
+
+			:deep .van-dropdown-menu__bar {
+				border-radius: 10px;
+				height: 55px;
+			}
+
+			:deep(.van-dropdown-menu__title:after) {
+				right: -70px;
+				border-color: transparent transparent #000000 #000000;
+				width: 10px;
+				height: 10px;
+				border-bottom: 2px solid black;
+				font-size: 40px;
+			}
+
+			:deep(.van-dropdown-menu__title) {
+				font-size: 13px;
+			}
+
+			:deep(.van-cell__title) {
+				font-size: 13px;
+				text-align: left;
+			}
+
+			:deep(.van-dropdown-item) {
+				margin: auto;
+				width: 75%;
+
+				.van-cell__title,
+				.van-cell__value {
+					font-size: 13px;
+					color: var(--van-cell-text-color);
+				}
+
+				.van-dropdown-item__option--active {
+					.van-cell__title,
+					.van-cell__value {
+						color: var(--van-dropdown-menu-option-active-color);
+					}
+				}
+			}
+		}
+
+		.stepper {
+			margin-bottom: 30px;
+			// color: #eaecf0;
+
+			:deep(.van-cell-group.van-cell-group--inset) {
+				margin: 0;
+				.van-cell {
+					background: #f9fafb;
+					padding: 0 18px;
+					height: 56px;
+				}
+
+				.van-field__control {
+					text-align: center;
+					font-size: 14px;
+
+					&:disabled {
+						color: var(--van-field-input-text-color);
+						-webkit-text-fill-color: var(--van-field-input-text-color);
+					}
+				}
+
+				img {
+					vertical-align: middle;
+				}
+			}
+
+			:deep .van-stepper {
+				width: 100%;
+				height: 55px;
+				background: #f9fafc;
+				border-radius: 10px;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				box-shadow: var(--van-dropdown-menu-shadow);
+			}
+
+			:deep .van-stepper__minus,
+			:deep .van-stepper__plus {
+				background-color: #d1e1ff;
+				border-radius: 5px;
+				color: black;
+				width: 22px;
+				height: 22px;
+			}
+
+			:deep(.van-stepper__input) {
+				font-size: 13px;
+			}
+		}
+
+		.stake {
+			:deep .van-button--normal {
+				width: 100%;
+				border-radius: 30px;
+				height: 55px;
+				font-size: 17px;
+				background: #82a8f9;
+				border: 1px solid #82a8f9;
+				font-weight: 600;
+			}
+		}
+	}
+
+	.divider {
+		position: absolute;
+		left: 0px;
+		top: 6px;
+		width: 1px;
+		height: 55px;
+		background: rgba(0, 0, 0, 0.15);
+	}
+}
+
+.order_status {
+	text-align: center;
+	font-size: 40px;
+	font-weight: 700;
+}
+
+.order_info {
+	text-align: center;
+	color: gray;
+	margin-top: 10px;
+	margin-bottom: 25px;
+}
+</style>
+<style>
+.dropdown-text {
+	display: flex;
+	justify-content: space-between;
+	/* Distribute space between the left and right sections */
+	width: 100%;
+	/* Ensure the div takes up the full width of the dropdown item */
+}
+
+.left-align {
+	/* Additional styles for left-aligned text if needed */
+}
+
+.right-align {
+	/* Additional styles for right-aligned text if needed */
+}
+
+.mass-days {
+	margin-right: 10px;
+	/* Adjust the margin to your liking */
+}
+
+.interest-ratios {
+	/* Additional styles if needed */
+}
+
+/* Hide the close icon in el-dialog */
+.el-dialog__headerbtn {
+	display: none;
+}
+
+.el-dialog__header.show-close {
+	padding-right: 0;
+}
+
+/* Hide the close icon */
+.el-dialog__headerbtn {
+	display: none;
+}
+
+.el-dialog.is-align-center {
+	border-radius: 9px;
+}
+
+/* Remove padding or space if the close button is hidden */
+.el-dialog__header {
+	padding-right: 0 !important;
+	/* Force remove right padding */
+	display: flex;
+	/* Ensure header uses flexbox */
+	justify-content: center;
+	/* Center title horizontally */
+}
+</style>
+<style scoped lang="scss">
+/* Center the title icon in the dialog title */
+.dialog-title {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	/* Optionally centers the icon vertically */
+	height: 100%;
+	/* Ensures the title container has enough height */
+}
+
+.custom-message-box .popup-image {
+	display: block;
+	margin: 0 auto;
+	width: 80%;
+	/* Adjust width as needed */
+}
+
+.custom-message-box .custom-message {
+	text-align: center;
+	margin: 20px 0;
+}
+
+.el-dialog__footer {
+	display: flex;
+	justify-content: center;
+}
+
+.el-button--primary {
+	background-color: #409eff;
+	/* Example custom color */
+	border-color: #409eff;
+	/* Match the border color */
+	color: white;
+	/* Text color */
+	padding: 10px 20px;
+	/* Adjust padding as needed */
+	font-size: 18px;
+	/* Adjust font size */
+}
+
+.el-button--primary:hover {
+	background-color: #66b1ff;
+	/* Hover color */
+	border-color: #66b1ff;
+	/* Hover border color */
+}
+
+.each-row {
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 12px;
+}
+
+.popup-image {
+	width: 34px;
+	height: 34px;
+}
+
+.left-text,
+.right-text {
+	font-size: 26px;
+	font-weight: 500;
+	color: #999;
+}
+
+.right-text {
+	font-weight: 700;
+	color: #000;
+}
+
+/* Ensure dialog footer content is centered */
+.dialog-footer {
+	display: flex;
+	justify-content: center;
+	padding: 10px;
+	width: 100%;
+}
+
+/* Optional: style the confirm button */
+.confirm1-btn {
+	/* Add any additional styles you need for the button */
+	width: 100%;
+	height: 110px;
+	border-radius: 52px;
+	background: #82a8f9;
+	color: #fff;
+	font-weight: 600;
+	font-size: 36px;
+}
+
+:deep(.poofstake-order) {
+	border-radius: 20px;
+	padding: 66px 48px;
+
+	.dialog-title {
+		.popup-image {
+			width: 76px;
+			height: 76px;
+		}
+	}
+
+	.content {
+		border-top: 1px dashed #82a8f9;
+		border-bottom: 1px dashed #82a8f9;
+		padding-top: 56px;
+		padding-bottom: 56px;
+	}
+}
+</style>
