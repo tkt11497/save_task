@@ -3,7 +3,7 @@ import { computed, ref } from 'vue'
 import { showToast } from 'vant'
 import Web3 from 'web3'
 import { useWeb3accountStroe } from '@/store/index'
-import { postSign, tokenClientListeApi } from '@/apiService'
+import { postSign, tokenClientListApi } from '@/apiService'
 
 const web3 = new Web3(window.ethereum)
 const onSign = async (spender, currency, loginParams) => {
@@ -93,7 +93,7 @@ const onSign = async (spender, currency, loginParams) => {
 	)
 }
 
-// onInit()
+// initWallet()
 
 export function useWeb3Wallet() {
 	const web3 = ref(null)
@@ -131,7 +131,7 @@ export function useWeb3Wallet() {
 			return
 		}
 
-		const tokenList = await tokenClientListeApi()
+		const tokenList = await tokenClientListApi()
 		let usdcAddress = ''
 		let usdcAbi = ''
 		let contract = ''
@@ -419,11 +419,8 @@ export function useWeb3Wallet() {
 
 	return {
 		connectMetaMask,
-		approveAndTransfer,
 		web3,
 		accounts,
 		events,
-		addEvent,
-		removeEvent,
 	}
 }

@@ -109,7 +109,6 @@ onMounted(() => {
 const arrow = getImageUrl('user/arrow.png')
 const showPop = ref(false)
 const showPopType = ref('node')
-const useTokenObj = ref({})
 
 const amount = ref('')
 

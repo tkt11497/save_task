@@ -35,7 +35,7 @@ import { useRouter, useRoute } from 'vue-router'
 import arrow from '@/assets/images/user/arrow.png'
 import BTC from '@/assets/images/home/BTC.png'
 import { userStore } from '@/store'
-import { getCurrencyAll, platformaccountClientListApi } from '@/apiService' // Import your API service
+import { getCurrencyAllApi, platformaccountClientListApi } from '@/apiService' // Import your API service
 import { useI18n } from 'vue-i18n'
 import { showToast } from 'vant'
 import useLoading from '@/hooks/useLoading.js'
@@ -66,7 +66,7 @@ const onClickLeft = () => {
 const getPlatformaList = async () => {
 	try {
 		loading.loading()
-		const response = await getCurrencyAll()
+		const response = await getCurrencyAllApi()
 		let obj = {
 			balance: 0,
 			balanceToUsdt: 0,

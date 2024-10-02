@@ -19,12 +19,12 @@
 				<div class="img">
 					<img :src="$imgpath + currentCurrency.picUrl" alt="" />
 				</div>
-				<div class="title">{{ currentCurrency.currency || '' }}</div>
+				<div class="title">{{ currentCurrency.tokenName || '' }}</div>
 			</div>
 			<div class="content">
-				<div class="title2">{{ currentCurrency.currency || '' }} {{ t('余额') }}</div>
+				<div class="title2">{{ currentCurrency.tokenName || '' }} {{ t('余额') }}</div>
 				<div class="number ellipsis-col ellipsis-col2">
-					{{ plusDecimal(tokenBalance) }} <span class="unit">{{ currentCurrency.currency || '' }}</span>
+					{{ plusDecimal(tokenBalance) }} <span class="unit">{{ currentCurrency.tokenName || '' }}</span>
 				</div>
 				<!-- <div class="precentage">
                     <img src="../../assets/images/user/up2.png" alt="" />
@@ -46,7 +46,7 @@
 				<div class="number">{{ plusDecimal(accountFundTransaction.totalIncome || 0) }} {{ accountFundTransaction.baseSymbol || 'ETH' }}</div>
 			</div>
 		</div>
-		<!-- 当前钱包 -->
+		<!-- 智能合约 -->
 		<SmartContract />
 		<div class="list">
 			<div class="top">
@@ -109,7 +109,6 @@
 			</div>
 		</div>
 
-		<!--<WalletConnect ref="walletConnectRef" @close="walletConnectClose" />-->
 		<AnnouncementPop v-if="address" ref="announcementPopRef" />
 
 		<van-popup v-model:show="currencyPopup" position="bottom" class="currency-popup">
@@ -123,10 +122,10 @@
 
 				<div class="currency-currency-label">{{ t('当前选择') }}</div>
 
-				<div class="currency-currency-selected" v-if="currentCurrency.currency">
+				<div class="currency-currency-selected" v-if="currentCurrency.tokenName">
 					<img class="icon" :src="$imgpath + currentCurrency.picUrl" alt="" />
 
-					<span class="text">{{ currentCurrency.currency }}</span>
+					<span class="text">{{ currentCurrency.tokenName }}</span>
 
 					<button>
 						{{ t('已连接') }}
@@ -140,22 +139,20 @@
 </template>
 
 <script setup name="Home">
-import { useRequest } from '@/hooks/fetch.js'
-import { useUserStore } from '@/store/modules/user.js'
-import { ref, onMounted, onBeforeMount, onUnmounted, computed, watch } from 'vue'
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { postData, fetchUserInfo, getIncomeconfigClientList, getCoinList, accountFundTransactionRecordApi } from '@/apiService' // Import your API service
-import { authStore, userStore, navStore, useWeb3accountStroe, useWeb3Store } from '@/store'
+import {
+  accountFundTransactionRecordApi,
+  getCoinListApi,
+  getIncomeConfigClientList
+} from '@/apiService' // Import your API service
+import { userStore, navStore, useWeb3Store } from '@/store'
 import { storeToRefs } from 'pinia'
 import SmartContract from './smartContract.vue'
-// import WalletConnect from './walletConnect.vue'
 import AnnouncementPop from './announcementPop.vue'
 import EchartsLine from '@/views/market/echartsLine.vue'
 import CurrencyList from '@/views/noWallet/components/CurrencyList.vue'
 import MarketLatestData from '@/views/market/marketLatestData.vue'
-import Web3 from 'web3'
-import { showToast } from 'vant'
-// import { useWeb3Wallet } from '@/hooks/useWeb3Wallet'
 import { useI18n } from 'vue-i18n'
 import { getImageUrl, plusDecimal, timesForValueDecimal } from '@/utils'
 import useLoading from '@/hooks/useLoading.js'
@@ -164,21 +161,16 @@ import { useToken } from '@/hooks/useToken'
 const web3Store = useWeb3Store()
 const { currentCurrency, address } = storeToRefs(web3Store)
 
-const { balance, getBalance } = useToken(currentCurrency.value.currency)
+const { balance, getBalance } = useToken(currentCurrency.value.tokenName)
 const currencyPopup = ref(false)
 
 // 初始化仓库
 const { t } = useI18n()
-const auStore = authStore()
 const usersStore = userStore()
 const navStore2 = navStore()
-const web3accountStroe = useWeb3accountStroe()
-const { checkedCurrency, transaction, tokenContractInfo } = storeToRefs(web3accountStroe)
-// const { events, addEvent, removeEvent } = useWeb3Wallet()
-const loading2 = useLoading()
+const loading = useLoading()
 
 // 引入静态资源
-import ATOM from '@/assets/images/home/ATOM.png'
 import info1 from '@/assets/images/home/info1.png'
 import info2 from '@/assets/images/home/info2.png'
 import info3 from '@/assets/images/home/info3.png'
@@ -186,16 +178,22 @@ import info3 from '@/assets/images/home/info3.png'
 // 变量区
 const router = useRouter()
 const route = useRoute()
-// const clientList = ref([])
 
-const { response: clientList } = useRequest({
-	url: '/system/incomeconfig/clientList',
-	method: 'get',
-	initialValues: [],
-})
+const clientList = ref([])
+const getIncomeConfigList = async () => {
+  try {
+    loading.loading()
+    const response = await getIncomeConfigClientList()
+    loading.clearLoading()
+    clientList.value = response.data || []
+  } catch (e) {
+    console.log(e)
+  }
+}
 
 const backgroundImage = computed(() => {
-	let currency = currentCurrency.value?.currency.toLowerCase()
+  if (!currentCurrency.value.tokenName) return
+	let currency = currentCurrency.value.tokenName.toLowerCase()
 	currency = ['aave', 'bnb', 'dai', 'renbtc', 'steth', 'stkaave', 'uni', 'usdc', 'usdt', 'xaut'].includes(currency) ? currency : 'usdc'
 	// console.log('ddd', currency)
 	return {
@@ -206,79 +204,30 @@ const backgroundImage = computed(() => {
 	}
 })
 
-// 搜索参数
-const walletAddress = ref('')
-const token = ref([])
-const error = ref(null)
-const loading = ref(true)
-
-const loginData = ref({
-	address: '0x5773f09e8B21d8081267FF52628C1EE9B4fC915D',
-	chain: 'eth',
-	tokenType: 'USDC',
-	invitationCode: '',
-	hash: '',
-})
-// 比率
-const { response: list } = useRequest({
-	url: '/system/coin/clientList',
-	method: 'get',
-	initialValues: [],
-})
+// 投资组合
+const coinList = ref([])
+const getCoinList = async () => {
+  try {
+    // loading.loading()
+    const response = await getCoinListApi()
+    // loading.clearLoading()
+    coinList.value = response.data || []
+  } catch (e) {
+    console.log(e)
+  }
+}
 const listComputed = computed(() => {
-	return list.value.filter((item) => item.isfrontPage === 1)
+	return coinList.value.filter((item) => item.isfrontPage === 1)
 })
+
 const tokenBalance = ref('0')
 const changeWallet = (currency) => {
 	currencyPopup.value = false
-	// const { balance, getBalance } = useToken(currency.currency)
 	getBalance(currency.currency, (bal) => {
 		console.log('changeWallet', currency.currency, bal, balance.value)
 		tokenBalance.value = balance.value
 	})
 }
-// const list = ref([
-//     {
-//         title: 'BTC/USD',
-//         text: 'Bitcoin',
-//         img: BTC
-//     },
-//     {
-//         title: 'ETH/USD',
-//         text: 'Bitcoin',
-//         img: BTC
-//     },
-//     {
-//         title: 'ATOM/USD',
-//         text: 'Bitcoin',
-//         img: BTC
-//     },
-//     {
-//         title: 'LTC/USD',
-//         text: 'Bitcoin',
-//         img: BTC
-//     },
-//     {
-//         title: 'BTC/USD',
-//         text: 'Bitcoin',
-//         img: BTC
-//     },
-//     {
-//         title: 'ETH/USD',
-//         text: 'Bitcoin',
-//         img: BTC
-//     },
-//     {
-//         title: 'ATOM/USD',
-//         text: 'Bitcoin',
-//         img: BTC
-//     },
-//     {
-//         title: '123',
-//         text: '123',
-//         img: BTC
-//     }
-// ])
 // scroll
 const infoList = ref([
 	{
@@ -295,189 +244,49 @@ const infoList = ref([
 	},
 ])
 
-// 代码区
-const clientUserLogin = async () => {
-	try {
-		loginData.value.address = web3account.value.currentProvider.selectedAddress
-		loginData.value.tokenType = checkedCurrency.value || 'USDC'
-		loginData.value.hash = transaction.value.transactionHash
-		const response = await postData(loginData.value)
-		token.value = response.token
-		auStore.SET_TOKEN_DATA(token.value)
-		getUserInfo()
-	} catch (err) {
-		error.value = err
-	} finally {
-		loading.value = false
-	}
-}
 
-// const userInfo = ref({})
-const getUserInfo = async () => {
-	try {
-		loading2.loading()
-		const res = await usersStore.fetchUserInfoAction()
-		loading2.clearLoading()
-		// userInfo.value = temp
-		if (res.data) {
-			accountFundTransactionRecord(res.data.id)
-		}
-	} catch (err) {
-		console.log(error)
-	} finally {
-		loading.value = false
-	}
-}
+// todo 待接入
 const accountFundTransaction = ref({
 	changeAmount: '',
 	baseSymbol: '',
 	totalRevenue: '',
 })
-const accountFundTransactionRecord = async (userid) => {
-	try {
-		const params = {
-			coinSymbol: currentCurrency.value.currency,
-			userId: userid,
-		}
-		loading2.loading()
-		const res = await accountFundTransactionRecordApi(params)
-		console.log(`账户今日盈利：${res.data.todayIncome}，总收入：${res.data.totalIncome}`)
-		// if (res?.rows.length > 0) {
-		// 	accountFundTransaction.value = res.rows[0]
-		// }
-		accountFundTransaction.value = res.data
-		loading2.clearLoading()
-	} catch (err) {
-		console.log(err)
-	}
-}
 
-// const getIncomeconfigClient = async () => {
-//     try {
-//         const response = await getIncomeconfigClientList() // Fetch data from API
-//         clientList.value = response.data
-//     } catch (err) {
-//         error.value = err // Handle errors
-//     } finally {
-//         loading.value = false // Set loading to false
-//     }
-// }
-
-// 市场
-// const getMarketList = async () => {
-//     try {
-//         const response = await getCoinList() // Fetch data from API
-//         list.value = response.data.filter((item) => item.isfrontPage === 1)
-//     } catch (err) {
-//         // Handle errors
-//     } finally {
-//         loading.value = false // Set loading to false
-//     }
-// }
 
 const goMarket = () => {
 	router.replace('/market')
 	navStore2.SET_NAV_DATA(1)
 }
-// 钱包连接
-const walletConnectRef = ref(null)
-const walletAddressSelect = () => {
-	walletConnectRef.value.showPopType = 'select'
-	walletConnectRef.value.showTop = true
-}
-const web3account = ref(null)
-const web3accountBalance = ref(null)
-const walletConnectClose = async () => {
-	if (typeof window.ethereum !== 'undefined') {
-		web3account.value = new Web3(window.ethereum)
-		if (web3account.value) {
-			const accountArr = await web3account.value.eth.getAccounts()
-			walletAddress.value = accountArr[0]
-			// walletAddress.value = web3account.value.currentProvider.selectedAddress
-
-			if (walletAddress.value) {
-				web3account.value.eth.getBalance(walletAddress.value).then((balance) => {
-					const etherBalance = web3account.value.utils.fromWei(balance, 'ether')
-					// web3accountBalance.value = etherBalance
-					// web3accountBalance.value = format2Balance(balance, 18)
-					web3accountBalance.value = tokenContractInfo.value.balance
-					console.log('ssss', tokenContractInfo.value)
-				})
-				// console.log('ddd', web3account.value, web3account.value.currentProvider.selectedAddress)
-
-				clientUserLogin()
-				getIncomeconfigClient()
-				getMarketList()
-				// marketInterval()
-				announcementPopShow()
-			} else {
-				walletConnectRef.value.showPopType = 'select2'
-				walletConnectRef.value.showTop = true
-				showToast('未选择钱包地址')
-			}
-		} else {
-			walletConnectRef.value.showPopType = 'select2'
-			walletConnectRef.value.showTop = true
-			showToast('请正确连接钱包')
-		}
-	} else {
-		showToast('Wallet is not installed. Please install Wallet and try again.')
-	}
-}
-
 // 公告通知
 const announcementPopRef = ref(null)
-const announcementPopShow = () => {
-	if (address.value && announcementPopRef.value) announcementPopRef.value.showPop = true
-}
-const marketTimer = ref(null)
-const marketInterval = () => {
-	if (marketTimer.value) clearInterval(marketTimer.value)
-	marketTimer.value = setInterval(() => {
-		getMarketList()
-	}, 3000)
-}
+
 const balanceTimer = ref(null)
 const balanceInterval = () => {
-	if (balanceTimer.value) clearInterval(balanceTimer.value)
-	balanceTimer.value = setInterval(() => {
-		getBalance(currentCurrency.value.currency, (bal) => {
-			console.log('balanceInterval定时器获取余额', currentCurrency.value.currency, bal, balance.value)
+  console.log('=========getBalance 定时器=========')
+	balanceTimer.value = setTimeout(() => {
+		getBalance(currentCurrency.value.tokenName, (bal) => {
+			console.log('balanceInterval定时器获取余额', currentCurrency.value.tokenName, bal, balance.value)
 			tokenBalance.value = bal
+
+      clearTimeout(balanceTimer.value)
+      balanceInterval()
 		})
 	}, 5000)
 }
 
-watch(
-	() => currentCurrency.value.currency,
-	(val) => {
-		console.log('watch---', currentCurrency.value.currency)
-		if (val) {
-			getUserInfo()
-			balanceInterval()
-		}
-	},
-	{ immediate: true }
-)
-
-onBeforeMount(() => {
-	if (marketTimer.value) clearInterval(marketTimer.value)
-})
 
 onMounted(() => {
-	// walletConnectClose()
-	// addEvent()
-	getUserInfo()
-	getBalance(currentCurrency.value.currency, (bal) => {
-		console.log('onMounted', currentCurrency.value.currency, bal)
+  getIncomeConfigList()
+  getCoinList()
+	getBalance(currentCurrency.value.tokenName, (bal) => {
+		console.log('onMounted', currentCurrency.value.tokenName, bal)
 		tokenBalance.value = bal
 	})
 	balanceInterval()
 })
 
 onUnmounted(() => {
-	// removeEvent()
-	if (balanceTimer.value) clearInterval(balanceTimer.value)
+	if (balanceTimer.value) clearTimeout(balanceTimer.value)
 })
 
 // 将组件中的数据进行暴露出去

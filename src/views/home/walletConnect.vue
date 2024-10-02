@@ -86,13 +86,11 @@
 	</div>
 </template>
 <script setup>
-import { computed, ref, watch } from 'vue'
-import { getCurrencyAll } from '@/apiService'
-import { showToast } from 'vant'
+import { ref, watch } from 'vue'
+import { getCurrencyAllApi } from '@/apiService'
 import { useWeb3Wallet } from '@/hooks/useWeb3Wallet'
-import Web3 from 'web3'
 
-const { accounts, connectMetaMask } = useWeb3Wallet()
+const { connectMetaMask } = useWeb3Wallet()
 
 const emit = defineEmits(['close'])
 
@@ -132,7 +130,7 @@ const getCurrencyAllList = async () => {
 		//     orderStatus:1
 		// }
 
-		const res = await getCurrencyAll({})
+		const res = await getCurrencyAllApi({})
 		currencyList.value = res.data.filter((item) => item.address)
 	} catch (error) {
 		console.log(error)

@@ -188,7 +188,7 @@ import { storeToRefs } from 'pinia'
 import arrow from '@/assets/images/user/arrow.png'
 import {
 	currencyProtocol,
-	getCurrencyAll,
+  getCurrencyAllApi,
 	platformaccountClientListApi,
 	clientCurrencyExchange,
 	withdrawOrderApplyApi,
@@ -201,7 +201,6 @@ import { useClipboard } from '@vueuse/core'
 import { useQRCode } from '@vueuse/integrations/useQRCode'
 import { useI18n } from 'vue-i18n'
 import useLoading from '@/hooks/useLoading.js'
-import { useToken } from '@/hooks/useToken'
 
 // 初始化仓库
 const usersStore = userStore()
@@ -228,7 +227,6 @@ const selectCoinInfo = ref({
 })
 const dropdown_menu = ref(null)
 const toexchangeRate = ref(0)
-const useTokenObj = ref({})
 
 let qrcode = ''
 const tabChange = (tab) => {
@@ -388,7 +386,7 @@ const widthdrawHandle = async () => {
 const getCurrencyList = async () => {
 	try {
 		loading.loading()
-		const response = await getCurrencyAll() // Fetch data from API
+		const response = await getCurrencyAllApi() // Fetch data from API
 		loading.clearLoading()
 		let filterList = []
 		filterList = response.data.filter((item) => {

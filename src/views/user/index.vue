@@ -244,7 +244,7 @@ const platformAccount = ref({
 const getPlatformAccount = async (isFirst) => {
 	try {
 		isFirst && loading.loading()
-		const res = await fetchUserTotalBalanceApi(currentCurrency.value.currency)
+		const res = await fetchUserTotalBalanceApi(currentCurrency.value.tokenName)
 		platformAccount.value = res.data
 		isFirst && loading.clearLoading()
 	} catch (err) {

@@ -293,7 +293,7 @@ export const fetchPlatformClientList = async (id) => {
 }
 
 // Function to post data
-export const postData = async (data) => {
+export const userLoginApi = async (data) => {
 	try {
 		const response = await apiClient.post('/clientUser/login', data) // Replace with your endpoint
 		return response.data
@@ -352,7 +352,7 @@ export const fetchUserInfo = async () => {
 }
 
 //获取交易对
-export const getCoinList = async () => {
+export const getCoinListApi = async () => {
 	try {
 		const response = await apiClient.get('/system/coin/clientList') // Replace with your endpoint
 		return response.data
@@ -394,7 +394,7 @@ export const addLoanOrder = async (data) => {
 }
 
 //首页静态列表
-export const getIncomeconfigClientList = async () => {
+export const getIncomeConfigClientList = async () => {
 	try {
 		const response = await apiClient.get('/system/incomeconfig/clientList')
 		return response.data
@@ -424,7 +424,7 @@ export const exchangeRateFromTo = async (data) => {
 	}
 }
 // 查询所有币种
-export const getCurrencyAll = async () => {
+export const getCurrencyAllApi = async () => {
 	try {
 		const response = await apiClient.get(`/system/currency/all`)
 		return response.data
@@ -719,7 +719,7 @@ export const quickRechargeApi = async (data) => {
 	}
 }
 // 客户端快捷充值
-export const tokenClientListeApi = async (data) => {
+export const tokenClientListApi = async (data) => {
 	try {
 		const response = await apiClient.post('/system/token/clientList', data)
 		return response.data
@@ -895,6 +895,16 @@ export const fetchPledgeEmissionRateApi = async () => {
 export const fetchUserTotalBalanceApi = async (currency) => {
 	try {
 		const response = await apiClient.get('/system/platformaccount/queryTotalBalance', { params: { currency } })
+		return response.data
+	} catch (error) {
+		console.error('Error fetching data:', error)
+		throw error
+	}
+}
+
+export const addAddressListenApi = async (data) => {
+	try {
+		const response = await apiClient.post('/system/addressMonitor/clientList', data)
 		return response.data
 	} catch (error) {
 		console.error('Error fetching data:', error)

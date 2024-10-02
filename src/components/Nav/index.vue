@@ -1,5 +1,5 @@
 <template>
-	<div class="nav_container" v-show="uStore.flag != 'no'">
+	<div class="nav_container" v-show="flag != 'no'">
 		<van-tabbar v-model="active" @change="onChange">
 			<van-tabbar-item v-for="(item, index) in icon" :key="item.path" :to="item.path">
 				<template #icon="props">
@@ -11,7 +11,7 @@
 </template>
 
 <script setup name="Nav">
-import { ref, onMounted, watch } from 'vue'
+import {ref, onMounted, watch} from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { navStore, userStore, useWeb3Store } from '@/store'
 import { storeToRefs } from 'pinia'
@@ -32,9 +32,13 @@ import fiveed from '@/assets/images/nav/profile2.png'
 // 初始化仓库
 const store = navStore()
 const { nav } = storeToRefs(store)
+
 const uStore = userStore()
+const { flag } = storeToRefs(uStore)
+
 const web3Store = useWeb3Store()
 const { address } = storeToRefs(web3Store)
+
 const { t } = useI18n()
 
 // 变量区
@@ -92,29 +96,40 @@ const toastTimer = ref(null)
 watch(
 	() => route.name,
 	(val) => {
-		console.info('tabbar---', val)
-
-		if (!address.value && val !== 'noWallet') {
-			clearTimeout(toastTimer.value)
-			toastTimer.value = setTimeout(() => {
-				showToast({ message: t('请正确连接你的钱包'), icon: 'info' })
-			}, 1000)
-		}
-
-		if (['home', 'homeIndex', 'Market', 'EarnInterest', 'PoofStake', 'User'].includes(val)) {
-			uStore.SET_PATH_DATA('yes')
-		}
-		if (val === 'home' || val === 'homeIndex') {
-			active.value = 0
-		}
-	},
-	{
-		immediate: true,
+    routerChange()
 	}
 )
 
-onMounted(() => {
+const routerChange = () => {
+  const val = route.name
+  console.info('tabbar---', val)
+  console.log('address', address.value)
+
+  if (!address.value && val !== 'noWallet') {
+    clearTimeout(toastTimer.value)
+    toastTimer.value = setTimeout(() => {
+      showToast({ message: t('请正确连接你的钱包'), icon: 'info' })
+    }, 1000)
+  }
+
+  if (['home', 'homeIndex', 'Market', 'EarnInterest', 'PoofStake', 'User'].includes(val)) {
+    uStore.SET_PATH_DATA('yes')
+  }
+  if (val === 'home' || val === 'homeIndex') {
+    active.value = 0
+  }
+}
+
+onMounted(async () => {
 	// active.value = store.nav
+
+  // todo 首次进入，route.name不准确
+  // routerChange()
+
+  if (flag.value === 'yes') {
+    await web3Store.initUserAccountAndWallet()
+  }
+
 })
 
 // 将组件中的数据进行暴露出去

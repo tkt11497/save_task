@@ -3,7 +3,7 @@
 		<div class="container" :class="{ 'withnav': isShowNav }">
 			<router-view></router-view>
 		</div>
-		<Nav v-if="$route.path !== '/'"></Nav>
+		<Nav></Nav>
 		<!-- <web3-modal-vue ref="web3modal" :theme="theme" :provider-options="providerOptions" cache-provider /> -->
 	</div>
 </template>

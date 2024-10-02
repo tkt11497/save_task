@@ -1,9 +1,9 @@
 <template>
 	<div class="currency-list">
 		<div v-for="currency in showCurrency" :key="currency.id">
-			<img :src="$imgpath + currency.picUrl" :alt="currency.currencyCode" />
+			<img :src="$imgpath + currency.iconUrl" :alt="currency.tokenName" />
 
-			<span class="text">{{ currency.currency }}</span>
+			<span class="text">{{ currency.tokenName }}</span>
 
 			<button @click="onChange(currency)">
 				{{ t('连接') }}
@@ -17,7 +17,6 @@ import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import useLoading from '@/hooks/useLoading.js'
 import { useWeb3Store } from '@/store/index.js'
-import currencyIcon from '@/utils/icon.js'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
@@ -38,7 +37,8 @@ const showCurrency = computed(() => {
 		console.log('showCurrency', currentCurrency.value)
 		return currencyList.value.filter((currency) => currency.id !== currentCurrency.value.id).filter((item) => item.address)
 	} else {
-		return currencyList.value.filter((item) => item.address)
+		// return currencyList.value.filter((item) => item.address)
+    return currencyList.value.filter(d => d.tokenName.toLowerCase() !== 'eth')
 	}
 })
 
@@ -47,11 +47,11 @@ const onChange = async (currency) => {
 	loading.loading()
 	try {
 		await onChangeCurrency(currency)
+    loading.clearLoading()
 		emits('signed', currency)
 	} catch (error) {
+    loading.clearLoading()
 		console.log(error)
-	} finally {
-		loading.clearLoading()
 	}
 }
 
