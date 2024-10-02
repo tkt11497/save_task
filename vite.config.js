@@ -37,7 +37,7 @@ export default defineConfig({
 			//     changeOrigin: true
 			// },
 			'/steal-api': {
-				target: 'http://18.141.68.65:8081/steal-api/',
+				target: 'http://18.141.68.65:8081',
 				changeOrigin: true,
 				// rewrite: (path) => path.replace(/^\/steal-api/, ''),
 			},
