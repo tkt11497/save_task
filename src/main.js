@@ -6,10 +6,9 @@ import { setToastDefaultOptions } from 'vant'
 // i18n
 import i18n from './i18n'
 // vue
-import { createApp, ref } from 'vue'
+import { createApp } from 'vue'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
-import Web3 from 'web3'
 
 // 移动端你适配
 import 'amfe-flexible'
@@ -28,13 +27,14 @@ import router from './router'
 
 // 引入store
 import store from '@/store'
+import {IMAGE_URL} from "@/config/index.js";
 
 setToastDefaultOptions({ position: 'top', className: 'toptoast' })
 
 // 注册App
 const app = createApp(App)
 app.component('Nav', Nav)
-app.config.globalProperties.$imgpath = import.meta.env.VITE_IMG_URL
+app.config.globalProperties.$imgpath = IMAGE_URL
 app.use(i18n)
 app.use(ElementPlus)
 app.use(store)

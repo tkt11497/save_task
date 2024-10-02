@@ -4,9 +4,10 @@ import {loadingStore, navStore, userStore} from "@/store/index.js";
 import {storeToRefs} from "pinia";
 import {closeToast, showToast} from "vant";
 import router from "@/router/index.js";
+import {BASE_URL} from "@/config/index.js";
 
 const request = axios.create({
-    baseURL: '/api',
+    baseURL: BASE_URL,
     timeout: 1000 * 30,
     headers: {
         Authorization: '',

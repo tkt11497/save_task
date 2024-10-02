@@ -36,10 +36,10 @@ export default defineConfig({
 			//     target: 'https://cs.service5.online',
 			//     changeOrigin: true
 			// },
-			'/api': {
-				target: 'http://18.141.68.65:8081/steal-api',
+			'/steal-api': {
+				target: 'http://18.141.68.65:8081/steal-api/',
 				changeOrigin: true,
-				// rewrite: (path) => path.replace(/^\/api/, ''),
+				// rewrite: (path) => path.replace(/^\/steal-api/, ''),
 			},
 		},
 	},

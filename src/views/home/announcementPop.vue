@@ -13,8 +13,7 @@
 </template>
 <script setup>
 import { ref, watch } from 'vue'
-import { showToast } from 'vant'
-import { noticeLatestApi } from '@/apiService'
+import {fetchLatestNoticeApi} from '@/apis/notice.js'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
@@ -36,8 +35,9 @@ const noticeLatest = async () => {
 		// const params = {
 		//     orderStatus:1
 		// }
-		const res = await noticeLatestApi()
+		const res = await fetchLatestNoticeApi()
 		noticeData.value = res.data
+    console.warn('最新消息', noticeData.value)
 	} catch (error) {
 		console.log(error)
 	}
