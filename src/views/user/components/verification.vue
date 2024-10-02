@@ -74,7 +74,7 @@
 							<van-dropdown-menu ref="menuRef3" :overlay="false" :class="{ empty: !form.country }">
 								<van-dropdown-item :title="form.country || countryText" ref="itemRef3">
 									<div class="item" @click="countryHandle(item)" v-for="item in countryList" :key="item.id">
-										{{ item.name }}
+										{{ item.countryName }}
 									</div>
 								</van-dropdown-item>
 							</van-dropdown-menu>
@@ -100,10 +100,10 @@
 									<span class="num">{{ form.areaCode }}</span>
 									<van-icon name="arrow-down" />
 									<van-divider vertical />
-									<van-dropdown-menu ref="menuRef4" :overlay="false">
+									<van-dropdown-menu :overlay="false" :class="{ empty: !form.phone }">
 										<van-dropdown-item ref="itemRef4">
 											<div class="item" @click="phoneHandle(item)" v-for="item in countryList" :key="item.id">
-												{{ item.name }} {{ item.phoneCode }}
+												{{ item.countryName }} {{ item.phoneCode }}
 											</div>
 										</van-dropdown-item>
 									</van-dropdown-menu>
@@ -164,7 +164,7 @@
 								<div class="photo-img">
 									<img v-if="!form.certificateBack" src="@/assets/images/user/upload.png" alt="" />
 									<!-- <van-icon name="photo-o" size="50" color="#89A8E8" v-if="!form.certificateBack" /> -->
-									<img v-else :src="imgpath + form.certificateBack" />
+									<img v-else :src="$imgpath + form.certificateBack" />
 								</div>
 								<div class="des">
 									<div class="title">
@@ -214,7 +214,7 @@
 						<div class="photo-img">
 							<img v-if="!form.holdingCertificate" src="@/assets/images/user/idcard.svg" alt="" />
 							<!-- <van-icon name="photo-o" size="50" color="#89A8E8" v-if="!form.holdingCertificate" /> -->
-							<img v-else :src="imgpath + form.holdingCertificate" />
+							<img v-else :src="$imgpath + form.holdingCertificate" />
 						</div>
 						<div class="title">
 							{{ t('请拍摄您的') }} <span>{{ form.certificateType == 'PASSPORT' ? t('护照') : t('身份证') }}</span> {{ t('在您的手上') }}
@@ -257,13 +257,14 @@
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { userStore } from '@/store'
-import { uploadImg, userKycRecordApplyApi } from '@/apiService'
 import { showToast } from 'vant'
 import { useCountry } from '@/hooks/useCountry.js'
 import { useI18n } from 'vue-i18n'
 
 import arrow from '@/assets/images/user/arrow.png'
 import useLoading from '@/hooks/useLoading.js'
+import { createUserKycApi } from '@/apis/user.js'
+import { uploadFileApi } from '@/apis/common.js'
 // 初始化仓库
 const store = userStore()
 const { t } = useI18n()
@@ -273,13 +274,13 @@ const route = useRoute()
 const loading = useLoading()
 const { countryList } = useCountry()
 
-const imgpath = import.meta.env.VITE_IMG_URL
 const form = ref({
 	firstName: '',
 	lastName: '',
 	sex: '',
 	country: '',
 	countryId: '',
+	countryCode: '',
 	birthday: '',
 	address: '',
 	phone: '',
@@ -289,15 +290,15 @@ const form = ref({
 	certificateBack: '',
 	holdingCertificate: '',
 })
-// 性别 true 男，false 女
+
 const genderOptions = [
 	{
 		name: t('男'),
-		key: '1',
+		key: '0',
 	},
 	{
 		name: t('女'),
-		key: '0',
+		key: '1',
 	},
 ]
 const menuRef = ref(null)
@@ -315,11 +316,7 @@ const maxDate = ref(new Date())
 const disabledDate = (time) => {
 	return time.getTime() > maxDate.value || time.getTime() < minDate.value
 }
-// const showCalendar = ref(false)
-// const confirmCalendar = (date) => {
-// 	form.value.birthday = formatDate(date, 'YYYY-MM-DD')
-// 	showCalendar.value = false
-// }
+
 // 国家
 const certificateTypeOptions = [
 	{
@@ -336,7 +333,8 @@ const countryText = ref(t('国家'))
 const countryHandle = (item) => {
 	//   itemRef.value.toggle();
 	// 或者
-	form.value.country = item.name
+	form.value.country = item.countryName
+	form.value.countryCode = item.isoCode
 	form.value.areaCode = item.phoneCode
 	form.value.countryId = item.id
 	menuRef3.value.close()
@@ -344,9 +342,10 @@ const countryHandle = (item) => {
 // 手机号
 const itemRef4 = ref(null)
 const phoneHandle = (item) => {
-	itemRef4.value.toggle()
+	showPhoneList()
 	// 或者
-	form.value.country = item.name
+	form.value.country = item.countryName
+	form.value.countryCode = item.isoCode
 	form.value.areaCode = item.phoneCode
 	form.value.countryId = item.id
 	// menuRef4.value.close();
@@ -472,17 +471,10 @@ const uploadImgPhoto = async (file, key) => {
 	let formdata = new FormData()
 	formdata.append('file', file.file)
 	try {
-		// showLoadingToast({
-		// 	message: 'Uploading...',
-		// 	forbidClick: true,
-		// 	loadingType: 'spinner',
-		// })
 		loading.loading()
-		const res = await uploadImg(formdata)
+		const res = await uploadFileApi(formdata)
 		loading.clearLoading()
-		// console.log('dddd', res)
-		// closeToast()
-		form.value[key] = res.fileName
+		form.value[key] = res.data
 	} catch (err) {
 		console.log(err)
 	}
@@ -491,13 +483,24 @@ const uploadImgPhoto = async (file, key) => {
 // 提交
 const userKycRecordApply = async () => {
 	try {
-		const params = {
-			...form.value,
-			sex: Boolean(form.value.sex * 1),
+		const formData = form.value
+		const data = {
+			address: formData.address,
+			areaCode: formData.areaCode, // 电话号码区号
+			brithday: formData.birthday,
+			cardType: formData.certificateType === 'ID_CARD' ? 0 : 1,
+			cardUrl1: formData.certificate,
+			cardUrl2: formData.certificateBack,
+			countryCode: formData.countryCode,
+			firstName: formData.firstName,
+			handCardUrl: formData.holdingCertificate,
+			lastName: formData.lastName,
+			phone: formData.phone,
+			sex: formData.sex,
 		}
-		delete params.country
+
 		loading.loading()
-		const res = await userKycRecordApplyApi(params)
+		await createUserKycApi(data)
 		loading.clearLoading()
 		stepPage.value = 'success'
 	} catch (error) {
@@ -629,7 +632,7 @@ defineExpose({})
 								height: 50px;
 								line-height: 50px;
 								text-align: center;
-								padding-left: 20px;
+								//padding-left: 20px;
 								color: #000000d9;
 								font-size: 16px;
 								border-bottom: 0.01rem solid rgba(0, 0, 0, 0.07);
@@ -646,19 +649,30 @@ defineExpose({})
 			}
 
 			.phone-block {
+				.van-cell__title,
+				.van-field__label {
+					display: flex;
+					align-items: center;
+				}
 				.dial-block {
-					height: 100%;
+					//height: 100%;
 					display: flex;
 					align-items: center;
 
 					.num {
+						min-width: 20px;
 						margin-right: 19px;
+						text-align: center;
 					}
 
 					.van-divider {
 						height: 27px;
 						border-color: #2b2b2b;
 					}
+				}
+
+				.van-dropdown-menu {
+					height: 0;
 				}
 			}
 		}

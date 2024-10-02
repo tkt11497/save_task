@@ -9,19 +9,20 @@
 		</div>
 		<div class="container">
 			<div class="list_info">
-				<div class="item" v-for="item in list" @click="openDepositandwithdrawal(item)" :key="item.id">
+				<div class="item" v-for="item in coinList" @click="openDepositandwithdrawal(item)" :key="item.id">
 					<div class="left">
 						<div class="item_img">
-							<img :src="$imgpath + item.picUrl" alt="" />
+							<img :src="$imgpath + item.iconUrl" alt="" />
 						</div>
 						<div class="title break-word">
-							<div style="font-weight: 700">{{ item.currency }}</div>
-							<div style="color: #b1b1b1">{{ item.fullName }}</div>
+							<div style="font-weight: 700">{{ item.tokenName }}</div>
+							<div style="color: #b1b1b1">{{ item.tokenAbbr }}</div>
 						</div>
 					</div>
 					<div class="right">
-						<span class="num">{{ toFixedDecimal(item.platformAccount.balance || 0, 8) }}</span>
-						<span class="usd">${{ item.platformAccount.balanceToUsdt }}</span>
+						<span class="num">{{ toFixedDecimal(item.balanceCoinType?.balance || 0, 8) }}</span>
+						<!--  todo 字段待接入-->
+						<span class="usd">${{ item.balanceCoinType?.balanceToUsdt || 0 }}</span>
 					</div>
 				</div>
 			</div>
@@ -34,10 +35,10 @@ import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import arrow from '@/assets/images/user/arrow.png'
 import { userStore } from '@/store'
-import { getCurrencyAllApi, platformaccountClientListApi } from '@/apiService' // Import your API service
 import { useI18n } from 'vue-i18n'
 import useLoading from '@/hooks/useLoading.js'
-import { toFixedDecimal } from '../../../utils/index.js'
+import { toFixedDecimal } from '@/utils/index.js'
+import { getAllCoinTypeApi, getAllPlatformTokenBalanceApi } from '@/apis/wallet.js'
 // 初始化仓库
 const store = userStore()
 const { t } = useI18n()
@@ -48,55 +49,35 @@ const router = useRouter()
 const route = useRoute()
 const state = ref('')
 // 钱包列表
-const coinList = ref([
-	// {
-	//   title: 'BTC/USD11',
-	//   text: 'Bitcoin',
-	//   img: BTC
-	// },
-])
+const coinList = ref([])
 
 // 代码区
 const onClickLeft = () => {
 	history.back()
 	store.SET_PATH_DATA('yes')
 }
-const getPlatformaList = async () => {
+const getPlatformCoinTypeList = async () => {
 	try {
 		loading.loading()
-		const response = await getCurrencyAllApi()
-		let obj = {
-			balance: 0,
-			balanceToUsdt: 0,
-		}
+		const response = await getAllCoinTypeApi()
 		loading.clearLoading()
-		coinList.value = response.data.map((item) => {
-			item.platformAccount = obj
-			return item
-		})
-		platformaccountClientList()
+		coinList.value = response.data
 	} catch (err) {
 		console.log(err)
 	}
 }
 const platformAccount = ref([])
-const list = ref([])
-const platformaccountClientList = async () => {
+const getPlatformCoinBalanceList = async () => {
 	try {
 		loading.loading()
-		const res = await platformaccountClientListApi()
+		const res = await getAllPlatformTokenBalanceApi()
 		loading.clearLoading()
 		let arr = res.data
-		list.value = []
 		coinList.value.forEach((item) => {
-			arr.forEach((item2) => {
-				if (item2.coinCode) {
-					if (item.currency.toLowerCase() === item2.coinCode.toLowerCase()) {
-						item.platformAccount = item2
-					}
-				}
+			const balanceCoinType = arr.find((item2) => {
+				return item2.coinCode && item.currency.toLowerCase() === item2.coinCode.toLowerCase()
 			})
-			list.value.push(item)
+			item.platformAccount = balanceCoinType || {}
 		})
 		platformAccount.value = arr
 	} catch (err) {
@@ -112,7 +93,9 @@ const openDepositandwithdrawal = (item) => {
 
 onMounted(() => {
 	store.SET_PATH_DATA('no')
-	getPlatformaList()
+	getPlatformCoinTypeList().then(() => {
+		return getPlatformCoinBalanceList()
+	})
 })
 
 // 将组件中的数据进行暴露出去

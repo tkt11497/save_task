@@ -99,7 +99,7 @@ const i18n = createI18n({
 
 export function getDefaultLanguage() {
 	let language = 'English',
-		languageCode = 'en',
+		languageCode = 'en_US',
 		localUser = localStorage.getItem('user')
 	try {
 		if (localUser) {

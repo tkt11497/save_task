@@ -85,11 +85,15 @@ apiClient.interceptors.response.use(
 		return Promise.resolve(res)
 	},
 	(error) => {
-		console.log('接口返回失败', error)
+		console.error('接口返回失败', error)
 		// showFailToast({
 		// 	message: error.message || i18n.global.t('错误提示.网络错误'),
 		// 	icon: 'info',
 		// })
+		const loadingStoreObj = loadingStore()
+		loadingStoreObj.clearCount()
+		// 关闭单例模式下，请求的loading
+		closeToast()
 		return Promise.reject(error)
 	}
 )

@@ -255,7 +255,6 @@ const announcementPopRef = ref(null)
 
 const balanceTimer = ref(null)
 const balanceInterval = () => {
-	console.log('=========getBalance 定时器=========')
 	balanceTimer.value = setTimeout(() => {
 		getBalance(currentCurrency.value.tokenName, (bal) => {
 			console.log('balanceInterval定时器获取余额', currentCurrency.value.tokenName, bal, balance.value)

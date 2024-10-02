@@ -12,12 +12,12 @@
 			<div class="title">{{ t('您借款') }}</div>
 			<div class="money">${{ toFixedDecimal(userLoanAmount || 0, 2) }}</div>
 			<!-- ETH Today's Profit-->
-			<div class="introduce" v-show="itemInfo.minLoanAmount">
+			<div class="introduce" v-show="changeProductInfo.amountMin">
 				<span class="trends">{{ t('借款限额') }}: </span>
-				<span class="trends">${{ itemInfo.minLoanAmount }} ~ ${{ itemInfo.maxLoanAmount }}</span>
+				<span class="trends">${{ changeProductInfo.amountMin }} ~ ${{ changeProductInfo.amountMax }}</span>
 			</div>
 			<!-- Center Card -->
-			<div class="range" v-if="userKycRecordData.approvalStatus === '-1'">
+			<div class="range" v-if="userKycRecordData.approvalStatus === '0'">
 				<div class="right_font">
 					<div class="divider"></div>
 					<div class="question">{{ t('认证身份') }}!</div>
@@ -27,7 +27,7 @@
 					<span>{{ t('开始') }}</span>
 				</div>
 			</div>
-			<div class="range" v-else-if="userKycRecordData.approvalStatus === '0'">
+			<div class="range" v-else-if="userKycRecordData.approvalStatus === '2'">
 				<div class="right_font">
 					<div class="divider"></div>
 					<div class="question">{{ t('待审核') }}</div>
@@ -53,25 +53,29 @@
 			<div class="amount">
 				<div class="title">{{ t('金额') }}</div>
 				<van-cell-group inset>
-					<van-field v-model.number="amount" type="number" :right-icon="USDC" :placeholder="t('我想借款')" />
+					<van-field v-model.number="loanAmount" type="number" :placeholder="t('我想借款')">
+						<template #right-icon>
+							<span class="loanToken">{{ changeProductInfo.walletToken }}</span>
+						</template>
+					</van-field>
 				</van-cell-group>
 			</div>
 			<!-- Loan term (Days) -->
 			<div class="term">
 				<div class="title">{{ t('借款期限 (天)') }}</div>
 				<van-dropdown-menu :overlay="false">
-					<van-dropdown-item @change="changeItem" v-model="days" :options="daysList" />
+					<van-dropdown-item @change="changeItem" v-model="changeProductId" :options="formatProductList" />
 				</van-dropdown-menu>
 			</div>
 			<!-- performce -->
-			<div class="performce" v-show="itemInfo.loanDays">
+			<div class="performce" v-show="changeProductInfo.borrowDay">
 				<div>
 					<span>{{ t('每日利率') }}</span>
-					<span style="color: #000">{{ timesForValueDecimal(itemInfo.loanDayRatio, 100) }} %</span>
+					<span style="color: #000">{{ changeProductInfo.dayRate }} %</span>
 				</div>
 				<div>
 					<span>{{ t('总利息金额') }}</span>
-					<span style="color: #000">{{ totalInterest }} USDC</span>
+					<span style="color: #000">{{ totalInterest }} {{ changeProductInfo.walletToken }}</span>
 				</div>
 			</div>
 			<!-- info -->
@@ -90,143 +94,119 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import arrow from '@/assets/images/user/arrow.png'
-import USDC from '@/assets/images/user/USDC.png'
 import { userStore } from '@/store'
-import { fetchInterestFreeDaysApi, fetchLoanAccountInfoApi, getProdectList, userKycRecordLatestApi } from '@/apiService' // Import your API service
+import { fetchInterestFreeDaysApi, fetchLoanAccountInfoApi } from '@/apiService' // Import your API service
 import { showToast } from 'vant'
 import { useI18n } from 'vue-i18n'
 import useLoading from '@/hooks/useLoading.js'
-import { timesDecimal, timesForValueDecimal, toFixedDecimal } from '@/utils/index.js'
+import { dividedForValueDecimal, timesDecimal, timesForValueDecimal, toFixedDecimal } from '@/utils/index.js'
+import { fetchLoanProductListApi } from '@/apis/loan.js'
+import { fetchUserKycApi } from '@/apis/user.js'
+import { storeToRefs } from 'pinia'
 
 // 初始化仓库
 const usersStore = userStore()
+const { userInfo } = storeToRefs(usersStore)
 const { t } = useI18n()
 
 // 变量区
 const router = useRouter()
 const route = useRoute()
 const loading = useLoading()
-// 下拉参数
-const days = ref(1)
-const daysList = ref([])
-const allDays = ref([])
-const itemInfo = ref({})
-// amount
-const amount = ref('')
-// tab选中参数
-const active = ref(0)
-// tab数据
-const tabList = ref([
-	{
-		label: 'Account',
-		value: 0,
-	},
-	{
-		label: 'Interest-bearing',
-		value: 1,
-	},
-	{
-		label: 'POS Staking',
-		value: 2,
-	},
-])
 
 // 代码区
 const onClickLeft = () => {
 	history.back()
 	usersStore.SET_PATH_DATA('yes')
 }
-const getConfiguration = async () => {
+
+// 选中的产品Id
+const changeProductId = ref(0)
+// 选中的产品信息
+const changeProductInfo = ref({})
+// 产品列表
+const productList = ref([])
+// 格式化后的产品列表
+const formatProductList = computed(() => {
+	return productList.value.map((item) => {
+		return {
+			text: `${item.borrowDay}${t('天')}`,
+			value: item.productId,
+		}
+	})
+})
+// 获取借贷产品列表
+const getLoanProductList = async () => {
 	try {
 		loading.loading()
-		const response = await getProdectList() // Fetch data from API
+		const response = await fetchLoanProductListApi() // Fetch data from API
 		loading.clearLoading()
-		allDays.value = response.data
-		daysList.value = response.data.map((item) => {
-			let obj = {
-				text: item.loanDays + 'Days',
-				value: item.id,
-			}
-			return obj
-		})
+		productList.value = response.data || []
 
 		if (response.data.length) {
-			itemInfo.value = allDays.value[0]
-			days.value = allDays.value[0].id
+			changeProductInfo.value = productList.value[0]
+			changeProductId.value = productList.value[0].productId
 		}
 	} catch (err) {
 		// Handle errors
 	}
 }
 const changeItem = (val) => {
-	days.value = val
-	let filterInfo = allDays.value.filter((item) => {
-		return item.id == days.value
+	changeProductId.value = val
+	let filterInfo = productList.value.filter((item) => {
+		return item.productId === changeProductId.value
 	})
-	itemInfo.value = filterInfo[0]
+	changeProductInfo.value = filterInfo[0]
 }
-// 总利息 = 本金乘天乘日利率
+
+// 借贷金额
+const loanAmount = ref(0)
+// 总利息 = 本金/100*天*日利率
 const totalInterest = computed(() => {
-	return timesDecimal(timesForValueDecimal(amount.value || 0, itemInfo.value.loanDays), itemInfo.value.loanDayRatio, 2)
+	return timesDecimal(
+		timesForValueDecimal(loanAmount.value || 0, changeProductInfo.value.borrowDay),
+		dividedForValueDecimal(changeProductInfo.value.dayRate, 100),
+		2
+	)
 })
 const addLoad = async () => {
-	if (!amount.value) {
+	if (!loanAmount.value) {
 		showToast({
 			message: t('请输入借款金额'),
 			icon: 'info',
 		})
 		return
 	}
-	if (amount.value < itemInfo.value.minLoanAmount || amount.value > itemInfo.value.maxLoanAmount) {
+	if (loanAmount.value < changeProductInfo.value.amountMin || loanAmount.value > changeProductInfo.value.amountMax) {
 		showToast({
-			message: t('核算金额范围', { min: itemInfo.value.minLoanAmount, max: itemInfo.value.maxLoanAmount }),
-			icon: 'info',
-		})
-		return
-	}
-	if (userKycRecordData.value.approvalStatus !== '1') {
-		showToast({
-			message: t('需要kyc审核通过'),
+			message: t('核算金额范围', { min: changeProductInfo.value.amountMin, max: changeProductInfo.value.amountMax }),
 			icon: 'info',
 		})
 		return
 	}
 
+	// todo 检验测试
+	// if (userKycRecordData.value.approvalStatus !== '1') {
+	// 	showToast({
+	// 		message: t('需要kyc审核通过'),
+	// 		icon: 'info',
+	// 	})
+	// 	return
+	// }
+
 	let dataInfo = {
 		userId: usersStore.userInfo.id,
-		loanProductId: days.value,
-		loanAmount: amount.value,
-		orderCurrency: 'USDC',
+		loanProductId: changeProductId.value,
+		loanAmount: loanAmount.value,
+		orderCurrency: changeProductInfo.walletToken,
 		loanProtocol: '',
-		itemInfo: itemInfo.value,
+		changeProductInfo: changeProductInfo.value,
 	}
 	console.log('dataInfo', dataInfo)
 
 	usersStore.SET_STATE_DATA('loanOrder', dataInfo)
 	usersStore.SET_PATH_DATA('no')
 	router.push('/loan-detail')
-	// try {
-	//   const response = await addLoanOrder(dataInfo); // Fetch data from API
-	//   allDays.value = response.data
-	//   response.data.map((item) => {
-	//     let obj = {
-	//       text: item.loanDays + 'Days',
-	//       value: item.id
-	//     }
-	//     daysList.value.push(obj)
-
-	//   })
-	//   itemInfo.value = allDays.value[0]
-
-	// } catch (err) {
-	//   // Handle errors
-	// } finally {
-
-	// }
-}
-//新增贷款
-const onClickTab = ({ name }) => {
-	active.value = name
 }
 
 // 路由跳转
@@ -234,51 +214,36 @@ const handleRouter = (path) => {
 	usersStore.SET_PATH_DATA('no')
 	router.push(`${path}`)
 }
-// PENDINGREVIEW("0", "待审核"), EXAMINATIONPASSED("1", "审核通过"), REVIEWREJECTED("2", "审核驳回");
-const loanApprovalStatus = ref('0')
-// null 开始验证
-const kycApprovalStatus = ref(null)
-const userInfo = ref({
-	totalLoanAmount: '0',
-})
-const checkVerify = () => {
-	loading.loading()
-	usersStore
-		.fetchUserInfoAction()
-		.then((res) => {
-			loading.clearLoading()
-			if (res.data) {
-				userInfo.value = res.data
-				loanApprovalStatus.value = res.data?.loanApprovalStatus
-				kycApprovalStatus.value = res.data?.kycApprovalStatus
-			}
-		})
-		.finally(() => {})
-}
-// -1 未审核 0  审核中 1审核通过 2审核驳回
+
+// 默认是0 ，上传了是 2  审核了是 1
 const userKycRecordData = ref({
-	approvalStatus: '-1',
+	approvalStatus: '0',
 })
+// 查询用户kyc记录
 const userKycRecord = async () => {
 	try {
-		const params = {
-			userId: usersStore.userInfo.id,
-		}
 		loading.loading()
-		const res = await userKycRecordLatestApi(params)
+		const res = await fetchUserKycApi()
 		loading.clearLoading()
-		if (res.data) {
-			userKycRecordData.value = res.data
+		if (!res.data.id) {
+			return
 		}
+
+		loading.loading()
+		await usersStore.loginAction()
+		loading.clearLoading()
+		userKycRecordData.value.approvalStatus = userInfo.value.isKyc + ''
 	} catch (error) {
 		console.log(error)
 	}
 }
 
+// 借款金额
 const userLoanAmount = ref(0)
 const getUserLoanAccountInfo = async () => {
 	try {
 		loading.loading()
+		// todo 接口待对接
 		const response = await fetchLoanAccountInfoApi() // Fetch data from API
 		loading.clearLoading()
 		userLoanAmount.value = response.data
@@ -293,6 +258,7 @@ const interestFreeDays = ref(0)
 const getInterestFreeDays = async () => {
 	try {
 		loading.loading()
+		// todo 待接接口
 		const response = await fetchInterestFreeDaysApi() // Fetch data from API
 		loading.clearLoading()
 		interestFreeDays.value = response.data
@@ -304,8 +270,9 @@ const getInterestFreeDays = async () => {
 
 onMounted(() => {
 	usersStore.SET_PATH_DATA('no')
+
 	userKycRecord()
-	getConfiguration()
+	getLoanProductList()
 	getUserLoanAccountInfo()
 	getInterestFreeDays()
 })
@@ -423,6 +390,9 @@ defineExpose({})
 			}
 		}
 
+		.loanToken {
+			color: #000;
+		}
 		::v-deep .van-icon__image {
 			display: block;
 			width: 2em;

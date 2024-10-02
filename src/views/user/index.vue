@@ -3,7 +3,7 @@
 		<!-- header -->
 		<div class="header">
 			<div class="logo">
-				<img src="../../assets/images/user/wallet-logo.svg" alt="logo" />
+				<img src="@/assets/images/user/wallet-logo.svg" alt="logo" />
 			</div>
 			<div class="title">Saving</div>
 			<div class="input">
@@ -17,7 +17,7 @@
 				<!-- Icon -->
 				<div class="icon" @click="router.push('/score')">
 					<!-- <img src="../../assets/images/user/wicon.png" alt="wicon" /> -->
-					<img src="../../assets/images/user/score.svg" alt="wicon" />
+					<img src="@/assets/images/user/score.svg" alt="wicon" />
 				</div>
 			</div>
 			<!-- Number -->
@@ -26,14 +26,14 @@
 
 				<!-- Precentage -->
 				<div class="precentage">
-					<img src="../../assets/images/user/up.png" alt="up" />
+					<img src="@/assets/images/user/up.png" alt="up" />
 					{{ '0.00%' }}
 				</div>
 			</div>
 			<!-- Introduce -->
 			<div class="bottom">
 				<div class="trend">
-					<img src="../../assets/images/home/trends.png" alt="trends" />
+					<img src="@/assets/images/home/trends.png" alt="trends" />
 				</div>
 				<div>
 					<span class="trends">${{ plusDecimal(userInfo.todayProfit || '0') }}</span>
@@ -46,21 +46,21 @@
 			<div class="range">
 				<div class="range_box" @click="handleRouter('/wallet')">
 					<div class="img">
-						<img src="../../assets/images/user/wallet-icon.svg" alt="wallet" />
+						<img src="@/assets/images/user/wallet-icon.svg" alt="wallet" />
 					</div>
 					<div>{{ t('钱包') }}</div>
 				</div>
 				<van-divider vertical />
 				<div class="range_box" @click="handleRouter('/loan')">
 					<div class="img">
-						<img src="../../assets/images/user/loan-icon.svg" alt="loan" />
+						<img src="@/assets/images/user/loan-icon.svg" alt="loan" />
 					</div>
 					<div>{{ t('借款') }}</div>
 				</div>
 				<van-divider vertical />
 				<div class="range_box" @click="handleRouter('/records')">
 					<div class="img">
-						<img src="../../assets/images/user/record-icon.svg" alt="record" />
+						<img src="@/assets/images/user/record-icon.svg" alt="record" />
 					</div>
 					<div>{{ t('记录') }}</div>
 				</div>
@@ -81,9 +81,10 @@
 			/>
 
 			<span class="title mt-30">{{ t('隐私与安全') }}</span>
-			<van-cell @click="handleClick()" :title="t('隐私与安全')" center :label="t('专注于您的安全和隐私')" :icon="policy" is-link to="/policy" />
+			<van-cell :title="t('隐私与安全')" center :label="t('专注于您的安全和隐私')" :icon="getImageUrl('user/policy.png')" is-link to="/policy" />
+
 			<span class="title mt-30">{{ t('设置') }}</span>
-			<van-cell @click="handleClick()" :title="t('更改语言')" center :icon="language" is-link to="/lang" />
+			<van-cell :title="t('更改语言')" center :icon="getImageUrl('user/language-vector-icon.svg')" is-link to="/lang" />
 		</div>
 		<router-link></router-link>
 	</div>
@@ -98,18 +99,7 @@ import { useI18n } from 'vue-i18n'
 import Web3 from 'web3'
 import { showToast } from 'vant'
 import { storeToRefs } from 'pinia'
-import { plusDecimal } from '@/utils'
-// 引入静态资源
-import BTC from '@/assets/images/home/BTC.png'
-import info1 from '@/assets/images/home/info1.png'
-import info2 from '@/assets/images/home/info2.png'
-import info3 from '@/assets/images/home/info3.png'
-import notifications from '@/assets/images/user/notification-icon.svg'
-import invite from '@/assets/images/user/gift-icon.svg'
-import support from '@/assets/images/user/support-icon.svg'
-import faq from '@/assets/images/user/book-square.svg'
-import policy from '@/assets/images/user/policy.png'
-import language from '@/assets/images/user/language-vector-icon.svg'
+import { getImageUrl, plusDecimal } from '@/utils'
 import useLoading from '@/hooks/useLoading.js'
 // 初始化仓库
 const usersStore = userStore()
@@ -123,83 +113,41 @@ const router = useRouter()
 const route = useRoute()
 // 搜索参数
 const value = ref('')
-// 比率
-const list = ref([
-	{
-		title: 'BTC/USD',
-		text: 'Bitcoin',
-		img: BTC,
-	},
-	{
-		title: 'ETH/USD',
-		text: 'Bitcoin',
-		img: BTC,
-	},
-	{
-		title: 'ATOM/USD',
-		text: 'Bitcoin',
-		img: BTC,
-	},
-	{
-		title: 'LTC/USD',
-		text: 'Bitcoin',
-		img: BTC,
-	},
-	{
-		title: 'BTC/USD',
-		text: 'Bitcoin',
-		img: BTC,
-	},
-	{
-		title: 'ETH/USD',
-		text: 'Bitcoin',
-		img: BTC,
-	},
-	{
-		title: 'ATOM/USD',
-		text: 'Bitcoin',
-		img: BTC,
-	},
-	{
-		title: '123',
-		text: '123',
-		img: BTC,
-	},
-])
+
 // scroll
 const infoList = ref([
 	{
-		icon: info1,
+		icon: getImageUrl('home/info1.png'),
 		content: 'Rellable Security Guarantee',
 	},
 	{
-		icon: info2,
+		icon: getImageUrl('home/info2.png'),
 		content: 'Stable andReliable Investment',
 	},
 	{
-		icon: info3,
+		icon: getImageUrl('home/info3.png'),
 		content: 'Convenient  and Easy Operation',
 	},
 ])
 // General
 const generalList = ref([
 	{
-		icon: notifications,
+		icon: getImageUrl('user/notification-icon.svg'),
 		title: t('通知'),
 		path: '/notifications',
 	},
 	{
-		icon: invite,
+		icon: getImageUrl('user/gift-icon.svg'),
 		title: t('邀请朋友'),
 		path: '/invite',
 	},
 	{
-		icon: support,
+		icon: getImageUrl('user/support-icon.svg'),
 		title: t('支持'),
 		path: '/support',
 	},
 	{
-		icon: faq,
+		icon: getImageUrl('user/book-square.svg'),
 		title: t('常见问题解答'),
 		path: '/faq',
 	},

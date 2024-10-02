@@ -19,19 +19,16 @@
 
 <script setup>
 import { onMounted } from 'vue'
-import { userStore, useWeb3Store } from '@/store'
+import { userStore } from '@/store'
 import CurrencyList from './components/CurrencyList.vue'
 import { useI18n } from 'vue-i18n'
 
 const usersStore = userStore()
-const web3Store = useWeb3Store()
 
 const { t } = useI18n()
 
 onMounted(() => {
 	usersStore.SET_PATH_DATA('no')
-
-	web3Store.initUserAccountAndWallet()
 })
 
 defineOptions({ name: 'noWallet' })

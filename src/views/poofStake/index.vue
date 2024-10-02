@@ -17,16 +17,16 @@
 		<div class="account">
 			<div class="title">{{ t('权益证明 账户') }}</div>
 			<div class="money">
-				{{ plusDecimal(poofStakeAccountInfo.pledgeAmount || '0') }}
-				<span>ETH</span>
+				{{ plusDecimal(poofStakeAccountInfo.stakingAmount || '0') }}
+				<span>{{ poofStakeAccountInfo.platformToken || stakeToken }}</span>
 			</div>
 			<!-- ETH Today's Profit-->
 			<div class="introduce">
 				<div class="trend">
 					<img src="../../assets/images/home/trends.png" alt="trends" />
 				</div>
-				<span class="trends">{{ plusDecimal(poofStakeAccountInfo.todayProfit || '0') }} </span>
-				<span class="trends"> ETH </span>
+				<span class="trends">{{ plusDecimal(poofStakeAccountInfo.stakingDayIncome || '0') }} </span>
+				<span class="trends"> {{ poofStakeAccountInfo.platformToken || stakeToken }} </span>
 				<span class="day"> {{ t('今日盈利') }}</span>
 			</div>
 			<!-- Center Card -->
@@ -45,7 +45,9 @@
 				</div>
 			</div>
 		</div>
-		<div class="scroll_title">{{ t('质押') }}<span>ETH</span></div>
+		<div class="scroll_title">
+			{{ t('质押') }}<span>{{ stakeToken }}</span>
+		</div>
 		<div class="footer">
 			<!-- Button -->
 			<div class="buttons">
@@ -66,10 +68,8 @@
 			<div class="rate">
 				<div class="yield">
 					<div class="title">{{ t('收益') }}:</div>
-					<div v-if="massList && massList[selectedDay]" class="title_value">
-						<div>
-							{{ timesForValueDecimal(massList[selectedDay].minRatio, 100) }}-{{ timesForValueDecimal(massList[selectedDay].maxRatio, 100) }}%
-						</div>
+					<div v-if="currentStakeItem" class="title_value">
+						<div>{{ currentStakeItem.rateMin }}-{{ currentStakeItem.rateMax }}%</div>
 					</div>
 				</div>
 			</div>
@@ -78,7 +78,7 @@
 				<van-dropdown-menu :overlay="false">
 					<van-dropdown-item :placeholder="t('选择天数')" ref="selectedDayDropdownItemRef">
 						<template #title>
-							<span v-if="massList[selectedDay]"> {{ massList[selectedDay].massDays }} {{ t('天') }}</span>
+							<span v-if="currentStakeItem"> {{ currentStakeItem.day }} {{ t('天') }}</span>
 						</template>
 						<template #default>
 							<div
@@ -90,11 +90,9 @@
 									{ 'van-dropdown-item__option--active': item.value === selectedDay },
 								]"
 							>
-								<div class="van-cell__title left-align">{{ item.massDays }} {{ t('天') }}</div>
+								<div class="van-cell__title left-align">{{ item.day }} {{ t('天') }}</div>
 								<!-- <br /> -->
-								<div class="van-cell__value right-align">
-									{{ timesForValueDecimal(item.minRatio, 100) }}-{{ timesForValueDecimal(item.maxRatio, 100) }}%
-								</div>
+								<div class="van-cell__value right-align">{{ item.rateMin }}-{{ item.rateMax }}%</div>
 							</div>
 						</template>
 					</van-dropdown-item>
@@ -102,7 +100,7 @@
 			</div>
 			<div class="stepper">
 				<van-cell-group inset>
-					<van-field v-model="stepper" :disabled="selectedPledge === '1'" type="number" center :clearable="false" label="" placeholder="">
+					<van-field v-model="stakeAmount" :disabled="selectedPledge === '1'" type="number" center :clearable="false" label="" placeholder="">
 						<template #left-icon>
 							<img src="@/assets/images/poofStake/minus.svg" @click="minusStepper" alt="minus" />
 						</template>
@@ -111,8 +109,6 @@
 						</template>
 					</van-field>
 				</van-cell-group>
-
-				<!--				<van-stepper v-model="stepper" />-->
 			</div>
 			<!-- Stake Button -->
 			<div class="stake">
@@ -130,19 +126,17 @@
 					<div class="content">
 						<div class="each-row">
 							<p class="left-text">{{ t('数量') }}:</p>
-							<p class="right-text">{{ stepper }} ETH</p>
+							<p class="right-text">{{ stakeAmount }} ETH</p>
 						</div>
 						<div class="each-row">
 							<p class="left-text">{{ t('收益') }}:</p>
-							<div class="right-text" v-if="massList && massList[selectedDay]">
-								<div>
-									{{ timesForValueDecimal(massList[selectedDay].minRatio, 100) }}-{{ timesForValueDecimal(massList[selectedDay].maxRatio, 100) }}%
-								</div>
+							<div class="right-text" v-if="currentStakeItem">
+								<div>{{ currentStakeItem.rateMin }}-{{ currentStakeItem.rateMax }}%</div>
 							</div>
 						</div>
 						<div class="each-row">
 							<p class="left-text">{{ t('质押期限') }}:</p>
-							<p class="right-text">{{ daysList[selectedDay].massDays }} {{ t('天') }}</p>
+							<p class="right-text" v-if="currentStakeItem">{{ currentStakeItem.day }} {{ t('天') }}</p>
 						</div>
 					</div>
 					<template #footer>
@@ -160,11 +154,12 @@
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { userStore } from '@/store'
-import { addPledgeOrderData, fetchMassClientList, fetchPoofStakeAccountInfoApi } from '@/apiService'
 import { showToast } from 'vant'
 import { useI18n } from 'vue-i18n'
 import useLoading from '@/hooks/useLoading.js'
-import { minusForValueDecimal, plusDecimal, plusForValueDecimal, timesForValueDecimal } from '@/utils'
+import { minusForValueDecimal, plusDecimal, plusForValueDecimal } from '@/utils'
+import { addStakeOrder, fetchJointStakeListApi, fetchPersonalStakeListApi } from '@/apis/stake.js'
+import { fetchStakeIncomeApi } from '@/apis/wallet.js'
 
 // 初始化仓库
 const usersStore = userStore()
@@ -194,12 +189,12 @@ const BASE = {
 	joint: 1, // 联合质押基数
 }
 // 计数器
-const stepper = ref(0)
+const stakeAmount = ref(0)
 watch(
 	() => selectedPledge.value,
 	(val) => {
 		selectedDay.value = 0
-		stepper.value = val === '1' ? BASE.personal : 0
+		stakeAmount.value = val === '1' ? BASE.personal : 0
 	},
 	{
 		immediate: true,
@@ -207,11 +202,11 @@ watch(
 )
 
 const showPopupFunc = () => {
-	if (!stepper.value) {
+	if (!stakeAmount.value) {
 		showToast({ message: t('请输入质押数量'), icon: 'info' })
 		return
 	}
-	if (!parseInt(stepper.value)) {
+	if (!parseInt(stakeAmount.value)) {
 		showToast({ message: t('请输入有效的质押数量'), icon: 'info' })
 		return
 	}
@@ -223,23 +218,24 @@ const updateData = async () => {
 }
 
 const insertPledge = async () => {
-	let temp = daysList.value[selectedDay.value]
-	let data = {
-		posMassId: temp.id,
-		pledgeAmount: stepper.value,
-		baseSymbol: 'ETH',
-		userId: usersStore.userId,
-		pledgeType: selectedPledge.value,
-	}
-
 	try {
+		const isJoint = selectedPledge.value === '0'
+		const stakeInfo = isJoint ? jointStakeList.value : personalStakeList.value
+		let data = {
+			configId: currentStakeItem.value.configId,
+			productId: stakeInfo.productId,
+			stakeAmount: stakeAmount.value,
+			stakeToken: stakeToken.value,
+		}
+
 		loading.loading()
-		const res = await addPledgeOrderData(data)
+		await addStakeOrder(data)
 		loading.clearLoading()
-		// showToast('staking successful.')
+
 		showToast({ message: t('质押成功'), icon: 'info' })
-		stepper.value = currentBase.value
+		stakeAmount.value = currentBase.value
 		centerDialogVisible.value = false
+
 		let timeout = setTimeout(() => {
 			getPoofStakeAccountInfo(true)
 			clearTimeout(timeout)
@@ -250,40 +246,69 @@ const insertPledge = async () => {
 	}
 }
 
-const selectedDayDropdownItemRef = ref(null)
-const daysList = ref([])
-
+// 质押币种，固定ETH
+const stakeToken = ref('ETH')
+// 当前选中的质押config列表
 const massList = computed(() => {
 	const isJoint = selectedPledge.value === '0'
-	return daysList.value.map((item, index) => ({
+	const stakeList = isJoint ? jointStakeList.value.stakeConfigs : personalStakeList.value.stakeConfigs
+	return stakeList.map((item, index) => ({
 		...item,
 		value: index,
-		text: item.massDays + `  ${t('天')}`,
-
-		minRatio: isJoint ? item.minUnionMassInterestRatio : item.minMassInterestRatio,
-		maxRatio: isJoint ? item.maxUnionMassInterestRatio : item.maxMassInterestRatio,
 	}))
 })
+// 当前选中的质押config
+const currentStakeItem = computed(() => {
+	return massList.value[selectedDay.value]
+})
+// 获取质押配置信息
+// 个人质押配置信息
+const personalStakeList = ref({
+	stakeConfigs: [],
+})
+// 联合质押配置信息
+const jointStakeList = ref({
+	stakeConfigs: [],
+})
+
+const getStakeConfig = async () => {
+	try {
+		loading.loading()
+		const [personalRes, jointRes] = await Promise.all([fetchPersonalStakeListApi(), fetchJointStakeListApi()])
+		loading.clearLoading()
+		personalStakeList.value = personalRes.data || {
+			stakeConfigs: [],
+		}
+		jointStakeList.value = jointRes.data || {
+			stakeConfigs: [],
+		}
+	} catch (err) {
+		console.log(err)
+	}
+}
+
+// 配置天数选择
+const selectedDayDropdownItemRef = ref(null)
 function onConfirmMassDays(item) {
 	selectedDayDropdownItemRef.value?.toggle()
 	selectedDay.value = item.value
 }
 function minusStepper() {
-	if (parseFloat(stepper.value) > currentBase.value) {
-		stepper.value = minusForValueDecimal(stepper.value, currentBase.value)
+	if (parseFloat(stakeAmount.value) > currentBase.value) {
+		stakeAmount.value = minusForValueDecimal(stakeAmount.value, currentBase.value)
 	} else {
 		if (selectedPledge.value === '1') {
-			stepper.value = currentBase.value
+			stakeAmount.value = currentBase.value
 		} else {
-			stepper.value = 0
+			stakeAmount.value = 0
 		}
 	}
 }
 function plusStepper() {
-	if (parseFloat(stepper.value)) {
-		stepper.value = plusForValueDecimal(stepper.value, currentBase.value)
+	if (parseFloat(stakeAmount.value)) {
+		stakeAmount.value = plusForValueDecimal(stakeAmount.value, currentBase.value)
 	} else {
-		stepper.value = currentBase.value
+		stakeAmount.value = currentBase.value
 	}
 }
 // 代码区
@@ -298,28 +323,18 @@ const pledgeFunc = (val) => {
 	selectedPledge.value = val
 }
 
-const getMassList = async () => {
-	try {
-		loading.loading()
-		const res = await fetchMassClientList()
-		loading.clearLoading()
-		daysList.value = res.data
-	} catch (err) {
-		console.log(err)
-	} finally {
-	}
-}
-
 const poofStakeAccountInfo = ref({
-	todayProfit: 0, // 今日收益
-	pledgeAmount: 0, // 质押金额
+	platformToken: 'ETH',
+	stakingAmount: 0, // 质押金额
+	stakingDayIncome: 0, // 今日盈利
+	stakingTotalIncome: 0, // 总盈利
 })
 const getPoofStakeAccountInfo = async (isLoading) => {
 	try {
 		isLoading && loading.loading()
-		const res = await fetchPoofStakeAccountInfoApi()
+		const res = await fetchStakeIncomeApi()
 		isLoading && loading.clearLoading()
-		poofStakeAccountInfo.value = res.data
+		poofStakeAccountInfo.value = res.data || {}
 	} catch (err) {
 		console.log(err)
 	}
@@ -337,7 +352,7 @@ const clearLoopInterval = () => {
 }
 
 onMounted(() => {
-	getMassList()
+	getStakeConfig()
 	getPoofStakeAccountInfo(true)
 	loopInterval()
 })

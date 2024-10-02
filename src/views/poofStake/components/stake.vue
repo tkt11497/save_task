@@ -12,37 +12,6 @@
 				<div class="title">{{ item.title }}</div>
 				<div class="text" :class="{ 'normal': index === tm('权益证明内容').length - 1 }">{{ item.text }}</div>
 			</template>
-			<!-- Introduction -->
-			<!--      <div class="title"></div>-->
-			<!--      <div class="text">-->
-			<!--        </div>-->
-			<!--      &lt;!&ndash; Ethereum 2.0 and Proof of Stake (POS) &ndash;&gt;-->
-			<!--      <div class="title"></div>-->
-			<!--      <div class="text">-->
-			<!--        </div>-->
-
-			<!--      &lt;!&ndash; The Staking Process &ndash;&gt;-->
-			<!--      <div class="title"></div>-->
-			<!--      <div class="text">-->
-			<!--        </div>-->
-			<!--      &lt;!&ndash; Staking Rewards and Risks &ndash;&gt;-->
-			<!--      <div class="title"></div>-->
-			<!--      <div class="text">-->
-
-			<!--      </div>-->
-			<!--      &lt;!&ndash; Joint Staking and Individual Staking &ndash;&gt;-->
-			<!--      <div class="title"></div>-->
-			<!--      <div class="text">-->
-			<!--        </div>-->
-			<!--      &lt;!&ndash; Your Rights and Choices &ndash;&gt;-->
-			<!--      <div class="title"></div>-->
-			<!--      <div class="text">-->
-
-			<!--      </div>-->
-			<!--      &lt;!&ndash; Changes to This Privacy Policy &ndash;&gt;-->
-			<!--      <div class="title"> </div>-->
-			<!--      <div class="text normal">-->
-			<!--      </div>-->
 		</div>
 	</div>
 </template>

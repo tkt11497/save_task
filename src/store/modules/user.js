@@ -44,7 +44,6 @@ export default defineStore('user', {
 		},
 		async loginAction() {
 			try {
-				console.log('loginAction')
 				const web3Store = useWeb3Store()
 				const { address, currentCurrency } = storeToRefs(web3Store)
 

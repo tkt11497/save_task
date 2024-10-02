@@ -19,7 +19,7 @@
 						<van-loading class="custom-page-loading" type="spinner" />
 					</template>
 
-					<div v-if="accountList.length == 0" class="container">
+					<div v-if="!accountList.length" class="container">
 						<div class="notice">
 							<img src="../../../assets/images/user/notice.png" alt="notice" />
 						</div>
@@ -38,23 +38,23 @@
 
 							<div class="content-row">
 								<p class="left-text">{{ t('金额') }}:</p>
-								<p class="right-text">{{ list.loanAmount || 0 }} {{ list.orderCurrency }}</p>
+								<p class="right-text">{{ list.borrowAmount || 0 }} {{ list.walletToken }}</p>
 							</div>
 							<div class="content-row">
 								<p class="left-text">{{ t('借款期限') }}:</p>
-								<p class="right-text">{{ list.loanDays }} {{ $t('天') }}</p>
+								<p class="right-text">{{ list.borrowDay }} {{ $t('天') }}</p>
 							</div>
 							<div class="content-row">
 								<p class="left-text">{{ t('总利息') }}:</p>
-								<p class="right-text">{{ list.totalProfit || 0 }} {{ list.orderCurrency }}</p>
+								<p class="right-text">{{ list.alreadyInterest || 0 }} {{ list.walletToken }}</p>
 							</div>
 							<div class="content-row">
 								<p class="left-text">{{ t('每日利率') }}:</p>
-								<p class="right-text">{{ timesForValueDecimal(list.dailyInterestRate, 100) }}%</p>
+								<p class="right-text">{{ list.dayRate }}%</p>
 							</div>
 							<div class="content-row">
 								<p class="left-text">{{ t('需要还款') }}:</p>
-								<p class="right-text">{{ list.repaymentRequired || 0 }} {{ list.orderCurrency }}</p>
+								<p class="right-text">{{ list.repaymentRequired || 0 }} {{ list.walletToken }}</p>
 							</div>
 							<div class="content-row">
 								<p class="left-text">{{ t('逾期') }}:</p>
@@ -62,7 +62,7 @@
 							</div>
 							<div class="content-row">
 								<p class="left-text">{{ t('违约金') }}:</p>
-								<p class="right-text">{{ list.penaltyAmount || 0 }} {{ list.orderCurrency }}</p>
+								<p class="right-text">{{ list.overdueInterest || 0 }} {{ list.orderCurrency }}</p>
 							</div>
 							<div class="content-row">
 								<p class="left-text">{{ t('认可') }}:</p>
@@ -129,95 +129,6 @@
 				</div>
 				<div class="block2" ref="agreementRef">
 					<loan-treaty :user-data="userKycRecordData" :loan-data="loanData" />
-					<!--                    <p class="b2p1">Loan Agreement (" xxxx ") dated {{ rowData.createTime }} ("Effective Date")-->
-					<!--                        entered into by the following parties:</p>-->
-					<!--                    <h2>Borrower:</h2>-->
-					<!--                    <p class="b2p1">First name: {{ userKycRecordData.firstName }}</p>-->
-					<!--                    <p class="b2p1">Last name: {{ userKycRecordData.lastName }}</p>-->
-					<!--                    <p class="b2p1">Address: {{ userKycRecordData.detailAddress }}</p>-->
-					<!--                    <p class="b2p1">Phone: {{ userKycRecordData.phone }}</p>-->
-					<!--                    <h2>Lender:</h2>-->
-					<!--                    <p class="b2p1">Name: xxxx</p>-->
-					<!--                    <p class="b2p1">Together referred to as the "Parties".</p>-->
-					<!--                    <p class="b2p1">Repayment Terms:</p>-->
-					<!--                    <p class="b2p1">-->
-					<!--                        1. Loan Amount: {{ rowData.loanAmount }} <br />-->
-					<!--                        2. Borrower agrees to repay ${{ rowData.loanAmount }} ("Loan").<br />-->
-					<!--                        3. Interest Rate: {{ rowData.dailyInterestRate * 100 }}%<br />-->
-					<!--                        4. The agreed-upon interest rate is {{ rowData.dailyInterestRate * 100 }}% (calculated on-->
-					<!--                        a daily basis). <br />-->
-					<!--                        5. Loan Term: {{ rowData.loanDays }} <br />-->
-					<!--                        6. The term of this loan is {{ rowData.loanDays }} days.<br />-->
-					<!--                        7. Repayment Method:<br />-->
-					<!--                        8. Borrower agrees to repay Lender ${{ rowData.loanAmount }} principal and $-->
-					<!--                        {{ ((rowData.dailyInterestRate) * rowData.loanDays * rowData.loanAmount).toFixed(2) }}-->
-					<!--                        interest upon maturity.-->
-					<!--                    </p>-->
-					<!--                    <p class="b2p1">Repayment Applicability:</p>-->
-					<!--                    <p class="b2p1 b2p2">1. Late Payment Fee: {{ rowData.accruedInterest * 100 }}%</p>-->
-					<!--                    <p class="b2p1 b2p2">-->
-					<!--                        2. If Borrower fails to repay on time, Borrower shall pay a late fee of-->
-					<!--                        {{ rowData.accruedInterest *-->
-					<!--                            100 }}% (calculated on a-->
-					<!--                        daily basis), which shall be considered a-->
-					<!--                        penalty rather than a fine.-->
-					<!--                    </p>-->
-					<!--                    <p class="b2p1 b2p2">3. Early Repayment:</p>-->
-					<!--                    <p class="b2p1 b2p2">4. No penalty shall be imposed on Borrower for early repayment.</p>-->
-					<!--                    <p class="b2p1 b2p2">5.Default:</p>-->
-					<!--                    <p class="b2p1 b2p2">-->
-					<!--                        6. If Borrower fails to repay on time, Borrower shall immediately pay all outstanding principal-->
-					<!--                        and interest without the need for notice-->
-					<!--                        or demand.-->
-					<!--                    </p>-->
-					<!--                    <p class="b2p1 b2p2">7. Fees:</p>-->
-					<!--                    <p class="b2p1 b2p2">-->
-					<!--                        8. If Borrower fails to fulfill the repayment obligation on time, Borrower agrees to bear all-->
-					<!--                        costs incurred by Lender in the collection-->
-					<!--                        process, including but not limited to attorney's fees.-->
-					<!--                    </p>-->
-					<!--                    <p class="b2p1 b2p2">9. Severability:</p>-->
-					<!--                    <p class="b2p1 b2p2">-->
-					<!--                        10. If any provision of this Agreement is found to be invalid or unenforceable, such provision-->
-					<!--                        shall be voided, but all other provisions-->
-					<!--                        shall remain valid and binding.-->
-					<!--                    </p>-->
-					<!--                    <p class="b2p1 b2p2">11. Legal Effect:</p>-->
-					<!--                    <p class="b2p1 b2p2">-->
-					<!--                        12. This Agreement is legally binding on both parties and may be signed and executed within the-->
-					<!--                        United States and Europe. Both parties-->
-					<!--                        declare that they have the authority to sign this Agreement.-->
-					<!--                    </p>-->
-					<!--                    <p class="b2p1 b2p2">13. Miscellaneous:</p>-->
-					<!--                    <p class="b2p1 b2p2">-->
-					<!--                        14. According to the terms of this Agreement, the company shall pay in the form of currency in-->
-					<!--                        the account balance. Both parties have the-->
-					<!--                        right to sign this Agreement. Neither party shall infringe upon the rights of third parties or-->
-					<!--                        violate any other agreements between the-->
-					<!--                        parties.-->
-					<!--                    </p>-->
-					<!--                    <p class="b2p1 b2p2">15. Applicable Law:</p>-->
-					<!--                    <p class="b2p1 b2p2">-->
-					<!--                        16. This Agreement shall be interpreted and enforced in accordance with the laws of the country-->
-					<!--                        in which the borrower is located.-->
-					<!--                    </p>-->
-					<!--                    <p class="b2p1 b2p2">17. Entire Agreement:</p>-->
-					<!--                    <p class="b2p1">-->
-					<!--                        18. Both parties confirm and agree that this Agreement constitutes the entire agreement between-->
-					<!--                        the parties. If either party wishes to-->
-					<!--                        change, add, or modify any provision, it must be done in writing and signed by both parties.-->
-					<!--                    </p>-->
-					<!--                    <p class="b2p1">Both parties agree to the above terms and conditions and sign as follows:</p>-->
-					<!--                    <p class="b2p1">Lender:</p>-->
-					<!--                    <p class="b2p1">"Borrower"</p>-->
-					<!--                    <p class="b2p1">-->
-					<!--                        Borrower Signature: <span class="underline"> <img width="40px" height="40px"-->
-					<!--                                :src="rowData.signName" alt="" />-->
-					<!--                        </span>-->
-					<!--                    </p>-->
-					<!--                    <p class="b2p1">-->
-					<!--                        Signature Date: <span class="underline">{{ rowData.createTime }}</span>-->
-					<!--                    </p>-->
 				</div>
 			</div>
 		</van-popup>
@@ -253,81 +164,16 @@ import { formatDate, timesForValueDecimal } from '@/utils'
 import useLoading from '@/hooks/useLoading.js'
 import LoanTreaty from '@/views/user/loan/loan-treaty.vue'
 import { useToken } from '@/hooks/useToken.js'
+import usePage from '@/hooks/usePage.js'
+import { fetchLoanOrderListApi } from '@/apis/loan.js'
+import { fetchUserKycApi } from '@/apis/user.js'
 
 const usersStore = userStore()
 const router = useRouter()
 const { t } = useI18n()
 const loading = useLoading()
 
-// list 滚动加载
-const pageData = ref({
-	pageSize: 20,
-	pageNum: 0,
-	total: 0,
-})
-const listError = ref(false)
-const listLoading = ref(false)
-const finished = ref(false)
-const refreshing = ref(false)
-const isEmptyList = ref(false)
-const onLoad = async () => {
-	try {
-		isEmptyList.value = false
-
-		if (refreshing.value) {
-			refreshing.value = false
-		}
-
-		if (pageData.value.pageNum == 0) {
-			accountList.value = []
-			pageData.value.total = 0
-			finished.value = false
-		}
-
-		const response = await loanOrderList({
-			pageSize: pageData.value.pageSize,
-			pageNum: pageData.value.pageNum + 1,
-		})
-
-		listError.value = false
-		pageData.value.pageNum += 1
-		pageData.value.total = response.total
-
-		if (accountList.value.length >= response.total) {
-			finished.value = true
-		} else {
-			finished.value = false
-		}
-		if (!response.total) {
-			isEmptyList.value = true
-		}
-	} catch (e) {
-		listError.value = true
-	} finally {
-		listLoading.value = false
-	}
-}
-const onRefresh = async () => {
-	// 清空列表数据
-	finished.value = false
-	listLoading.value = true
-
-	// 重新加载数据
-	pageData.value.pageNum = 0
-	onLoad()
-}
-
-const accountList = ref([])
-// loanReviewStatus -1 未审核 0  审核中 1审核通过 2审核驳回
-const loanOrderList = async (pageData) => {
-	try {
-		const res = await loanOrderListeApi(pageData)
-		accountList.value = accountList.value.concat(res.rows || [])
-		return res
-	} catch (err) {
-		console.log(err)
-	}
-}
+const { onRefresh, onLoad, listLoading, listError, finished, isEmptyList, refreshing, dataList: accountList } = usePage(fetchLoanOrderListApi)
 
 const showPop = ref(false)
 
@@ -338,12 +184,12 @@ const confirmRepayment = async () => {
 			loanAmount: rowData.value.loanAmount,
 		}
 		loading.loading()
-		const res = await loanRepaymentClientAddApi(params)
+		await loanRepaymentClientAddApi(params)
 		loading.clearLoading()
 		showPop.value = false
 		showUserBalancePop.value = false
 
-		onRefresh()
+		await pageHooks.onRefresh()
 	} catch (err) {
 		console.log(err)
 	}
@@ -390,7 +236,7 @@ const userKycRecord = async () => {
 		const params = {
 			userId: usersStore.userInfo.id,
 		}
-		const res = await userKycRecordLatestApi(params)
+		const res = await fetchUserKycApi(params)
 		if (res.data) {
 			userKycRecordData.value = res.data
 		}

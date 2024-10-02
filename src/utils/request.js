@@ -19,14 +19,11 @@ request.interceptors.request.use(
 	(config) => {
 		const usStore = userStore()
 		const { userId } = storeToRefs(usStore)
-		// const storageToken = localStorage.getItem('token')
 
-		// 添加语言
-		if (!config.params) {
-			config.params = {}
-		}
-		config.params.lang = usStore.languageCode
+		// todo 添加语言
+		config.headers['Accept-Language'] = usStore.languageCode
 
+		console.log('请求拦截', config.url, userId.value)
 		if (config.url !== '/user/login' && userId.value) {
 			config.headers['Authorization'] = userId.value
 		}
@@ -43,7 +40,6 @@ request.interceptors.response.use(
 		const userStoreObj = userStore()
 		const navStoreObj = navStore()
 		const loadingStoreObj = loadingStore()
-		console.log(res)
 		const status = res.data.code
 
 		if (0 === status) {
@@ -51,11 +47,10 @@ request.interceptors.response.use(
 			return Promise.resolve(res.data)
 		} else if (401 === status) {
 			// todo 默认调用login
-			console.log('请求401')
+			console.log(`request-请求401-${res.config.url}`)
 			userStoreObj
 				.loginAction()
 				.then(() => {
-					console.log('请求401，重新登录成功')
 					return request({
 						method: res.config.method,
 						url: res.config.url,
@@ -64,11 +59,11 @@ request.interceptors.response.use(
 					})
 				})
 				.then((apiData) => {
-					console.log('请求401，重新请求成功', apiData)
+					console.log(`request-请求401-${res.config.url}，重新请求成功`, apiData)
 					return Promise.resolve(apiData)
 				})
 				.catch((e) => {
-					console.log('请求401失败', e)
+					console.log(`request-请求401-${res.config.url}失败`, e)
 					loadingStoreObj.clearCount()
 					closeToast()
 
@@ -103,6 +98,10 @@ request.interceptors.response.use(
 		// 	message: error.message || i18n.global.t('错误提示.网络错误'),
 		// 	icon: 'info',
 		// })
+		const loadingStoreObj = loadingStore()
+		loadingStoreObj.clearCount()
+		// 关闭单例模式下，请求的loading
+		closeToast()
 		return Promise.reject(error)
 	}
 )

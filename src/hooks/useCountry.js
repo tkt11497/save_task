@@ -1,22 +1,27 @@
 import { ref } from 'vue'
-import { countryAllApi } from '@/apiService'
+import { fetchCountryListApi } from '@/apis/common.js'
 
 export function useCountry() {
 	const countryList = ref([
-		{
-			name: 'United States',
-			id: 0,
-			areaCode: '86',
-		},
-		{
-			name: 'United States',
-			id: 0,
-			areaCode: '86',
-		},
+		// {
+		// 	name: 'United States',
+		// 	id: 0,
+		// 	phoneCode: '1',
+		// 	countryCode: '5',
+		// },
+		// {
+		// 	name: 'Chinese',
+		// 	id: 1,
+		// 	phoneCode: '86',
+		// 	countryCode: '9',
+		// },
 	])
 
-	countryAllApi().then((res) => {
-		countryList.value = res.data
+	// todo 接口挂的
+	fetchCountryListApi().then((res) => {
+		if (res.data) {
+			countryList.value = res.data
+		}
 	})
 
 	return {

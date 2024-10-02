@@ -18,7 +18,7 @@
 		<div class="account">
 			<div class="title">{{ t('赚取利息') }} {{ t('账户') }}</div>
 			<div class="money">
-				${{ plusDecimal(earnInterestAccountInfo.investAmount || '0') }}
+				${{ plusDecimal(earnInterestAccountInfo.stakingAmount || '0') }}
 				<!--				<span>ETH</span>-->
 			</div>
 			<!-- ETH Today's Profit-->
@@ -26,7 +26,7 @@
 				<div class="trend">
 					<img src="../../assets/images/home/trends.png" alt="trends" />
 				</div>
-				<span class="trends">${{ plusDecimal(earnInterestAccountInfo.todayProfit || '0') }} </span>
+				<span class="trends">${{ plusDecimal(earnInterestAccountInfo.stakingDayIncome || '0') }} </span>
 				<!--				<span class="trends">Eth</span>-->
 				<span class="day">{{ t('今日盈利') }}</span>
 			</div>
@@ -78,10 +78,6 @@
 				<div class="title">{{ t('质押期限') }}</div>
 				<!-- Days Select -->
 				<div class="select">
-					<!-- <van-dropdown-menu :overlay="false">
-            <van-dropdown-item v-model="days" :options="daysList" />
-          </van-dropdown-menu> -->
-					<!-- {{selectedDay}} -->
 					<el-select
 						v-model="selectedDay"
 						:placeholder="t('选择天数')"
@@ -104,7 +100,7 @@
 				<div class="input">
 					<div class="select">
 						<el-select
-							v-model="selectOption"
+							v-model="selectCoinOption"
 							placeholder=""
 							class="custom-select pledge-currency"
 							popper-class="custom-select-popper pledge-currency"
@@ -116,16 +112,13 @@
 								</template>
 							</el-option>
 							<template #prefix>
-								<img :src="selectedItem?.image" alt="icon" class="option-image" />
+								<img :src="selectedCoinItem?.image" alt="icon" class="option-image" />
 							</template>
 						</el-select>
-						<!-- <van-dropdown-menu style="width:80%" :overlay="false">
-              <van-dropdown-item v-model="usdc" :options="usdcList" />
-            </van-dropdown-menu> -->
 					</div>
 					<div class="fied">
 						<van-cell-group inset>
-							<van-field v-model="num" placeholder="0.00" />
+							<van-field v-model="stakeAmount" type="number" placeholder="0.00" />
 						</van-cell-group>
 					</div>
 				</div>
@@ -134,13 +127,25 @@
 			<div class="rate">
 				<div class="yield">
 					<div class="title">{{ t('收益') }}:</div>
-					<div v-if="formattedDaysList[selectedDay]">
-						{{ formattedDaysList[selectedDay].rightText }}
+					<div v-if="currentFormatterDayInfo">
+						{{ currentFormatterDayInfo.rightText }}
 					</div>
 				</div>
 				<div class="limit">
 					<div class="title">{{ t('限制') }}:</div>
-					<div v-if="formattedDaysList[selectedDay]">${{ formattedDaysList[selectedDay].amountRange }}</div>
+					<div v-if="currentFormatterDayInfo && parseFloat(stakeAmount)">
+						${{
+							timesForValueDecimal(
+								stakeAmount,
+								timesForValueDecimal(currentFormatterDayInfo.day, dividedForValueDecimal(currentFormatterDayInfo.rateMin, 100))
+							)
+						}}-{{
+							timesForValueDecimal(
+								stakeAmount,
+								timesForValueDecimal(currentFormatterDayInfo.day, dividedForValueDecimal(currentFormatterDayInfo.rateMax, 100))
+							)
+						}}
+					</div>
 				</div>
 			</div>
 			<!-- Subscribe Button -->
@@ -161,18 +166,18 @@
 				<div class="content">
 					<div class="each-row">
 						<p class="left-text">{{ t('质押金额') }}:</p>
-						<p class="right-text">${{ num }}</p>
+						<p class="right-text">${{ stakeAmount }}</p>
 					</div>
 					<div class="each-row">
 						<p class="left-text">{{ t('收益') }}:</p>
-						<div class="right-text" v-if="formattedDaysList && formattedDaysList[selectedDay]">
-							<div>{{ formattedDaysList[selectedDay].rightText }}</div>
+						<div class="right-text" v-if="currentFormatterDayInfo">
+							<div>{{ currentFormatterDayInfo.rightText }}</div>
 						</div>
 					</div>
 					<div class="each-row">
 						<p class="left-text">{{ t('质押期限') }}:</p>
-						<p class="right-text" v-if="formattedDaysList && formattedDaysList[selectedDay]">
-							{{ formattedDaysList[selectedDay].leftText }}
+						<p class="right-text" v-if="currentFormatterDayInfo">
+							{{ currentFormatterDayInfo.leftText }}
 						</p>
 					</div>
 				</div>
@@ -190,15 +195,16 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { userStore } from '@/store'
-import { addFinancialManageData, fetchEarnInteresAccountInfoApi, fetchFixPressureData } from '@/apiService'
 import { showToast } from 'vant'
 import { useI18n } from 'vue-i18n'
-import { plusDecimal, timesDecimal } from '@/utils'
+import { dividedForValueDecimal, plusDecimal, timesForValueDecimal } from '@/utils'
 import useLoading from '@/hooks/useLoading.js'
 // 引入静态资源
 import info1 from '@/assets/images/home/info1.png'
 import info2 from '@/assets/images/home/info2.png'
 import info3 from '@/assets/images/home/info3.png'
+import { addStakeOrder, fetchFinancialStakeListApi } from '@/apis/stake.js'
+import { fetchFinancialStakeIncomeApi } from '@/apis/wallet.js'
 
 const loading = useLoading()
 
@@ -210,9 +216,9 @@ const { t } = useI18n()
 const router = useRouter()
 const route = useRoute()
 
-// usdc下拉参数
-const selectOption = ref(0)
-// usdc下拉数据
+// 理财币种
+const selectCoinOption = ref(0)
+// 理财币种下拉数据
 const coinOptions = ref([
 	{
 		text: 'USDC',
@@ -225,19 +231,14 @@ const coinOptions = ref([
 		image: new URL('@/assets/images/market/USDT.png', import.meta.url).href,
 	},
 ])
+// 理财币种详情
+const selectedCoinItem = computed(() => {
+	return coinOptions.value.find((option) => option.value === selectCoinOption.value)
+})
+
 // 输入框参数
-const num = ref(0)
+const stakeAmount = ref(0)
 const error = ref(null)
-// 日期下拉参数
-const days = ref(0)
-// 日期下拉数据
-// const daysList = ref([
-//   { text: '30 Days 2.00-2.50%', value: 0 },
-//   { text: '60 Days 2.50-3.20%', value: 1 },
-//   { text: '90 Days 3.20-4.20%', value: 3 },
-//   { text: '120 Days 4.20-5.20%', value: 4 },
-// ])
-const daysList = ref([])
 // scroll
 const infoList = ref([
 	{
@@ -254,10 +255,6 @@ const infoList = ref([
 	},
 ])
 
-const selectedItem = computed(() => {
-	return coinOptions.value.find((option) => option.value === selectOption.value)
-})
-
 // 代码区
 
 // 路由跳转
@@ -265,21 +262,15 @@ const handleRouter = () => {
 	usersStore.SET_PATH_DATA('no')
 	router.push('/earn')
 }
-// {
-//     "investAmount":1000,
-//     "fixedPledgeConfigurationId":1,
-//     "userId":1,
-//     "financialCurrency":"USDC"
-// }
 
 // 弹窗
 const centerDialogVisible = ref(false)
 const showPopupFunc = () => {
-	if (!num.value) {
+	if (!stakeAmount.value) {
 		showToast({ message: t('请输入质押金额'), icon: 'info' })
 		return
 	}
-	if (!parseFloat(num.value)) {
+	if (!parseFloat(stakeAmount.value)) {
 		showToast({ message: t('请输入有效的质押金额'), icon: 'info' })
 		return
 	}
@@ -287,19 +278,20 @@ const showPopupFunc = () => {
 }
 
 const addNew = async () => {
-	centerDialogVisible.value = false
 	try {
-		let temp = {
-			investAmount: num.value,
-			fixedPledgeConfigurationId: daysList.value[days.value].id,
-			financialCurrency: coinOptions.value[selectOption.value].text,
+		const data = {
+			configId: currentFormatterDayInfo.value.configId,
+			productId: financialStakeList.value.productId,
+			stakeAmount: stakeAmount.value,
+			stakeToken: coinOptions.value[selectCoinOption.value].text,
 		}
 
 		loading.loading()
-		const res = await addFinancialManageData(temp)
+		await addStakeOrder(data)
 		loading.clearLoading()
 		showToast({ message: t('购买理财成功'), icon: 'info' })
-		num.value = 0
+		stakeAmount.value = 0
+		centerDialogVisible.value = false
 		let timeout = setTimeout(() => {
 			getEarnInterestAccountInfo(true)
 			clearTimeout(timeout)
@@ -308,49 +300,55 @@ const addNew = async () => {
 		console.log(err)
 	}
 }
+
 const selectedDay = ref(0)
+// 日期下拉数据
+const financialStakeList = ref({
+	productId: undefined,
+	stakeConfigs: [],
+})
 
 const formattedDaysList = computed(() => {
-	return daysList.value.map((item, index) => ({
-		leftText: `${item.days} ${t('天')}`,
-		rightText: `${timesDecimal(item.minRate, 100, 2)}-${timesDecimal(item.maxRate, 100, 2)}%`,
+	return financialStakeList.value.stakeConfigs.map((item, index) => ({
+		...item,
+		leftText: `${item.day} ${t('天')}`,
+		rightText: `${item.rateMin}-${item.rateMax}%`,
+		// todo 缺字段
 		amountRange: `${item.minAmount}-${item.maxAmount}`,
 		value: index,
 	}))
 })
-
-const selectedOption = computed(() => {
-	const selected = formattedDaysList.value.find((option) => option.value === selectedDay.value)
-	return selected || { leftText: '', rightText: '' }
+// 当前选择的质押配置
+const currentFormatterDayInfo = computed(() => {
+	return formattedDaysList.value[selectedDay.value]
 })
+
 // Function to fetch data
 const loadFixPressure = async () => {
 	try {
 		loading.loading()
-		const res = await fetchFixPressureData()
+		const res = await fetchFinancialStakeListApi()
 		loading.clearLoading()
-		// daysList.value = res.data;
-		const temp = res.data
 
-		daysList.value = temp.map((item, index) => ({
-			...item,
-			text: item.days,
-			value: index,
-		}))
+		financialStakeList.value = res.data || {
+			productId: undefined,
+			stakeConfigs: [],
+		}
 	} catch (err) {
 		console.log(err)
 	}
 }
 
 const earnInterestAccountInfo = ref({
-	todayProfit: 0, // 今日收益
-	investAmount: 0, // 订单金额
-	financialCurrency: '', // 币种
+	platformToken: '',
+	stakingAmount: 0, // 质押金额
+	stakingDayIncome: 0, // 今日盈利
+	stakingTotalIncome: 0, // 总盈利
 })
 const getEarnInterestAccountInfo = async (isLoading) => {
 	try {
 		isLoading && loading.loading()
-		const res = await fetchEarnInteresAccountInfoApi()
+		const res = await fetchFinancialStakeIncomeApi()
 		isLoading && loading.clearLoading()
 		earnInterestAccountInfo.value = res.data
 	} catch (err) {

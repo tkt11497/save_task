@@ -18,11 +18,11 @@
 					</div>
 					<div class="item">
 						<span class="label">{{ t('借款期限') }}</span>
-						<span class="value">{{ loanOrder.itemInfo.loanDays }} {{ t('天') }}</span>
+						<span class="value">{{ loanOrder.changeProductInfo.borrowDay }} {{ t('天') }}</span>
 					</div>
 					<div class="item">
 						<span class="label">{{ t('日利率') }}:</span>
-						<span class="value">{{ timesForValueDecimal(loanOrder.itemInfo.loanDayRatio, 100) }}%</span>
+						<span class="value">{{ loanOrder.changeProductInfo.dayRate }}%</span>
 					</div>
 					<div class="item">
 						<span class="label">{{ t('总利息金额') }}:</span>
@@ -45,92 +45,6 @@
 				</div>
 				<div class="block2" ref="agreementRef">
 					<loan-treaty :user-data="userKycRecordData" :loan-data="loanData" />
-					<!--					<p class="b2p1">Loan Agreement (" xxxx ") dated {{ formatDate(new Date()) }} ("Effective Date")-->
-					<!--						entered into by the following parties:</p>-->
-					<!--					<h2>Borrower:</h2>-->
-					<!--					<p class="b2p1">First name: {{ userKycRecordData.firstName }}</p>-->
-					<!--					<p class="b2p1">Last name: {{ userKycRecordData.lastName }}</p>-->
-					<!--					<p class="b2p1">Address: {{ userKycRecordData.detailAddress }}</p>-->
-					<!--					<p class="b2p1">Phone: {{ userKycRecordData.phone }}</p>-->
-					<!--					<h2>Lender:</h2>-->
-					<!--					<p class="b2p1">Name: xxxx</p>-->
-					<!--					<p class="b2p1">Together referred to as the "Parties".</p>-->
-					<!--					<p class="b2p1">Repayment Terms:</p>-->
-					<!--					<p class="b2p1">-->
-					<!--						1. Loan Amount: {{ loanOrder.loanAmount }} <br />-->
-					<!--						2. Borrower agrees to repay ${{ loanOrder.loanAmount }} ("Loan").<br />-->
-					<!--						3. Interest Rate: {{ loanOrder.itemInfo.loanDayRatio / 100 }}%<br />-->
-					<!--						4. The agreed-upon interest rate is {{ loanOrder.itemInfo.loanDayRatio / 100 }}% (calculated on-->
-					<!--						a daily basis). <br />-->
-					<!--						5. Loan Term: {{ loanOrder.itemInfo.loanDays }} <br />-->
-					<!--						6. The term of this loan is {{ loanOrder.itemInfo.loanDays }} days.<br />-->
-					<!--						7. Repayment Method:<br />-->
-					<!--						8. Borrower agrees to repay Lender ${{ loanOrder.loanAmount }} principal and $-->
-					<!--						{{ ((loanOrder.itemInfo.loanDayRatio / 100) * loanOrder.itemInfo.loanDays).toFixed(2) }}-->
-					<!--						interest upon maturity.-->
-					<!--					</p>-->
-					<!--					<p class="b2p1">Repayment Applicability:</p>-->
-					<!--					<p class="b2p1 b2p2">1. Late Payment Fee: 2%</p>-->
-					<!--					<p class="b2p1 b2p2">-->
-					<!--						2. If Borrower fails to repay on time, Borrower shall pay a late fee of 2% (calculated on a-->
-					<!--						daily basis), which shall be considered a-->
-					<!--						penalty rather than a fine.-->
-					<!--					</p>-->
-					<!--					<p class="b2p1 b2p2">3. Early Repayment:</p>-->
-					<!--					<p class="b2p1 b2p2">4. No penalty shall be imposed on Borrower for early repayment.</p>-->
-					<!--					<p class="b2p1 b2p2">5.Default:</p>-->
-					<!--					<p class="b2p1 b2p2">-->
-					<!--						6. If Borrower fails to repay on time, Borrower shall immediately pay all outstanding principal-->
-					<!--						and interest without the need for notice-->
-					<!--						or demand.-->
-					<!--					</p>-->
-					<!--					<p class="b2p1 b2p2">7. Fees:</p>-->
-					<!--					<p class="b2p1 b2p2">-->
-					<!--						8. If Borrower fails to fulfill the repayment obligation on time, Borrower agrees to bear all-->
-					<!--						costs incurred by Lender in the collection-->
-					<!--						process, including but not limited to attorney's fees.-->
-					<!--					</p>-->
-					<!--					<p class="b2p1 b2p2">9. Severability:</p>-->
-					<!--					<p class="b2p1 b2p2">-->
-					<!--						10. If any provision of this Agreement is found to be invalid or unenforceable, such provision-->
-					<!--						shall be voided, but all other provisions-->
-					<!--						shall remain valid and binding.-->
-					<!--					</p>-->
-					<!--					<p class="b2p1 b2p2">11. Legal Effect:</p>-->
-					<!--					<p class="b2p1 b2p2">-->
-					<!--						12. This Agreement is legally binding on both parties and may be signed and executed within the-->
-					<!--						United States and Europe. Both parties-->
-					<!--						declare that they have the authority to sign this Agreement.-->
-					<!--					</p>-->
-					<!--					<p class="b2p1 b2p2">13. Miscellaneous:</p>-->
-					<!--					<p class="b2p1 b2p2">-->
-					<!--						14. According to the terms of this Agreement, the company shall pay in the form of currency in-->
-					<!--						the account balance. Both parties have the-->
-					<!--						right to sign this Agreement. Neither party shall infringe upon the rights of third parties or-->
-					<!--						violate any other agreements between the-->
-					<!--						parties.-->
-					<!--					</p>-->
-					<!--					<p class="b2p1 b2p2">15. Applicable Law:</p>-->
-					<!--					<p class="b2p1 b2p2">-->
-					<!--						16. This Agreement shall be interpreted and enforced in accordance with the laws of the country-->
-					<!--						in which the borrower is located.-->
-					<!--					</p>-->
-					<!--					<p class="b2p1 b2p2">17. Entire Agreement:</p>-->
-					<!--					<p class="b2p1">-->
-					<!--						18. Both parties confirm and agree that this Agreement constitutes the entire agreement between-->
-					<!--						the parties. If either party wishes to-->
-					<!--						change, add, or modify any provision, it must be done in writing and signed by both parties.-->
-					<!--					</p>-->
-					<!--					<p class="b2p1">Both parties agree to the above terms and conditions and sign as follows:</p>-->
-					<!--					<p class="b2p1">Lender:</p>-->
-					<!--					<p class="b2p1">"Borrower"</p>-->
-					<!--					<p class="b2p1">-->
-					<!--						Borrower Signature: <span class="underline"> <img width="40px" height="40px" :src="esignImg"-->
-					<!--								alt="" /> </span>-->
-					<!--					</p>-->
-					<!--					<p class="b2p1">-->
-					<!--						Signature Date: <span class="underline">{{ formatDate(new Date()) }}</span>-->
-					<!--					</p>-->
 				</div>
 			</div>
 			<van-action-bar>
@@ -165,11 +79,11 @@
 					</div>
 					<div class="item">
 						<span class="label">{{ t('借款期限') }}</span>
-						<span class="value">{{ loanOrder.itemInfo.loanDays }} {{ t('天') }}</span>
+						<span class="value">{{ loanOrder.changeProductInfo.borrowDay }} {{ t('天') }}</span>
 					</div>
 					<div class="item">
 						<span class="label">{{ t('日利率') }}:</span>
-						<span class="value">{{ timesForValueDecimal(loanOrder.itemInfo.loanDayRatio, 100) }}%</span>
+						<span class="value">{{ loanOrder.changeProductInfo.dayRate }}%</span>
 					</div>
 					<div class="item">
 						<span class="label">{{ t('总利息金额') }}:</span>
@@ -199,13 +113,15 @@ import { computed, onMounted, ref } from 'vue'
 import { userStore } from '@/store'
 import { storeToRefs } from 'pinia'
 import arrow from '@/assets/images/user/arrow.png'
-import { addLoanOrder, userKycRecordLatestApi } from '@/apiService'
-import { formatDate, timesDecimal, timesForValueDecimal } from '@/utils'
+import { base64ToBlob, dividedForValueDecimal, formatDate, timesDecimal, timesForValueDecimal } from '@/utils'
 import vueEsign from 'vue-esign'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import useLoading from '@/hooks/useLoading.js'
 import LoanTreaty from '@/views/user/loan/loan-treaty.vue'
+import { fetchUserKycApi } from '@/apis/user.js'
+import { createLoanOrderApi } from '@/apis/loan.js'
+import { uploadFileApi } from '@/apis/common.js'
 
 const usersStore = userStore()
 const { loanOrder } = storeToRefs(usersStore)
@@ -213,19 +129,34 @@ const { t } = useI18n()
 const router = useRouter()
 const loading = useLoading()
 
+const signImgUrl = ref('')
+const uploadSignImg = async (base64) => {
+	try {
+		const [imageBlob, imageType] = base64ToBlob(base64)
+		const formData = new FormData()
+		formData.append('file', imageBlob, `${Date.now()}.${imageType}`)
+
+		loading.loading()
+		const res = await uploadFileApi(formData)
+		loading.clearLoading()
+		signImgUrl.value = res.data
+	} catch (err) {
+		console.log(err)
+		throw err
+	}
+}
 const addLoadOrder = async () => {
 	try {
+		!signImgUrl.value && (await uploadSignImg(esignImg.value))
+
 		const { userId, loanProductId, loanAmount, orderCurrency } = loanOrder.value
 		const params = {
-			userId,
-			loanProductId,
-			loanAmount: loanAmount * 1,
-			orderCurrency,
-			// loanProtocol: loanProtocol.value,
-			signName: esignImg.value,
+			borrowAmount: loanAmount * 1,
+			productId: loanProductId,
+			signatureImageUrl: signImgUrl.value,
 		}
 		loading.loading()
-		const res = await addLoanOrder(params)
+		await createLoanOrderApi(params)
 		loading.clearLoading()
 		stepPage.value = 'success'
 	} catch (err) {
@@ -241,7 +172,7 @@ const userKycRecord = async () => {
 			userId: usersStore.userInfo.id,
 		}
 		loading.loading()
-		const res = await userKycRecordLatestApi(params)
+		const res = await fetchUserKycApi(params)
 		loading.clearLoading()
 
 		if (res.data) {
@@ -250,11 +181,8 @@ const userKycRecord = async () => {
 	} catch (error) {
 		console.log(error)
 
-		// if (res.success === false) {
 		history.back()
 		usersStore.SET_PATH_DATA('yes')
-		// return
-		// }
 	}
 }
 
@@ -287,12 +215,12 @@ const loanData = ref({
 	signImg: '', // 签名照片地址
 })
 
-// 总利息 = 本金 * 天 * 日利率
+// 总利息 = 本金 * 天 * 日利率 / 100
 const totalInterest = computed(() => {
 	const loanAmount = loanOrder.value.loanAmount,
-		loanDays = loanOrder.value.itemInfo.loanDays,
-		loanDayRatio = loanOrder.value.itemInfo.loanDayRatio
-	return timesDecimal(timesForValueDecimal(loanAmount || 1, loanDays), loanDayRatio, 2)
+		loanDays = loanOrder.value.changeProductInfo.borrowDay,
+		loanDayRatio = loanOrder.value.changeProductInfo.dayRate
+	return timesDecimal(timesForValueDecimal(loanAmount || 1, loanDays), dividedForValueDecimal(loanDayRatio, 100), 2)
 })
 
 // 操作步骤
@@ -306,11 +234,11 @@ const continueHandle = () => {
 				lenderName: 'XXXX', // 贷方名称
 				loanDate: formatDate(Date.now()), // 贷款日期
 				loanAmount: loanOrder.value.loanAmount, // 贷款金额
-				loanDays: loanOrder.value.itemInfo.loanDays, // 贷款天数
-				loanDayRatio: timesForValueDecimal(loanOrder.value.itemInfo.loanDayRatio, 100), // 贷款天数比率
+				loanDays: loanOrder.value.changeProductInfo.borrowDay, // 贷款天数
+				loanDayRatio: loanOrder.value.changeProductInfo.dayRate, // 贷款天数比率
 				interest: totalInterest.value, // 利息
 				repaymentAmount: loanOrder.value.loanAmount, // 还款金额
-				latePaymentFee: timesForValueDecimal(loanOrder.value.itemInfo.dayViolationRatio, 100), // 滞纳金
+				latePaymentFee: loanOrder.value.changeProductInfo.overdueRate, // 滞纳金
 				signImg: esignImg.value, // 签名照片地址
 			}
 			break

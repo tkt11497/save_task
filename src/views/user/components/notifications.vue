@@ -7,32 +7,50 @@
 				</template>
 			</van-nav-bar>
 		</div>
-		<div v-if="noticeData.length == 0" class="container">
-			<div class="notice">
-				<img src="../../../assets/images/user/notice.png" alt="notice" />
-			</div>
-			<div class="title">{{ t('哎呀！') }}</div>
-			<div class="info">{{ t('您尚无任何新闻。') }}</div>
-			<div class="info">{{ t('列表为空') }}</div>
-		</div>
-		<div v-else class="datahave">
-			<div class="each-block" v-for="(list, ind1) in noticeData" :key="ind1">
-				<div class="each-container">
-					<div class="title1-row">
-						<p class="day-text">{{ list.noticeTitle }}</p>
+		<div class="content">
+			<van-pull-refresh v-model="refreshing" @refresh="onRefresh" :loosing-text="t('释放即可刷新')">
+				<van-list
+					v-model:loading="listLoading"
+					v-model:error="listError"
+					:error-text="t('请求失败，点击重新加载')"
+					:finished="finished"
+					:finished-text="isEmptyList ? '' : t('没有更多了')"
+					@load="onLoad"
+				>
+					<template #loading>
+						<van-loading class="custom-page-loading" type="spinner" />
+					</template>
+
+					<div v-if="!noticeList.length" class="container">
+						<div class="notice">
+							<img src="../../../assets/images/user/notice.png" alt="notice" />
+						</div>
+						<div class="title">{{ t('哎呀！') }}</div>
+						<div class="info">{{ t('您尚无任何新闻。') }}</div>
+						<div class="info">{{ t('列表为空') }}</div>
 					</div>
-					<div class="content-row1">
-						<div class="contentcss" v-html="list.noticeContent"></div>
-					</div>
-					<div class="content-row">
-						<p class="date-left">{{ list.currencyMoney }}</p>
-						<div class="date-right">
-							<p class="circlecss"></p>
-							<span class="time">{{ list.createTime }}</span>
+					<div v-else class="datahave">
+						<!-- todo 内容待完善 -->
+						<div class="each-block" v-for="(list, ind1) in noticeList" :key="ind1">
+							<div class="each-container">
+								<div class="title1-row">
+									<p class="day-text">{{ list.noticeTitle }}</p>
+								</div>
+								<div class="content-row1">
+									<div class="contentcss" v-html="list.content"></div>
+								</div>
+								<div class="content-row">
+									<p class="date-left">{{ list.currencyMoney }}</p>
+									<div class="date-right">
+										<p class="circlecss"></p>
+										<span class="time">{{ list.createTime }}</span>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
-				</div>
-			</div>
+				</van-list>
+			</van-pull-refresh>
 		</div>
 	</div>
 </template>
@@ -42,9 +60,10 @@ import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import arrow from '@/assets/images/user/arrow.png'
 import { userStore } from '@/store'
-import { fetchNoticeList } from '@/apiService'
 import { useI18n } from 'vue-i18n'
 import useLoading from '@/hooks/useLoading.js'
+import { fetchNoticeListApi } from '@/apis/common.js'
+import usePage from '@/hooks/usePage.js'
 
 // 初始化仓库
 const store = userStore()
@@ -55,28 +74,16 @@ const router = useRouter()
 const route = useRoute()
 const loading = useLoading()
 const state = ref('')
-const noticeData = ref([])
 
 // 代码区
 const onClickLeft = () => {
 	history.back()
 	store.SET_PATH_DATA('yes')
 }
-const getNoticeList = async () => {
-	try {
-		loading.loading()
-		const response = await fetchNoticeList()
-		loading.clearLoading()
-		noticeData.value = response.data
-		console.log('Notice List ', inviteCode.value)
-	} catch (err) {
-		console.log(err)
-	}
-}
 
-onMounted(() => {
-	getNoticeList()
-})
+const { onRefresh, onLoad, listLoading, listError, refreshing, finished, isEmptyList, dataList: noticeList } = usePage(fetchNoticeListApi)
+
+onMounted(() => {})
 
 // 将组件中的数据进行暴露出去
 defineExpose({})

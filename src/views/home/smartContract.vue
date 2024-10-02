@@ -33,11 +33,12 @@
 </template>
 <script setup>
 import { onMounted, onUnmounted, ref } from 'vue'
-import { fixactivityClientApplyApi, fixactivityClientGetByIdApi } from '@/apiService'
+import { fixactivityClientApplyApi } from '@/apiService'
 import { showToast } from 'vant'
 import router from '@/router'
 import { useI18n } from 'vue-i18n'
 import useLoading from '@/hooks/useLoading.js'
+import { fetchFixStakeApi } from '@/apis/stake.js'
 
 const { t } = useI18n()
 const loading = useLoading()
@@ -45,7 +46,7 @@ const timer = ref(null)
 
 onMounted(() => {
 	timer.value = setTimeout(() => {
-		fixactivityClientGetById()
+		getFixStake()
 		contractInterval()
 	}, 2000)
 })
@@ -58,14 +59,11 @@ const contractData = ref({
 	days: '0',
 	// orderStatus: '0',
 })
-const fixactivityClientGetById = async () => {
+const getFixStake = async () => {
 	try {
-		// const params = {
-		//     orderStatus:1
-		// }
-		const res = await fixactivityClientGetByIdApi({})
-		if (res.data) {
-			contractData.value = res.data
+		const res = await fetchFixStakeApi()
+		if (res.data && res.data.length) {
+			contractData.value = res.data[0]
 			isShowContract.value = true
 		} else {
 			isShowContract.value = false
@@ -89,7 +87,7 @@ const fixactivityClientApply = async () => {
 			message: t('操作成功'),
 			icon: 'info',
 		})
-		fixactivityClientGetById()
+		getFixStake()
 	} catch (error) {
 		console.log(error)
 	}
@@ -111,7 +109,7 @@ const contractTimer = ref(null)
 const contractInterval = () => {
 	if (contractTimer.value) clearInterval(contractTimer.value)
 	contractTimer.value = setInterval(() => {
-		fixactivityClientGetById()
+		getFixStake()
 	}, 5000)
 }
 
