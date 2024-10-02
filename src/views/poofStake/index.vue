@@ -157,10 +157,10 @@
 </template>
 
 <script setup name="PoofStake">
-import { ref, computed, onMounted, watch, onUnmounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { userStore } from '@/store'
-import { fetchMassClientList, addPledgeOrderData, fetchPoofStakeAccountInfoApi } from '@/apiService'
+import { addPledgeOrderData, fetchMassClientList, fetchPoofStakeAccountInfoApi } from '@/apiService'
 import { showToast } from 'vant'
 import { useI18n } from 'vue-i18n'
 import useLoading from '@/hooks/useLoading.js'
@@ -553,7 +553,6 @@ defineExpose({})
 		border-radius: 32px;
 		background: #fff;
 		padding: 44px;
-
 
 		.buttons {
 			.btn {

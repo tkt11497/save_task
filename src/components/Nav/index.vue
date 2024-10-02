@@ -11,8 +11,8 @@
 </template>
 
 <script setup name="Nav">
-import {ref, onMounted, watch} from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { onMounted, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { navStore, userStore, useWeb3Store } from '@/store'
 import { storeToRefs } from 'pinia'
 import { showToast } from 'vant'
@@ -96,40 +96,39 @@ const toastTimer = ref(null)
 watch(
 	() => route.name,
 	(val) => {
-    routerChange()
+		routerChange()
 	}
 )
 
 const routerChange = () => {
-  const val = route.name
-  console.info('tabbar---', val)
-  console.log('address', address.value)
+	const val = route.name
+	console.info('tabbar---', val)
+	console.log('address', address.value)
 
-  if (!address.value && val !== 'noWallet') {
-    clearTimeout(toastTimer.value)
-    toastTimer.value = setTimeout(() => {
-      showToast({ message: t('请正确连接你的钱包'), icon: 'info' })
-    }, 1000)
-  }
+	if (!address.value && val !== 'noWallet') {
+		clearTimeout(toastTimer.value)
+		toastTimer.value = setTimeout(() => {
+			showToast({ message: t('请正确连接你的钱包'), icon: 'info' })
+		}, 1000)
+	}
 
-  if (['home', 'homeIndex', 'Market', 'EarnInterest', 'PoofStake', 'User'].includes(val)) {
-    uStore.SET_PATH_DATA('yes')
-  }
-  if (val === 'home' || val === 'homeIndex') {
-    active.value = 0
-  }
+	if (['home', 'homeIndex', 'Market', 'EarnInterest', 'PoofStake', 'User'].includes(val)) {
+		uStore.SET_PATH_DATA('yes')
+	}
+	if (val === 'home' || val === 'homeIndex') {
+		active.value = 0
+	}
 }
 
 onMounted(async () => {
 	// active.value = store.nav
 
-  // todo 首次进入，route.name不准确
-  // routerChange()
+	// todo 首次进入，route.name不准确
+	// routerChange()
 
-  if (flag.value === 'yes') {
-    await web3Store.initUserAccountAndWallet()
-  }
-
+	if (flag.value === 'yes') {
+		await web3Store.initUserAccountAndWallet()
+	}
 })
 
 // 将组件中的数据进行暴露出去

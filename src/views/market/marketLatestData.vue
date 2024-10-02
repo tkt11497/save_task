@@ -7,7 +7,7 @@
 	</div>
 </template>
 <script setup>
-import { ref, onMounted, toRefs, onUnmounted } from 'vue'
+import { onMounted, onUnmounted, ref, toRefs } from 'vue'
 import Socket from '@/utils/socket.js'
 
 const props = defineProps({

@@ -76,8 +76,8 @@
 </template>
 
 <script setup name="Policy">
-import { reactive, ref, onMounted, defineEmits, defineProps, defineExpose } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { defineExpose, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { userStore } from '@/store'
 import arrow from '@/assets/images/user/arrow.png'
 import { useI18n } from 'vue-i18n'

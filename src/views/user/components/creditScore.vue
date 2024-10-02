@@ -23,14 +23,13 @@
 	</div>
 </template>
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { userStore } from '@/store'
 import arrow from '@/assets/images/user/arrow.png'
 import { useI18n } from 'vue-i18n'
 import LoanTreaty from '@/views/user/loan/loan-treaty.vue'
 import { fetchUserInfo } from '@/apiService.js'
 import useLoading from '@/hooks/useLoading.js'
-import { showToast } from 'vant'
 import { formatDate } from '@/utils/index.js'
 
 const usersStore = userStore()

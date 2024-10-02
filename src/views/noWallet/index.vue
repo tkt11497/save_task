@@ -31,7 +31,7 @@ const { t } = useI18n()
 onMounted(() => {
 	usersStore.SET_PATH_DATA('no')
 
-  web3Store.initUserAccountAndWallet()
+	web3Store.initUserAccountAndWallet()
 })
 
 defineOptions({ name: 'noWallet' })

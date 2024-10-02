@@ -82,13 +82,12 @@
 	</div>
 </template>
 <script setup>
-import { ref, onMounted, computed, onUnmounted } from 'vue'
-import { userStore } from '@/store'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { userStore, useWeb3Store } from '@/store'
 import { getImageUrl, timesForValueDecimal } from '@/utils/index.js'
 import { showToast } from 'vant'
-import { useWeb3Store } from '@/store'
 import { storeToRefs } from 'pinia'
-import { fixactivityClientGetByIdApi, fixactivityClaimRewardApi, fixactivityClientAddApi } from '@/apiService'
+import { fixactivityClaimRewardApi, fixactivityClientAddApi, fixactivityClientGetByIdApi } from '@/apiService'
 import { useI18n } from 'vue-i18n'
 import { useToken } from '@/hooks/useToken'
 import useLoading from '@/hooks/useLoading.js'

@@ -384,28 +384,24 @@
 </template>
 
 <script setup name="Records">
-import { reactive, ref, onMounted, onUnmounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { onMounted, onUnmounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import arrow from '@/assets/images/user/arrow.png'
-import BTC from '@/assets/images/home/BTC.png'
 import { userStore } from '@/store'
 import {
-	fetchInterestDataList,
-	fetchPosStakingDataList,
-	updatePosStaingData,
-	updateInterestData,
-	fetchContractOrderList,
-	fetchIncomeRecordList,
-	optionOrderClientList,
-	getTuserList,
-	manualClosePositionApi,
 	fetchAccountPageList,
+	fetchContractOrderList,
+	fetchInterestDataList,
 	fetchInterestEmissionRateApi,
 	fetchPledgeEmissionRateApi,
+	fetchPosStakingDataList,
+	manualClosePositionApi,
+	optionOrderClientList,
+	updateInterestData,
+	updatePosStaingData,
 } from '@/apiService'
 import { useI18n } from 'vue-i18n'
 import useLoading from '@/hooks/useLoading.js'
-import { showToast } from 'vant'
 import { timesDecimal, timesForValueDecimal, toFixedDecimal } from '../../../utils/index.js'
 import { dayjs } from 'element-plus'
 // 初始化仓库

@@ -4,10 +4,10 @@
 	</div>
 </template>
 <script setup>
-import { ref, onMounted, toRefs, watch, shallowRef } from 'vue'
+import { onMounted, ref, shallowRef, toRefs, watch } from 'vue'
 import * as echarts from 'echarts/core'
 import { LineChart } from 'echarts/charts'
-import { GridComponent, DatasetComponent } from 'echarts/components'
+import { DatasetComponent, GridComponent } from 'echarts/components'
 import { CanvasRenderer } from 'echarts/renderers'
 import { klieListApi } from '@/apiService'
 import { formatDate } from '@/utils'

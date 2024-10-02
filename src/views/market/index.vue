@@ -317,18 +317,18 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, nextTick, onUnmounted, computed } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import BTC from '@/assets/images/home/BTC.png'
 import {
-	getCoinList,
-	getSymbolInfo,
-	fetchProdFinalClientList,
-	optionClientAdd,
-	clientgetPlatformClient,
 	addContractOrder,
-	klieListApi,
+	clientgetPlatformClient,
+	fetchProdFinalClientList,
+	getCoinList,
 	getOptionOrderDetailApi,
+	getSymbolInfo,
+	klieListApi,
+	optionClientAdd,
 } from '@/apiService'
 import { userStore } from '@/store'
 import Socket from '@/utils/socket.js'
@@ -339,7 +339,7 @@ import { showToast } from 'vant'
 import { useI18n } from 'vue-i18n'
 import useLoading from '@/hooks/useLoading.js'
 import { onClickOutside } from '@vueuse/core'
-import { plusDecimal, timesForValueDecimal, dividedForValueDecimal, getImageUrl } from '@/utils'
+import { dividedForValueDecimal, getImageUrl, plusDecimal, timesForValueDecimal } from '@/utils'
 
 // 初始化仓库
 const uStore = userStore()

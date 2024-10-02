@@ -139,14 +139,10 @@
 </template>
 
 <script setup name="Home">
-import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import {
-  accountFundTransactionRecordApi,
-  getCoinListApi,
-  getIncomeConfigClientList
-} from '@/apiService' // Import your API service
-import { userStore, navStore, useWeb3Store } from '@/store'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { getCoinListApi, getIncomeConfigClientList } from '@/apiService' // Import your API service
+import { navStore, userStore, useWeb3Store } from '@/store'
 import { storeToRefs } from 'pinia'
 import SmartContract from './smartContract.vue'
 import AnnouncementPop from './announcementPop.vue'
@@ -157,6 +153,10 @@ import { useI18n } from 'vue-i18n'
 import { getImageUrl, plusDecimal, timesForValueDecimal } from '@/utils'
 import useLoading from '@/hooks/useLoading.js'
 import { useToken } from '@/hooks/useToken'
+// 引入静态资源
+import info1 from '@/assets/images/home/info1.png'
+import info2 from '@/assets/images/home/info2.png'
+import info3 from '@/assets/images/home/info3.png'
 
 const web3Store = useWeb3Store()
 const { currentCurrency, address } = storeToRefs(web3Store)
@@ -170,29 +170,24 @@ const usersStore = userStore()
 const navStore2 = navStore()
 const loading = useLoading()
 
-// 引入静态资源
-import info1 from '@/assets/images/home/info1.png'
-import info2 from '@/assets/images/home/info2.png'
-import info3 from '@/assets/images/home/info3.png'
-
 // 变量区
 const router = useRouter()
 const route = useRoute()
 
 const clientList = ref([])
 const getIncomeConfigList = async () => {
-  try {
-    loading.loading()
-    const response = await getIncomeConfigClientList()
-    loading.clearLoading()
-    clientList.value = response.data || []
-  } catch (e) {
-    console.log(e)
-  }
+	try {
+		loading.loading()
+		const response = await getIncomeConfigClientList()
+		loading.clearLoading()
+		clientList.value = response.data || []
+	} catch (e) {
+		console.log(e)
+	}
 }
 
 const backgroundImage = computed(() => {
-  if (!currentCurrency.value.tokenName) return
+	if (!currentCurrency.value.tokenName) return
 	let currency = currentCurrency.value.tokenName.toLowerCase()
 	currency = ['aave', 'bnb', 'dai', 'renbtc', 'steth', 'stkaave', 'uni', 'usdc', 'usdt', 'xaut'].includes(currency) ? currency : 'usdc'
 	// console.log('ddd', currency)
@@ -207,14 +202,14 @@ const backgroundImage = computed(() => {
 // 投资组合
 const coinList = ref([])
 const getCoinList = async () => {
-  try {
-    // loading.loading()
-    const response = await getCoinListApi()
-    // loading.clearLoading()
-    coinList.value = response.data || []
-  } catch (e) {
-    console.log(e)
-  }
+	try {
+		// loading.loading()
+		const response = await getCoinListApi()
+		// loading.clearLoading()
+		coinList.value = response.data || []
+	} catch (e) {
+		console.log(e)
+	}
 }
 const listComputed = computed(() => {
 	return coinList.value.filter((item) => item.isfrontPage === 1)
@@ -244,14 +239,12 @@ const infoList = ref([
 	},
 ])
 
-
 // todo 待接入
 const accountFundTransaction = ref({
 	changeAmount: '',
 	baseSymbol: '',
 	totalRevenue: '',
 })
-
 
 const goMarket = () => {
 	router.replace('/market')
@@ -262,22 +255,21 @@ const announcementPopRef = ref(null)
 
 const balanceTimer = ref(null)
 const balanceInterval = () => {
-  console.log('=========getBalance 定时器=========')
+	console.log('=========getBalance 定时器=========')
 	balanceTimer.value = setTimeout(() => {
 		getBalance(currentCurrency.value.tokenName, (bal) => {
 			console.log('balanceInterval定时器获取余额', currentCurrency.value.tokenName, bal, balance.value)
 			tokenBalance.value = bal
 
-      clearTimeout(balanceTimer.value)
-      balanceInterval()
+			clearTimeout(balanceTimer.value)
+			balanceInterval()
 		})
 	}, 5000)
 }
 
-
 onMounted(() => {
-  getIncomeConfigList()
-  getCoinList()
+	getIncomeConfigList()
+	getCoinList()
 	getBalance(currentCurrency.value.tokenName, (bal) => {
 		console.log('onMounted', currentCurrency.value.tokenName, bal)
 		tokenBalance.value = bal

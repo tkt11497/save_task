@@ -1,9 +1,7 @@
-import {defineStore, storeToRefs} from 'pinia'
-import { fetchUserInfo } from '@/apiService'
+import { defineStore, storeToRefs } from 'pinia'
 import { getDefaultLanguage } from '@/i18n/index.js'
-import {useWeb3Store} from "@/store/index.js";
-import {userLoginApi} from "@/apis/user.js";
-
+import { useWeb3Store } from '@/store/index.js'
+import { userLoginApi } from '@/apis/user.js'
 
 export default defineStore('user', {
 	state: () => ({
@@ -48,12 +46,12 @@ export default defineStore('user', {
 			try {
 				console.log('loginAction')
 				const web3Store = useWeb3Store()
-				const {address,currentCurrency}=  storeToRefs(web3Store)
+				const { address, currentCurrency } = storeToRefs(web3Store)
 
 				const response = await userLoginApi({
 					walletAddress: address.value,
 					defaultToken: currentCurrency.value.tokenName,
-					inviteCode: ''
+					inviteCode: '',
 				})
 
 				this.userInfo = response.data
@@ -63,7 +61,7 @@ export default defineStore('user', {
 				console.log('用户登录错误', e)
 				throw e
 			}
-		}
+		},
 	},
 	// 持久化存储
 	persist: {

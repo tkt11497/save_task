@@ -131,7 +131,7 @@
 </template>
 
 <script setup>
-import { computed, ref, toRefs } from 'vue'
+import { ref, toRefs } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const { t, tm, rt } = useI18n()

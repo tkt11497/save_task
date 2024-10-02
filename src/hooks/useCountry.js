@@ -1,6 +1,5 @@
 import { ref } from 'vue'
 import { countryAllApi } from '@/apiService'
-import { showToast } from 'vant'
 
 export function useCountry() {
 	const countryList = ref([

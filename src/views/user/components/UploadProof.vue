@@ -44,12 +44,12 @@
 </template>
 
 <script setup name="Faq">
-import { reactive, ref, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { onMounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { userStore } from '@/store'
 import arrow from '@/assets/images/user/arrow.png'
 import { addRechangeOrder, uploadImg } from '@/apiService'
-import { showLoadingToast, closeToast, showToast } from 'vant'
+import { showToast } from 'vant'
 import { useI18n } from 'vue-i18n'
 import useLoading from '@/hooks/useLoading.js'
 // 初始化仓库

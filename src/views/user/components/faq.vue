@@ -53,9 +53,9 @@
 </template>
 
 <script setup name="Faq">
-import { reactive, ref, onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { fetchFAQdetail } from '@/apiService'
-import { useRouter, useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { userStore } from '@/store'
 import { useI18n } from 'vue-i18n'
 import arrow from '@/assets/images/user/arrow.png'
@@ -63,7 +63,6 @@ import info1 from '@/assets/images/home/info1.png'
 import info2 from '@/assets/images/home/info2.png'
 import info3 from '@/assets/images/home/info3.png'
 import useLoading from '@/hooks/useLoading.js'
-import { showToast } from 'vant'
 // 初始化仓库
 const store = userStore()
 const { t } = useI18n()

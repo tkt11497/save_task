@@ -4,9 +4,9 @@
 	</div>
 </template>
 <script setup>
-import { ref, onMounted, toRefs, nextTick, shallowRef, onUnmounted } from 'vue'
+import { onMounted, onUnmounted, ref, shallowRef, toRefs } from 'vue'
 import * as echarts from 'echarts/core'
-import { TooltipComponent, GridComponent, MarkLineComponent, DataZoomComponent } from 'echarts/components'
+import { DataZoomComponent, GridComponent, MarkLineComponent, TooltipComponent } from 'echarts/components'
 import { BarChart, CandlestickChart } from 'echarts/charts'
 import { CanvasRenderer } from 'echarts/renderers'
 import { formatDate } from '@/utils'

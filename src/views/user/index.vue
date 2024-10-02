@@ -90,10 +90,10 @@
 </template>
 
 <script setup name="Home">
-import { reactive, ref, onMounted, onUnmounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { onMounted, onUnmounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { userStore, useWeb3Store } from '@/store'
-import { fetchUserInfo, fetchArticleDetail, fetchInvitationCode, fetchCountryAll, addInvitesetData, fetchUserTotalBalanceApi } from '@/apiService'
+import { addInvitesetData, fetchArticleDetail, fetchCountryAll, fetchInvitationCode, fetchUserInfo, fetchUserTotalBalanceApi } from '@/apiService'
 import { useI18n } from 'vue-i18n'
 import Web3 from 'web3'
 import { showToast } from 'vant'
@@ -101,9 +101,6 @@ import { storeToRefs } from 'pinia'
 import { plusDecimal } from '@/utils'
 // 引入静态资源
 import BTC from '@/assets/images/home/BTC.png'
-import ETH from '@/assets/images/home/ETH.png'
-import LTC from '@/assets/images/home/LTC.png'
-import ATOM from '@/assets/images/home/ATOM.png'
 import info1 from '@/assets/images/home/info1.png'
 import info2 from '@/assets/images/home/info2.png'
 import info3 from '@/assets/images/home/info3.png'

@@ -187,24 +187,24 @@
 </template>
 
 <script setup name="EarnInterest">
-import { ref, onMounted, computed, onUnmounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { userStore } from '@/store'
-import { fetchFixPressureData, addFinancialManageData, fetchEarnInteresAccountInfoApi } from '@/apiService'
+import { addFinancialManageData, fetchEarnInteresAccountInfoApi, fetchFixPressureData } from '@/apiService'
 import { showToast } from 'vant'
 import { useI18n } from 'vue-i18n'
 import { plusDecimal, timesDecimal } from '@/utils'
 import useLoading from '@/hooks/useLoading.js'
+// 引入静态资源
+import info1 from '@/assets/images/home/info1.png'
+import info2 from '@/assets/images/home/info2.png'
+import info3 from '@/assets/images/home/info3.png'
+
 const loading = useLoading()
 
 // 初始化仓库
 const usersStore = userStore()
 const { t } = useI18n()
-
-// 引入静态资源
-import info1 from '@/assets/images/home/info1.png'
-import info2 from '@/assets/images/home/info2.png'
-import info3 from '@/assets/images/home/info3.png'
 
 // 变量区
 const router = useRouter()

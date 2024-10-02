@@ -9,7 +9,7 @@
 </template>
 
 <script setup name="App">
-import { watch, ref, onMounted } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { userStore } from '@/store/index.js'
 import VConsole from 'vconsole'

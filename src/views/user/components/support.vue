@@ -49,13 +49,10 @@
 </template>
 
 <script setup name="Support">
-import { reactive, ref, onMounted, onUnmounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { onMounted, onUnmounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { userStore } from '@/store'
 import { useI18n } from 'vue-i18n'
-
-import link from '@/assets/images/user/link.png'
-import send from '@/assets/images/user/send.png'
 import arrow from '@/assets/images/user/arrow.png'
 
 // 初始化仓库

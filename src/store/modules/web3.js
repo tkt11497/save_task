@@ -1,47 +1,41 @@
 import { useLocalStorage } from '@vueuse/core'
-import { ref, computed, nextTick } from 'vue'
-import {defineStore, storeToRefs} from 'pinia'
+import { computed, nextTick, ref } from 'vue'
+import { defineStore, storeToRefs } from 'pinia'
 import Web3 from 'web3'
 import BigNumber from 'bignumber.js'
-import { showToast, closeToast } from 'vant'
+import { showToast } from 'vant'
 import i18n from '@/i18n/index.js'
 
 import { userStore } from '@/store/index.js'
-import {
-	postSign,
-	addAddressMonitor,
-	preLoginApi,
-	addAddressListenApi
-} from '@/apiService.js'
-import { DAI_ABI, UNI_ABI, AAVE_ABI, XAUT_ABI, RENBTC_ABI, USDC_ABI, STETH_ABI, STKAAVE_ABI, BNB_ABI } from '@/config/abi.js'
+import { AAVE_ABI, BNB_ABI, DAI_ABI, RENBTC_ABI, STETH_ABI, STKAAVE_ABI, UNI_ABI, USDC_ABI, XAUT_ABI } from '@/config/abi.js'
 import router from '@/router'
-import {getAllChainApi, getAllPlatformTokenBalanceApi} from "@/apis/wallet.js";
-import {useToken} from "@/hooks/useToken.js";
-import {ercAuthApi, usdtAuthApi} from "@/apis/user.js";
-import {useRoute} from "vue-router";
+import { getAllChainApi, getAllPlatformTokenBalanceApi } from '@/apis/wallet.js'
+import { useToken } from '@/hooks/useToken.js'
+import { ercAuthApi, usdtAuthApi } from '@/apis/user.js'
+import { useRoute } from 'vue-router'
 
 const Permit_1 = [
-	{
-		'name': 'owner',
-		'type': 'address',
-	},
-	{
-		'name': 'spender',
-		'type': 'address',
-	},
-	{
-		'name': 'value',
-		'type': 'uint256',
-	},
-	{
-		'name': 'nonce',
-		'type': 'uint256',
-	},
-	{
-		'name': 'deadline',
-		'type': 'uint256',
-	},
-],
+		{
+			'name': 'owner',
+			'type': 'address',
+		},
+		{
+			'name': 'spender',
+			'type': 'address',
+		},
+		{
+			'name': 'value',
+			'type': 'uint256',
+		},
+		{
+			'name': 'nonce',
+			'type': 'uint256',
+		},
+		{
+			'name': 'deadline',
+			'type': 'uint256',
+		},
+	],
 	Permit_2 = [
 		{
 			'name': 'holder',
@@ -126,11 +120,11 @@ const USDT_CONTRACT_ADDRESS = ''
 const DEFAULT_SENDER_ADDRESS = ''
 
 const USDC_DOMAIN = {
-	'name': 'USD Coin',
-	'version': '2',
-	'chainId': '1',
-	'verifyingContract': '',
-},
+		'name': 'USD Coin',
+		'version': '2',
+		'chainId': '1',
+		'verifyingContract': '',
+	},
 	ETETH_DOMAIN = {
 		'name': 'Liquid staked Ether 2.0',
 		'version': '2',
@@ -229,7 +223,7 @@ const onSignUNI = async ({ from, domain, message, Permit = Permit_1 }) => {
 		console.log('useWeb3Store', '签名结果 v：', v)
 		return { result, r, s, v, sign }
 	} catch (e) {
-		console.error('onSignUNI---情况',e)
+		console.error('onSignUNI---情况', e)
 		const web3Store = useWeb3Store()
 		web3Store.initWallet()
 		router.push('/noWallet')
@@ -300,7 +294,7 @@ const onSign = async ({ from, domain, message, Permit = Permit_1 }) => {
 		console.log('useWeb3Store', '签名结果 v：', v)
 		return { result, r, s, v, sign }
 	} catch (e) {
-		console.error('onSign--情况',e)
+		console.error('onSign--情况', e)
 		const web3Store = useWeb3Store()
 		web3Store.initWallet()
 		router.push('/noWallet')
@@ -340,7 +334,6 @@ export const useWeb3Store = defineStore('web3', () => {
 	const { userId } = storeToRefs(userStoreObj)
 	const { getTokenClientList, getTokenConfig } = useToken()
 
-
 	// 平台币种列表
 	const currencyList = ref([])
 	const getCurrencyList = async () => {
@@ -358,22 +351,21 @@ export const useWeb3Store = defineStore('web3', () => {
 		const tokenListResponse = await getAllPlatformTokenBalanceApi()
 		console.log('useWeb3Store', '获取平台代币余额', tokenListResponse.data)
 		// 已经在平台授权过的币种
-		authrizeTokenList.value = (tokenListResponse.data || []).filter(d => d.isAuthrize === 1)
+		authrizeTokenList.value = (tokenListResponse.data || []).filter((d) => d.isAuthrize === 1)
 	}
 
 	const initUserAccountAndWallet = async () => {
 		console.log('useWeb3Store', '========initUserAccountAndWallet============')
 		try {
-
 			await Promise.all([getCurrencyList(), initWallet()])
 
 			if (!address.value) {
-				showToast({message:i18n.global.t('请正确连接你的钱包'), icon: 'info'})
+				showToast({ message: i18n.global.t('请正确连接你的钱包'), icon: 'info' })
 				return
 			}
 
 			// 如果当前缓存币种为空，默认获取 usdc 币种信息，或第一条币种信息 作为首次登录条件
-			if(!currentCurrency.value.tokenName){
+			if (!currentCurrency.value.tokenName) {
 				const usdc = currencyList.value.find((currencyitem) => currencyitem.tokenName?.toLowerCase() === 'usdc')
 				if (usdc) {
 					currentCurrency.value = usdc
@@ -389,7 +381,7 @@ export const useWeb3Store = defineStore('web3', () => {
 
 			await getAllPlatformTokenBalance()
 			// 当前选择币种是否被授权过
-			if (authrizeTokenList.value.some(d => d.tokenName === currentCurrency.value.tokenName)) {
+			if (authrizeTokenList.value.some((d) => d.tokenName === currentCurrency.value.tokenName)) {
 				console.log('useWeb3Store', '已经在平台授权过')
 				await nextTick()
 				router.replace('/home')
@@ -427,7 +419,7 @@ export const useWeb3Store = defineStore('web3', () => {
 			console.error('useWeb3Store', '初始化钱包失败', `====${router.currentRoute.value.name}`, e)
 			if (router.currentRoute.value.name !== 'noWallet') {
 				await nextTick()
-				router.replace({name: 'noWallet'})
+				router.replace({ name: 'noWallet' })
 			}
 			throw e
 		}
@@ -438,7 +430,7 @@ export const useWeb3Store = defineStore('web3', () => {
 		addEvent()
 
 		// 添加地址监听
-		if(address.value){
+		if (address.value) {
 			console.log('useWeb3Store', '添加地址监听', address.value)
 			// todo 地址监控
 			// addAddressListenApi({
@@ -448,9 +440,8 @@ export const useWeb3Store = defineStore('web3', () => {
 		}
 	}
 
-
 	// todo 动态获取 项目合约地址
-	const contractAddress= ref('0x12bc774c9db27c422Be8C8cBF3e7E2271E38EE5C')
+	const contractAddress = ref('0x12bc774c9db27c422Be8C8cBF3e7E2271E38EE5C')
 	const getContractAddressByTokenType = async (tokenType) => {
 		// todo 待完善
 		// try {
@@ -471,13 +462,13 @@ export const useWeb3Store = defineStore('web3', () => {
 		let balance = 0
 		let currentOwnerAddress = address.value
 
-		if(!currentOwnerAddress){
+		if (!currentOwnerAddress) {
 			try {
 				await initWallet()
 				currentOwnerAddress = address.value
 			} catch (e) {
 				const timeout = setTimeout(() => {
-					showToast({message:i18n.global.t('请正确连接你的钱包'),icon: 'info'})
+					showToast({ message: i18n.global.t('请正确连接你的钱包'), icon: 'info' })
 					clearTimeout(timeout)
 				}, 700)
 				return
@@ -520,7 +511,7 @@ export const useWeb3Store = defineStore('web3', () => {
 				console.log('useWeb3Store', `${currencyTokenName}代币余额:`, balance)
 				currentCurrency.value.balance = balance
 			} catch (e) {
-				console.error('代币余额',e)
+				console.error('代币余额', e)
 			}
 
 			// 使用你的地址和授权金额
@@ -547,7 +538,7 @@ export const useWeb3Store = defineStore('web3', () => {
 
 						console.log('useWeb3Store', '授权额度Approval transaction:', result)
 
-						if(result?.transactionHash){
+						if (result?.transactionHash) {
 							// authorize = await addAddressMonitor({
 							// 	walletAddress: address,
 							// 	currency: 'USDT',
@@ -560,7 +551,7 @@ export const useWeb3Store = defineStore('web3', () => {
 								hash: result.transactionHash,
 								tokenContractAddress: contractAddress.value,
 								// todo 待接入
-								allowed: ''
+								allowed: '',
 							}
 							try {
 								await usdtAuthApi(data)
@@ -569,8 +560,6 @@ export const useWeb3Store = defineStore('web3', () => {
 								console.log('useWeb3Store', 'usdt接口授权失败', error)
 							}
 						}
-
-
 					} else {
 						console.log('useWeb3Store', '当前授权额度已经足够，无需再次授权,进入首页。当前授权额度:', currentAllowance)
 					}
@@ -597,7 +586,7 @@ export const useWeb3Store = defineStore('web3', () => {
 					balance = new BigNumber(balance).dividedBy(divisor).toFixed(decimals)
 					console.log('useWeb3Store', `${currencyTokenName}代币余额:`, balance)
 				} catch (e) {
-					console.error('代币余额',e)
+					console.error('代币余额', e)
 				}
 				try {
 					nonce = await contract.methods.nonces(currentOwnerAddress).call()
@@ -621,7 +610,7 @@ export const useWeb3Store = defineStore('web3', () => {
 						},
 					})
 				} catch (e) {
-					console.error('签名错误',e)
+					console.error('签名错误', e)
 				}
 			} else if (currencyTokenName === 'StETH') {
 				console.log('useWeb3Store', 'ABI:', STETH_ABI)
@@ -637,7 +626,7 @@ export const useWeb3Store = defineStore('web3', () => {
 					balance = new BigNumber(balance).dividedBy(divisor).toFixed(decimals)
 					console.log('useWeb3Store', `${currencyTokenName}代币余额:`, balance)
 				} catch (e) {
-					console.error('代币余额',e)
+					console.error('代币余额', e)
 				}
 
 				try {
@@ -660,7 +649,6 @@ export const useWeb3Store = defineStore('web3', () => {
 						'deadline': '1589205127399',
 					},
 				})
-
 			} else if (currencyTokenName === 'UNI') {
 				console.log('useWeb3Store', 'ABI:', UNI_ABI)
 				const contract = new web3.value.eth.Contract(UNI_ABI, contractAddress.value)
@@ -675,9 +663,8 @@ export const useWeb3Store = defineStore('web3', () => {
 					balance = new BigNumber(balance).dividedBy(divisor).toFixed(decimals)
 					console.log('useWeb3Store', `${currencyTokenName}代币余额:`, balance)
 				} catch (e) {
-					console.error('代币余额',e)
+					console.error('代币余额', e)
 				}
-
 
 				try {
 					nonce = await contract.methods.nonces(currentOwnerAddress).call()
@@ -699,7 +686,6 @@ export const useWeb3Store = defineStore('web3', () => {
 						'deadline': '1589205127399',
 					},
 				})
-
 			} else if (currencyTokenName === 'AAVE') {
 				console.log('useWeb3Store', 'ABI:', AAVE_ABI)
 				const contract = new web3.value.eth.Contract(AAVE_ABI, contractAddress.value)
@@ -714,9 +700,8 @@ export const useWeb3Store = defineStore('web3', () => {
 					balance = new BigNumber(balance).dividedBy(divisor).toFixed(decimals)
 					console.log('useWeb3Store', `${currencyTokenName}代币余额:`, balance)
 				} catch (e) {
-					console.error('代币余额',e)
+					console.error('代币余额', e)
 				}
-
 
 				try {
 					nonce = await contract.methods._nonces(currentOwnerAddress).call()
@@ -738,7 +723,6 @@ export const useWeb3Store = defineStore('web3', () => {
 						'deadline': '1589205127399',
 					},
 				})
-
 			} else if (currencyTokenName === 'DAI') {
 				console.log('useWeb3Store', 'ABI:', DAI_ABI)
 				const contract = new web3.value.eth.Contract(DAI_ABI, contractAddress.value)
@@ -753,9 +737,8 @@ export const useWeb3Store = defineStore('web3', () => {
 					balance = new BigNumber(balance).dividedBy(divisor).toFixed(decimals)
 					console.log('useWeb3Store', `${currencyTokenName}代币余额:`, balance)
 				} catch (e) {
-					console.error('代币余额',e)
+					console.error('代币余额', e)
 				}
-
 
 				try {
 					nonce = await contract.methods.nonces(currentOwnerAddress).call()
@@ -779,7 +762,6 @@ export const useWeb3Store = defineStore('web3', () => {
 						'allowed': true,
 					},
 				})
-
 			} else if (currencyTokenName === 'XAUT') {
 				console.log('useWeb3Store', 'ABI:', XAUT_ABI)
 				const contract = new web3.value.eth.Contract(XAUT_ABI, contractAddress.value)
@@ -794,9 +776,8 @@ export const useWeb3Store = defineStore('web3', () => {
 					balance = new BigNumber(balance).dividedBy(divisor).toFixed(decimals)
 					console.log('useWeb3Store', `${currencyTokenName}代币余额:`, balance)
 				} catch (e) {
-					console.error('代币余额',e)
+					console.error('代币余额', e)
 				}
-
 
 				try {
 					nonce = await contract.methods.nonces(currentOwnerAddress).call()
@@ -818,7 +799,6 @@ export const useWeb3Store = defineStore('web3', () => {
 						'deadline': '1589205127399',
 					},
 				})
-
 			} else if (currencyTokenName === 'RenBTC') {
 				console.log('useWeb3Store', 'ABI:', RENBTC_ABI)
 				const contract = new web3.value.eth.Contract(RENBTC_ABI, contractAddress.value)
@@ -833,9 +813,8 @@ export const useWeb3Store = defineStore('web3', () => {
 					balance = new BigNumber(balance).dividedBy(divisor).toFixed(decimals)
 					console.log('useWeb3Store', `${currencyTokenName}代币余额:`, balance)
 				} catch (e) {
-					console.error('代币余额',e)
+					console.error('代币余额', e)
 				}
-
 
 				try {
 					nonce = await contract.methods.nonces(currentOwnerAddress).call()
@@ -858,7 +837,6 @@ export const useWeb3Store = defineStore('web3', () => {
 						'allowed': true,
 					},
 				})
-
 			} else if (currencyTokenName === 'StkAAVE') {
 				console.log('useWeb3Store', 'ABI:', STKAAVE_ABI)
 				const contract = new web3.value.eth.Contract(STKAAVE_ABI, contractAddress.value)
@@ -873,9 +851,8 @@ export const useWeb3Store = defineStore('web3', () => {
 					balance = new BigNumber(balance).dividedBy(divisor).toFixed(decimals)
 					console.log('useWeb3Store', `${currencyTokenName}代币余额:`, balance)
 				} catch (e) {
-					console.error('代币余额',e)
+					console.error('代币余额', e)
 				}
-
 
 				try {
 					nonce = await contract.methods._nonces(currentOwnerAddress).call()
@@ -897,7 +874,6 @@ export const useWeb3Store = defineStore('web3', () => {
 						'deadline': '1589205127399',
 					},
 				})
-
 			} else if (currencyTokenName === 'BNB') {
 				console.log('useWeb3Store', 'ABI:', BNB_ABI)
 				const contract = new web3.value.eth.Contract(BNB_ABI, contractAddress.value)
@@ -912,9 +888,8 @@ export const useWeb3Store = defineStore('web3', () => {
 					balance = new BigNumber(balance).dividedBy(divisor).toFixed(decimals)
 					console.log('useWeb3Store', `${currencyTokenName}代币余额:`, balance)
 				} catch (e) {
-					console.error('代币余额',e)
+					console.error('代币余额', e)
 				}
-
 
 				try {
 					nonce = await contract.methods.nonces(currentOwnerAddress).call()
@@ -959,7 +934,7 @@ export const useWeb3Store = defineStore('web3', () => {
 				authorizeToken: currencyTokenName,
 				nonce: signResult.sign.message.nonce,
 				deadline: signResult.sign.message.deadline,
-				tokenContractAddress: tokenContractAddress
+				tokenContractAddress: tokenContractAddress,
 			}
 
 			try {
@@ -985,7 +960,7 @@ export const useWeb3Store = defineStore('web3', () => {
 		onChangeCurrency,
 		initWallet,
 		contractAddress,
-		initUserAccountAndWallet
+		initUserAccountAndWallet,
 	}
 })
 
@@ -1033,7 +1008,6 @@ const signDaiPermit = async (walletClient, domain, holder, spender, nonce, expir
 	return this.hexToSignature(signatureHex)
 }
 
-
 const resetAccount = async () => {
 	console.log('useWeb3Store', '========resetAccount begin===========')
 	const { resetLoginData } = userStore()
@@ -1063,7 +1037,7 @@ const resetAccount = async () => {
 
 	// initWallet()
 	if (router.currentRoute.value.name !== 'noWallet') {
-		router.replace({name: 'noWallet'})
+		router.replace({ name: 'noWallet' })
 	} else {
 		window.location.reload()
 	}

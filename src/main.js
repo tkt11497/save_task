@@ -1,7 +1,6 @@
 // vant
-import Vant from 'vant'
+import Vant, { setToastDefaultOptions } from 'vant'
 import 'vant/lib/index.css'
-import { setToastDefaultOptions } from 'vant'
 
 // i18n
 import i18n from './i18n'
@@ -27,7 +26,7 @@ import router from './router'
 
 // 引入store
 import store from '@/store'
-import {IMAGE_URL} from "@/config/index.js";
+import { IMAGE_URL } from '@/config/index.js'
 
 setToastDefaultOptions({ position: 'top', className: 'toptoast' })
 

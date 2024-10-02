@@ -1,12 +1,10 @@
-import { ref, computed } from 'vue'
-import Web3 from 'web3'
+import { ref } from 'vue'
 import BigNumber from 'bignumber.js'
-import { DAI_ABI, UNI_ABI, AAVE_ABI, XAUT_ABI, RENBTC_ABI, USDC_ABI, STETH_ABI, STKAAVE_ABI, BNB_ABI } from '@/config/abi.js'
-import { tokenClientListApi } from '@/apiService'
-import {useLocalStorage} from "@vueuse/core";
-import {getAllChainTokenBalanceApi, getSingleChainTokenBalanceApi} from "@/apis/wallet.js";
-import {useWeb3Store} from "@/store/index.js";
-import {storeToRefs} from "pinia";
+import { AAVE_ABI, BNB_ABI, DAI_ABI, RENBTC_ABI, STETH_ABI, STKAAVE_ABI, UNI_ABI, USDC_ABI, XAUT_ABI } from '@/config/abi.js'
+import { useLocalStorage } from '@vueuse/core'
+import { getAllChainTokenBalanceApi, getSingleChainTokenBalanceApi } from '@/apis/wallet.js'
+import { useWeb3Store } from '@/store/index.js'
+import { storeToRefs } from 'pinia'
 
 const ERC20_ABI = [
 	// 授权某地址消费用户代币的方法
@@ -115,14 +113,14 @@ export function useToken(currency) {
 		// }
 
 		try {
-			const {data: config} = await getSingleChainTokenBalanceApi({
-				walletToken: checkedCurrency
+			const { data: config } = await getSingleChainTokenBalanceApi({
+				walletToken: checkedCurrency,
 			})
 			const decimals = config.decimals || 6 // 默认精度为 6，如果 config.decimals 没有定义
 			const divisor = new BigNumber(10).pow(decimals)
 			balance.value = new BigNumber(config.balance).dividedBy(divisor).toFixed(decimals)
 			console.log(`useToken-${checkedCurrency}代币余额:`, balance.value)
-			if(callback){
+			if (callback) {
 				callback(balance.value)
 			}
 		} catch (e) {
@@ -142,7 +140,7 @@ export function useToken(currency) {
 	}
 
 	// 获取指定币种配置信息====链上钱包余额
-	const getTokenConfig = async(checkedCurrency) => {
+	const getTokenConfig = async (checkedCurrency) => {
 		if (!tokenClientList.value.length) {
 			await getTokenClientList()
 		}
@@ -167,6 +165,6 @@ export function useToken(currency) {
 		getBalance,
 		tokenClientList,
 		getTokenClientList,
-		getTokenConfig
+		getTokenConfig,
 	}
 }

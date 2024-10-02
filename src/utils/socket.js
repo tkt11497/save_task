@@ -1,4 +1,5 @@
 import { WS_URL } from '@/config'
+
 export default class Socket {
 	constructor(url) {
 		// websocket实例

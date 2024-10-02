@@ -1,5 +1,4 @@
-import { storeToRefs } from 'pinia'
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import { showToast } from 'vant'
 import Web3 from 'web3'
 import { useWeb3accountStroe } from '@/store/index'

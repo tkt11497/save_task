@@ -1,5 +1,3 @@
-import { useWeb3Store } from '@/store/index.js'
-import { storeToRefs } from 'pinia'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
@@ -134,9 +132,9 @@ const router = createRouter({
 			component: () => import('@/views/user/components/creditScore.vue'),
 		},
 		{
-			path: "/:w+",
-			name: "*",
-			redirect: "/",
+			path: '/:w+',
+			name: '*',
+			redirect: '/',
 		},
 	],
 })

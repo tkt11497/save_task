@@ -243,7 +243,7 @@
 	</div>
 </template>
 <script setup>
-import { ref, onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { userStore } from '@/store'
 import arrow from '@/assets/images/user/arrow.png'
 import { useRouter } from 'vue-router'

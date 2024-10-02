@@ -1,9 +1,8 @@
 import axios from 'axios'
 import { authStore, loadingStore, navStore, userStore } from '@/store'
-import { showFailToast, showToast, closeToast } from 'vant'
+import { closeToast, showToast } from 'vant'
 import router from '@/router/index.js'
 import { storeToRefs } from 'pinia'
-import i18n from '@/i18n/index.js'
 
 // Create an Axios instance
 const apiClient = axios.create({
@@ -56,10 +55,10 @@ apiClient.interceptors.response.use(
 		} else if (401 === status) {
 			loadingStoreObj.clearCount()
 			closeToast()
-			// 
+			//
 			// authStoreObj.SET_TOKEN_DATA('')
 			navStoreObj.SET_NAV_DATA(0)
-			authStoreObj.loginAction().then(()=>{
+			authStoreObj.loginAction().then(() => {
 				router.push('/noWallet')
 			})
 			// location.reload()

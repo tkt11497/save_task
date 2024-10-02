@@ -38,14 +38,13 @@
 </template>
 
 <script setup name="Notifications">
-import { reactive, ref, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { onMounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import arrow from '@/assets/images/user/arrow.png'
 import { userStore } from '@/store'
 import { fetchNoticeList } from '@/apiService'
 import { useI18n } from 'vue-i18n'
 import useLoading from '@/hooks/useLoading.js'
-import { showToast } from 'vant'
 
 // 初始化仓库
 const store = userStore()

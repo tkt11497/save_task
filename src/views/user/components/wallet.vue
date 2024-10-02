@@ -30,14 +30,12 @@
 </template>
 
 <script setup name="Wallet">
-import { reactive, ref, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { onMounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import arrow from '@/assets/images/user/arrow.png'
-import BTC from '@/assets/images/home/BTC.png'
 import { userStore } from '@/store'
 import { getCurrencyAllApi, platformaccountClientListApi } from '@/apiService' // Import your API service
 import { useI18n } from 'vue-i18n'
-import { showToast } from 'vant'
 import useLoading from '@/hooks/useLoading.js'
 import { toFixedDecimal } from '../../../utils/index.js'
 // 初始化仓库

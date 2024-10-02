@@ -1,6 +1,6 @@
 import { storeToRefs } from 'pinia'
 import { onBeforeUnmount } from 'vue'
-import { showLoadingToast, closeToast } from 'vant'
+import { closeToast, showLoadingToast } from 'vant'
 import { loadingStore as useLoadingStore } from '@/store'
 
 export default function () {

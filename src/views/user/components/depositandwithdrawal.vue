@@ -181,22 +181,22 @@
 </template>
 
 <script setup name="Lang">
-import { ref, onMounted, watch } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { onMounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { userStore, useWeb3accountStroe } from '@/store'
 import { storeToRefs } from 'pinia'
 import arrow from '@/assets/images/user/arrow.png'
 import {
-	currencyProtocol,
-  getCurrencyAllApi,
-	platformaccountClientListApi,
 	clientCurrencyExchange,
-	withdrawOrderApplyApi,
-	quickRechargeApi,
+	currencyProtocol,
 	exchangeRateFromTo,
+	getCurrencyAllApi,
 	paymentAddressSettingApi,
+	platformaccountClientListApi,
+	quickRechargeApi,
+	withdrawOrderApplyApi,
 } from '@/apiService'
-import { showLoadingToast, closeToast, showToast } from 'vant'
+import { closeToast, showToast } from 'vant'
 import { useClipboard } from '@vueuse/core'
 import { useQRCode } from '@vueuse/integrations/useQRCode'
 import { useI18n } from 'vue-i18n'

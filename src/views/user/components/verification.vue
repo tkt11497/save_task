@@ -254,13 +254,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { onMounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { userStore } from '@/store'
-import { userKycRecordApplyApi, uploadImg } from '@/apiService'
-import { showToast, showLoadingToast, closeToast } from 'vant'
+import { uploadImg, userKycRecordApplyApi } from '@/apiService'
+import { showToast } from 'vant'
 import { useCountry } from '@/hooks/useCountry.js'
-import { formatDate } from '@/utils'
 import { useI18n } from 'vue-i18n'
 
 import arrow from '@/assets/images/user/arrow.png'

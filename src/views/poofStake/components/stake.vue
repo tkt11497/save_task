@@ -48,8 +48,8 @@
 </template>
 
 <script setup name="Stake">
-import { ref, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { onMounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { userStore } from '@/store'
 import arrow from '@/assets/images/user/arrow.png'
 import { useI18n } from 'vue-i18n'

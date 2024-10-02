@@ -34,16 +34,15 @@
 </template>
 
 <script setup name="Lang">
-import { ref, onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { fetchLanguageAll } from '@/apiService'
-import { useRouter, useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { userStore } from '@/store'
 import { useI18n } from 'vue-i18n'
-const { locale, t } = useI18n()
-
 import arrow from '@/assets/images/user/arrow.png'
 import useLoading from '@/hooks/useLoading.js'
-import { showToast } from 'vant'
+
+const { locale, t } = useI18n()
 
 // 初始化仓库
 const store = userStore()

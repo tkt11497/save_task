@@ -38,7 +38,7 @@ const showCurrency = computed(() => {
 		return currencyList.value.filter((currency) => currency.id !== currentCurrency.value.id).filter((item) => item.address)
 	} else {
 		// return currencyList.value.filter((item) => item.address)
-    return currencyList.value.filter(d => d.tokenName.toLowerCase() !== 'eth')
+		return currencyList.value.filter((d) => d.tokenName.toLowerCase() !== 'eth')
 	}
 })
 
@@ -47,10 +47,10 @@ const onChange = async (currency) => {
 	loading.loading()
 	try {
 		await onChangeCurrency(currency)
-    loading.clearLoading()
+		loading.clearLoading()
 		emits('signed', currency)
 	} catch (error) {
-    loading.clearLoading()
+		loading.clearLoading()
 		console.log(error)
 	}
 }

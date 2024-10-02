@@ -87,12 +87,12 @@
 </template>
 
 <script setup>
-import { reactive, ref, onMounted, computed } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { computed, onMounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import arrow from '@/assets/images/user/arrow.png'
 import USDC from '@/assets/images/user/USDC.png'
 import { userStore } from '@/store'
-import { getProdectList, userKycRecordLatestApi, fetchLoanAccountInfoApi, fetchInterestFreeDaysApi } from '@/apiService' // Import your API service
+import { fetchInterestFreeDaysApi, fetchLoanAccountInfoApi, getProdectList, userKycRecordLatestApi } from '@/apiService' // Import your API service
 import { showToast } from 'vant'
 import { useI18n } from 'vue-i18n'
 import useLoading from '@/hooks/useLoading.js'

@@ -32,8 +32,8 @@
 	</div>
 </template>
 <script setup>
-import { onMounted, ref, onUnmounted } from 'vue'
-import { fixactivityClientGetByIdApi, fixactivityClientApplyApi } from '@/apiService'
+import { onMounted, onUnmounted, ref } from 'vue'
+import { fixactivityClientApplyApi, fixactivityClientGetByIdApi } from '@/apiService'
 import { showToast } from 'vant'
 import router from '@/router'
 import { useI18n } from 'vue-i18n'

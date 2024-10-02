@@ -19,14 +19,12 @@
 </template>
 
 <script setup name="Invite">
-import { ref, onMounted } from 'vue'
-import { fetchInvitationCode, addInvitesetData } from '@/apiService'
-import { useRouter, useRoute } from 'vue-router'
+import { onMounted, ref } from 'vue'
+import { addInvitesetData, fetchInvitationCode } from '@/apiService'
+import { useRoute, useRouter } from 'vue-router'
 import { userStore } from '@/store'
-import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import arrow from '@/assets/images/user/arrow.png'
-import customIcon from '@/assets/images/user/success-icon.png'
 import useLoading from '@/hooks/useLoading.js'
 import { showToast } from 'vant' // Import image if needed
 

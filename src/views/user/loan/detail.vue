@@ -195,11 +195,10 @@
 	</div>
 </template>
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { userStore } from '@/store'
 import { storeToRefs } from 'pinia'
 import arrow from '@/assets/images/user/arrow.png'
-import { showToast } from 'vant'
 import { addLoanOrder, userKycRecordLatestApi } from '@/apiService'
 import { formatDate, timesDecimal, timesForValueDecimal } from '@/utils'
 import vueEsign from 'vue-esign'
