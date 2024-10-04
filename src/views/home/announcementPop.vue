@@ -36,7 +36,6 @@ const noticeLatest = async () => {
 		// }
 		const res = await fetchLatestNoticeApi()
 		noticeData.value = res.data
-		console.warn('最新消息', noticeData.value)
 	} catch (error) {
 		console.log(error)
 	}

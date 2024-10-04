@@ -5,7 +5,7 @@ export default class Socket {
 		// websocket实例
 		this.websocket = null
 		// 通讯地址
-		this.ws_url = WS_URL + url || 'ws://18.136.236.123:8080/ws/list'
+		this.ws_url = WS_URL + url
 		// 开启
 		this.socket_open = false
 		// 心跳time对象

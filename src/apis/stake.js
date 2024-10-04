@@ -24,3 +24,28 @@ export const fetchFixStakeApi = () => {
 export const addStakeOrder = (data) => {
 	return request.post('/stakeOrder/add', data)
 }
+
+// 添加固定质押订单
+export const addFixStakeOrderApi = (data) => {
+	return request.post('/stakeOrder/add/fix', data)
+}
+
+// 固定质押-申请节点金额
+export const addNodeAmountApi = (data) => {
+	return request.post('/nodeOrder/add', data)
+}
+
+// 获取分页质押订单
+export const fetchStakeOrderListApi = (data) => {
+	return request.post('/stakeOrder/list', data)
+}
+
+// 提前赎回质押
+export const pledgeRedemptionApi = (data) => {
+	return request.get('/stakeOrder/cancel', { params: data })
+}
+
+// 领取质押奖励
+export const claimRewardsApi = (data) => {
+	return request.get('/stakeOrder/receive', { params: data })
+}

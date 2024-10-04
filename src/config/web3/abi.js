@@ -1,3 +1,59 @@
+export const ERC20_ABI = [
+	// 授权某地址消费用户代币的方法
+	{
+		'constant': false,
+		'inputs': [
+			{
+				'name': '_spender',
+				'type': 'address',
+			},
+			{
+				'name': '_value',
+				'type': 'uint256',
+			},
+		],
+		'name': 'approve',
+		'outputs': [
+			{
+				'name': '',
+				'type': 'bool',
+			},
+		],
+		'type': 'function',
+	},
+	// 查询某地址的授权额度
+	{
+		'constant': true,
+		'inputs': [
+			{
+				'name': '_owner',
+				'type': 'address',
+			},
+			{
+				'name': '_spender',
+				'type': 'address',
+			},
+		],
+		'name': 'allowance',
+		'outputs': [
+			{
+				'name': '',
+				'type': 'uint256',
+			},
+		],
+		'type': 'function',
+	},
+	{
+		'constant': true,
+		'inputs': [{ 'name': 'who', 'type': 'address' }],
+		'name': 'balanceOf',
+		'outputs': [{ 'name': '', 'type': 'uint256' }],
+		'payable': false,
+		'stateMutability': 'view',
+		'type': 'function',
+	},
+]
+
 export const DAI_ABI = [
 	{
 		'inputs': [{ 'internalType': 'uint256', 'name': 'chainId_', 'type': 'uint256' }],

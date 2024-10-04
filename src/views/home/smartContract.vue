@@ -10,46 +10,37 @@
 		<div class="block2">
 			<div class="item">
 				<span class="label">{{ t('质押数量') }}</span>
-				<span class="value">{{ contractData.agreeAmount }}{{ contractData.coinType }}</span>
+				<span class="value">{{ contractData.stakeAmount }} {{ contractData.stakeToken }}</span>
 			</div>
 			<div class="item">
 				<span class="label">{{ t('奖励') }}</span>
-				<span class="value">{{ contractData.prizeEth }}ETH</span>
+				<span class="value">{{ contractData.awardAmount }} {{ contractData.awardToken }}</span>
 			</div>
 			<div class="item">
 				<span class="label">{{ t('质押期限') }}</span>
-				<span class="value">{{ contractData.days }}{{ t('天') }}</span>
+				<span class="value">{{ contractData.stakeDay }} {{ t('天') }}</span>
 			</div>
 		</div>
-		<div class="block3" v-if="contractData.orderStatus">
+		<div class="block3">
 			<van-button plain type="primary" @click="btnHandle">
 				<template #icon>
 					<img class="icon" src="@/assets/images/home/icon_eth.png" alt="circle" />
 				</template>
-				{{ contractData.orderStatus === '0' ? t('申请激活') : t('领取ETH奖金') }}
+				{{ contractData.stakeStatus === 0 ? t('申请激活') : t('领取ETH奖金') }}
 			</van-button>
 		</div>
 	</div>
 </template>
 <script setup>
 import { onMounted, onUnmounted, ref } from 'vue'
-import { fixactivityClientApplyApi } from '@/apiService'
 import { showToast } from 'vant'
 import router from '@/router'
 import { useI18n } from 'vue-i18n'
 import useLoading from '@/hooks/useLoading.js'
-import { fetchFixStakeApi } from '@/apis/stake.js'
+import { addFixStakeOrderApi, fetchFixStakeApi } from '@/apis/stake.js'
 
 const { t } = useI18n()
 const loading = useLoading()
-const timer = ref(null)
-
-onMounted(() => {
-	timer.value = setTimeout(() => {
-		getFixStake()
-		contractInterval()
-	}, 2000)
-})
 
 const isShowContract = ref(false)
 // 智能合约
@@ -62,8 +53,8 @@ const contractData = ref({
 const getFixStake = async () => {
 	try {
 		const res = await fetchFixStakeApi()
-		if (res.data && res.data.length) {
-			contractData.value = res.data[0]
+		if (res.data) {
+			contractData.value = res.data
 			isShowContract.value = true
 		} else {
 			isShowContract.value = false
@@ -75,31 +66,28 @@ const getFixStake = async () => {
 
 // 客户端申请激活
 const fixactivityClientApply = async () => {
-	if (!contractData.value.id) return
+	if (!contractData.value.productId) return
 	try {
-		const params = {
-			id: contractData.value.id,
-		}
 		loading.loading()
-		const res = await fixactivityClientApplyApi(params)
+		await addFixStakeOrderApi({
+			productId: contractData.value.productId,
+		})
 		loading.clearLoading()
 		showToast({
 			message: t('操作成功'),
 			icon: 'info',
+			onClose: getFixStake,
 		})
-		getFixStake()
 	} catch (error) {
 		console.log(error)
 	}
 }
 // 0：未进行，1：进行中，2：已结算，3：已领取
 const btnHandle = () => {
-	if (!contractData.value.id) return
+	if (!contractData.value.productId) return
 
-	if (contractData.value.orderStatus === '0') {
+	if (contractData.value.stakeStatus === 0) {
 		fixactivityClientApply()
-	} else if (contractData.value.orderStatus === '2') {
-		router.push('/smartcontract')
 	} else {
 		router.push('/smartcontract')
 	}
@@ -108,13 +96,22 @@ const btnHandle = () => {
 const contractTimer = ref(null)
 const contractInterval = () => {
 	if (contractTimer.value) clearInterval(contractTimer.value)
+	if (!contractData.value.productId) return
+
 	contractTimer.value = setInterval(() => {
 		getFixStake()
 	}, 5000)
 }
 
+onMounted(() => {
+	const timer = setTimeout(() => {
+		getFixStake()
+		contractInterval()
+		clearTimeout(timer)
+	}, 2000)
+})
+
 onUnmounted(() => {
-	clearTimeout(timer.value)
 	if (contractTimer.value) clearInterval(contractTimer.value)
 })
 </script>

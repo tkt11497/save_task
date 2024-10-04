@@ -56,15 +56,15 @@
 			<div class="list_info">
 				<div class="item" v-for="(item, index) in listComputed" :key="item.id">
 					<div class="item_img">
-						<img :src="$imgpath + item.productLogPath" alt="" />
+						<img :src="$imgpath + item.mainTokenIconUrl" alt="" />
 					</div>
 					<div class="coin">
-						<div class="name">{{ item.productName }}</div>
-						<div>{{ item.productFullname }}</div>
+						<div class="name">{{ item.symbol }}</div>
+						<div>{{ item.mainTokenName }}</div>
 					</div>
 					<div class="echarts">
 						<!-- <img src="../../assets/images/home/echarts.png" alt="echarts"> -->
-						<EchartsLine :line-id="item.productName || `line-${index}`" :row-data="item" />
+						<EchartsLine :line-id="item.symbol || `line-${index}`" :row-data="item" />
 					</div>
 					<MarketLatestData :row-data="item" />
 					<!-- <div class="num">
@@ -77,12 +77,14 @@
 			</div>
 		</div>
 		<div class="info">
-			<van-swipe class="my-swipe" :loop="false" :show-indicators="false" indicator-color="white">
-				<van-swipe-item class="info_box" v-for="(item, index) in infoList" :key="index">
-					<div class="icon">
-						<img :src="item.icon" alt="" />
+			<van-swipe class="my-swipe" :width="126" :show-indicators="false" :loop="false">
+				<van-swipe-item v-for="(item, index) in infoList" :key="index">
+					<div class="info_box">
+						<div class="icon">
+							<img :src="item.icon" alt="" />
+						</div>
+						<div class="content">{{ t(item.content) }}</div>
 					</div>
-					<div class="content">{{ t(item.content) }}</div>
 				</van-swipe-item>
 			</van-swipe>
 		</div>
@@ -141,7 +143,7 @@
 <script setup name="Home">
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getCoinListApi, getIncomeConfigClientList } from '@/apiService' // Import your API service
+import { getIncomeConfigClientList } from '@/apiService' // Import your API service
 import { navStore, userStore, useWeb3Store } from '@/store'
 import { storeToRefs } from 'pinia'
 import SmartContract from './smartContract.vue'
@@ -157,6 +159,7 @@ import { useToken } from '@/hooks/useToken'
 import info1 from '@/assets/images/home/info1.png'
 import info2 from '@/assets/images/home/info2.png'
 import info3 from '@/assets/images/home/info3.png'
+import { fetchTradingPairListApi } from '@/apis/optionAndContract.js'
 
 const web3Store = useWeb3Store()
 const { currentCurrency, address } = storeToRefs(web3Store)
@@ -174,6 +177,8 @@ const loading = useLoading()
 const router = useRouter()
 const route = useRoute()
 
+// todo kevin 首页回报列表接口待接入
+// 回报列表
 const clientList = ref([])
 const getIncomeConfigList = async () => {
 	try {
@@ -203,23 +208,23 @@ const backgroundImage = computed(() => {
 const coinList = ref([])
 const getCoinList = async () => {
 	try {
-		// loading.loading()
-		const response = await getCoinListApi()
-		// loading.clearLoading()
+		loading.loading()
+		const response = await fetchTradingPairListApi()
+		loading.clearLoading()
 		coinList.value = response.data || []
 	} catch (e) {
 		console.log(e)
 	}
 }
 const listComputed = computed(() => {
-	return coinList.value.filter((item) => item.isfrontPage === 1)
+	return coinList.value.filter((item) => item.isTop === 1)
 })
 
 const tokenBalance = ref('0')
-const changeWallet = (currency) => {
+const changeWallet = () => {
 	currencyPopup.value = false
-	getBalance(currency.currency, (bal) => {
-		console.log('changeWallet', currency.currency, bal, balance.value)
+	getBalance(currentCurrency.value.tokenName, () => {
+		console.log('changeWallet', currentCurrency.value.tokenName)
 		tokenBalance.value = balance.value
 	})
 }
@@ -239,7 +244,7 @@ const infoList = ref([
 	},
 ])
 
-// todo 待接入
+// todo kevin 用户收益接口待接入
 const accountFundTransaction = ref({
 	changeAmount: '',
 	baseSymbol: '',
@@ -476,7 +481,7 @@ defineExpose({})
 	}
 
 	.list {
-		padding: 0px 24px;
+		padding: 0px 42px;
 
 		.top {
 			display: flex;
@@ -532,7 +537,7 @@ defineExpose({})
 					flex: 0 0 140px;
 					color: #b8b8b8;
 					font-size: 24px;
-					margin-right: 52px;
+					margin-right: 20px;
 
 					.name {
 						font-size: 28px;
@@ -543,13 +548,7 @@ defineExpose({})
 				}
 
 				.echarts {
-					width: 150px;
-					height: 80px;
-
-					img {
-						width: 100%;
-						height: 100%;
-					}
+					width: 160px;
 				}
 
 				.num {
@@ -586,38 +585,42 @@ defineExpose({})
 	}
 
 	.info {
-		padding: 40px 24px 40px;
+		padding: 44px 42px 36px;
 		display: flex;
 		justify-content: space-between;
 
+		:deep(.van-swipe-item) {
+			padding-right: 20px;
+			box-sizing: border-box;
+		}
 		.info_box {
-			width: 220px !important;
-			height: 224px;
+			//width: 220px !important;
+			//height: 224px;
+			//background: #fff;
+			//border-radius: 24px;
+			//padding-top: 32px;
+			//padding-bottom: 32px;
+			//margin-right: 20px;
+			//display: flex;
+			//flex-direction: column;
+
 			background: #fff;
-			border-radius: 24px;
-			padding-top: 32px;
-			padding-bottom: 32px;
-			margin-right: 20px;
-			display: flex;
-			flex-direction: column;
+			border-radius: 28px;
+			padding: 15px;
+			height: 100%;
 
 			.icon {
-				display: flex;
-				width: 48px;
-				height: 48px;
-				margin-left: 20px;
-				margin-bottom: 30px;
+				line-height: 1;
 
-				> img {
-					width: 100%;
-					height: 100%;
+				img {
+					width: 50px;
+					height: 50px;
 				}
 			}
 
 			.content {
-				padding: 0 20px;
+				margin-top: 22px;
 				font-weight: 700;
-				line-height: 1.5;
 				font-size: 28px;
 				color: #000;
 			}
@@ -626,7 +629,7 @@ defineExpose({})
 
 	.rate {
 		background: #fff;
-		margin: 0 24px 48px;
+		margin: 0 42px 48px;
 		padding: 32px 22px;
 		border-radius: 32px;
 

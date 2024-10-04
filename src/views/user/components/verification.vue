@@ -97,13 +97,13 @@
 						>
 							<template #label>
 								<div class="dial-block" @click.stop="showPhoneList">
-									<span class="num">{{ form.areaCode }}</span>
+									<span class="num">{{ form.areaCode ? `+${form.areaCode}` : '' }}</span>
 									<van-icon name="arrow-down" />
 									<van-divider vertical />
-									<van-dropdown-menu :overlay="false" :class="{ empty: !form.phone }">
+									<van-dropdown-menu ref="menuRef4" :overlay="false" :class="{ empty: !form.phone }">
 										<van-dropdown-item ref="itemRef4">
 											<div class="item" @click="phoneHandle(item)" v-for="item in countryList" :key="item.id">
-												{{ item.countryName }} {{ item.phoneCode }}
+												{{ item.countryName }} +{{ item.phoneCode }}
 											</div>
 										</van-dropdown-item>
 									</van-dropdown-menu>
@@ -243,7 +243,9 @@
 				<div class="block1">
 					<img src="@/assets/images/user/check_circle.png" alt="" />
 					<p class="p1">{{ t('提交成功！') }}</p>
-					<p class="p2">{{ t('请耐心等待KYC验证的审核，我们将尽快完成审核。') }}</p>
+					<p class="p2">
+						{{ t('请耐心等待KYC验证的审核，我们将尽快完成审核。') }}
+					</p>
 					<van-button plain type="primary" @click="continueHandle()">{{ t('关闭') }}</van-button>
 				</div>
 			</div>
@@ -340,15 +342,13 @@ const countryHandle = (item) => {
 	menuRef3.value.close()
 }
 // 手机号
+const menuRef4 = ref(null)
 const itemRef4 = ref(null)
 const phoneHandle = (item) => {
-	showPhoneList()
-	// 或者
 	form.value.country = item.countryName
 	form.value.countryCode = item.isoCode
 	form.value.areaCode = item.phoneCode
 	form.value.countryId = item.id
-	// menuRef4.value.close();
 }
 const showPhoneList = () => {
 	itemRef4.value.toggle()
@@ -450,21 +450,17 @@ function beforeRead(file) {
 }
 // idcard 上传
 const afterRead1 = (file) => {
-	form.value.certificate = file.content
 	uploadImgPhoto(file, 'certificate')
 }
 const afterRead2 = (file) => {
-	form.value.certificateBack = file.content
 	uploadImgPhoto(file, 'certificateBack')
 }
 // passport上传
 const afterRead3 = (file) => {
-	form.value.certificate = file.content
 	uploadImgPhoto(file, 'certificate')
 }
 // takephoto上传
 const afterRead4 = (file) => {
-	form.value.holdingCertificate = file.content
 	uploadImgPhoto(file, 'holdingCertificate')
 }
 const uploadImgPhoto = async (file, key) => {
@@ -660,7 +656,7 @@ defineExpose({})
 					align-items: center;
 
 					.num {
-						min-width: 20px;
+						min-width: 40px;
 						margin-right: 19px;
 						text-align: center;
 					}
@@ -738,6 +734,7 @@ defineExpose({})
 			background: #d9e5fb;
 			padding: 30px 30px 30px;
 			width: 100%;
+			display: flex;
 
 			.uploader-box {
 				display: flex;
@@ -750,6 +747,7 @@ defineExpose({})
 
 					img {
 						width: 100px;
+						height: 100px;
 					}
 				}
 
@@ -896,6 +894,7 @@ defineExpose({})
 	.success-page {
 		padding: 0 48px 0;
 		height: 100%;
+		margin-top: 50%;
 
 		img {
 			width: 100px;

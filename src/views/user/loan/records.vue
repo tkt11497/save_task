@@ -33,7 +33,7 @@
 						<div class="each-container">
 							<div class="title1-row">
 								<img src="@/assets/images/record/loan.png" class="img-css" alt="notice" />
-								<p class="day-text">{{ $t('贷款订单') }}</p>
+								<span class="day-text">{{ $t('贷款订单') }}</span>
 							</div>
 
 							<div class="content-row">
@@ -46,44 +46,75 @@
 							</div>
 							<div class="content-row">
 								<p class="left-text">{{ t('总利息') }}:</p>
-								<p class="right-text">{{ list.alreadyInterest || 0 }} {{ list.walletToken }}</p>
+								<p class="right-text">{{ list.interest || 0 }} {{ list.walletToken }}</p>
 							</div>
 							<div class="content-row">
 								<p class="left-text">{{ t('每日利率') }}:</p>
 								<p class="right-text">{{ list.dayRate }}%</p>
 							</div>
-							<div class="content-row">
-								<p class="left-text">{{ t('需要还款') }}:</p>
-								<p class="right-text">{{ list.repaymentRequired || 0 }} {{ list.walletToken }}</p>
-							</div>
-							<div class="content-row">
-								<p class="left-text">{{ t('逾期') }}:</p>
-								<p class="right-text">{{ list.overdueDay }}{{ $t('天') }}</p>
-							</div>
+							<!--							<div class="content-row">-->
+							<!--								<p class="left-text">{{ t('逾期') }}:</p>-->
+							<!--								<p class="right-text">{{}}{{ $t('天') }}</p>-->
+							<!--							</div>-->
 							<div class="content-row">
 								<p class="left-text">{{ t('违约金') }}:</p>
-								<p class="right-text">{{ list.overdueInterest || 0 }} {{ list.orderCurrency }}</p>
+								<p class="right-text">{{ list.overdueInterest || 0 }} {{ list.walletToken }}</p>
 							</div>
 							<div class="content-row">
-								<p class="left-text">{{ t('认可') }}:</p>
-								<p class="right-text">{{ list.loanReviewTime }}</p>
+								<p class="left-text">{{ t('需要还款') }}:</p>
+								<p class="right-text">
+									{{ plusForValueDecimal(list.overdueInterest, plusForValueDecimal(list.borrowAmount, list.interest)) }} {{ list.walletToken }}
+								</p>
 							</div>
-							<div class="content-row">
-								<p class="left-text">{{ t('还款日期') }}:</p>
-								<p class="right-text">{{ list.loanEndTime }}</p>
+
+							<!-- 借贷状态-->
+							<div class="content-row" v-if="list.status !== 3">
+								<p class="left-text">{{ t('借款状态') }}:</p>
+								<p class="right-text">
+									<!-- "状态(0:未审核,1:审核通过,2:审核失败,3:订单结束)" -->
+									<Status v-if="list.status === 0" status="process" />
+									<Status v-else-if="list.status === 1" status="success" />
+									<Status v-else-if="list.status === 2" status="fail" />
+								</p>
 							</div>
+
+							<!-- 借贷审核成功-->
+							<template v-if="list.status === 1">
+								<div class="content-row">
+									<p class="left-text">{{ t('认可') }}:</p>
+									<p class="right-text">{{ formatDate(list.startDate) }}</p>
+								</div>
+
+								<div class="content-row" v-if="list.repaymentStatus !== 0">
+									<p class="left-text">{{ t('还款状态') }}:</p>
+									<p class="right-text">
+										<!-- 还款状态(0.未还款；1.提交还款;2.审核通过;3.审核失败) -->
+										<Status v-if="list.repaymentStatus === 1" status="process" />
+										<Status v-else-if="list.repaymentStatus === 2" status="success" />
+										<Status v-else-if="list.repaymentStatus === 3" status="fail" />
+									</p>
+								</div>
+
+								<div class="content-row" v-if="list.repaymentStatus === 2">
+									<p class="left-text">{{ t('还款日期') }}:</p>
+									<p class="right-text">{{ formatDate(list.endDate) }}</p>
+								</div>
+							</template>
 						</div>
 						<div class="confirm-btn confirm-btn2">
 							<el-button plain @click="checkItem(list, 'contract')" class="btn-css">
 								{{ t('合同') }}
 							</el-button>
-							<el-button v-if="!list.repaymentStatus" plain @click="checkItem(list)" class="btn-css">
-								{{ t('立即还款') }}
-							</el-button>
 
-							<el-button v-else-if="list.repaymentStatus" plain disabled class="btn-css">
-								{{ t('已还款') }}
-							</el-button>
+							<template v-if="list.status === 1">
+								<el-button v-if="list.repaymentStatus === 0" plain @click="checkItem(list)" class="btn-css">
+									{{ t('立即还款') }}
+								</el-button>
+
+								<el-button v-esel plain disabled class="btn-css">
+									{{ t('已还款') }}
+								</el-button>
+							</template>
 						</div>
 					</div>
 				</van-list>
@@ -101,19 +132,22 @@
 				<div class="rich-conetent">
 					<div class="each-row">
 						<p class="left-text">{{ t('金额') }}:</p>
-						<p class="right-text">{{ rowData.loanAmount || 0 }} {{ rowData.orderCurrency }}</p>
+						<p class="right-text">{{ rowData.borrowAmount || 0 }} {{ rowData.walletToken }}</p>
 					</div>
 					<div class="each-row">
 						<p class="left-text">{{ t('总利息') }}:</p>
-						<p class="right-text">{{ rowData.totalProfit || 0 }} {{ rowData.orderCurrency }}</p>
+						<p class="right-text">{{ rowData.interest || 0 }} {{ rowData.walletToken }}</p>
 					</div>
 					<div class="each-row">
 						<p class="left-text">{{ t('违约金') }}:</p>
-						<p class="right-text">{{ rowData.penaltyAmount || 0 }} {{ rowData.orderCurrency }}</p>
+						<p class="right-text">{{ rowData.overdueInterest || 0 }} {{ rowData.walletToken }}</p>
 					</div>
 					<div class="each-row">
 						<p class="left-text">{{ t('需要还款') }}:</p>
-						<p class="right-text">{{ rowData.repaymentRequired || 0 }} {{ rowData.orderCurrency }}</p>
+						<p class="right-text">
+							{{ plusForValueDecimal(rowData.overdueInterest, plusForValueDecimal(rowData.borrowAmount, rowData.interest)) }}
+							{{ rowData.walletToken }}
+						</p>
 					</div>
 				</div>
 				<!-- <van-divider /> -->
@@ -143,11 +177,10 @@
 				<!-- <van-divider /> -->
 				<div class="rich-conetent">
 					<div class="each-row">
-						<p class="left-text">{{ rowData.orderCurrency?.toUpperCase() }}:</p>
+						<p class="left-text">{{ rowData.walletToken?.toUpperCase() }}:</p>
 						<p class="right-text balance">{{ userWalletBalance }}</p>
 					</div>
 				</div>
-
 				<van-button class="btn" size="small" type="primary" @click="confirmRepayment">{{ t('确认') }}</van-button>
 			</div>
 		</van-popup>
@@ -158,15 +191,15 @@ import { onMounted, ref } from 'vue'
 import { userStore } from '@/store'
 import arrow from '@/assets/images/user/arrow.png'
 import { useRouter } from 'vue-router'
-import { loanOrderListeApi, loanRepaymentClientAddApi, userKycRecordLatestApi } from '@/apiService'
 import { useI18n } from 'vue-i18n'
-import { formatDate, timesForValueDecimal } from '@/utils'
+import { formatDate, plusForValueDecimal } from '@/utils'
 import useLoading from '@/hooks/useLoading.js'
 import LoanTreaty from '@/views/user/loan/loan-treaty.vue'
 import { useToken } from '@/hooks/useToken.js'
 import usePage from '@/hooks/usePage.js'
-import { fetchLoanOrderListApi } from '@/apis/loan.js'
+import { fetchLoanOrderListApi, repaymentLoanApi } from '@/apis/loan.js'
 import { fetchUserKycApi } from '@/apis/user.js'
+import Status from '@/components/Status/index.vue'
 
 const usersStore = userStore()
 const router = useRouter()
@@ -179,17 +212,16 @@ const showPop = ref(false)
 
 const confirmRepayment = async () => {
 	try {
-		const params = {
-			loanOrderId: rowData.value.id,
-			loanAmount: rowData.value.loanAmount,
-		}
 		loading.loading()
-		await loanRepaymentClientAddApi(params)
+		// todo  接口待测试操作
+		await repaymentLoanApi({
+			orderId: rowData.value.orderId,
+		})
 		loading.clearLoading()
 		showPop.value = false
 		showUserBalancePop.value = false
 
-		await pageHooks.onRefresh()
+		await onRefresh()
 	} catch (err) {
 		console.log(err)
 	}
@@ -214,13 +246,13 @@ const checkItem = (item, type = '') => {
 	loanData.value = {
 		lenderName: 'XXXX', // 贷方名称
 		loanDate: formatDate(rowData.value.createTime), // 贷款日期
-		loanAmount: rowData.value.loanAmount, // 贷款金额
-		loanDays: rowData.value.loanDays, // 贷款天数
-		loanDayRatio: timesForValueDecimal(rowData.value.dailyInterestRate, 100), // 贷款天数比率
-		interest: rowData.value.totalProfit, // 利息
-		repaymentAmount: rowData.value.loanAmount, // 还款金额
-		latePaymentFee: timesForValueDecimal(rowData.value.dailyDefaultInterestRate, 100), // 滞纳金
-		signImg: rowData.value.signName, // 签名照片地址
+		loanAmount: rowData.value.borrowAmount, // 贷款金额
+		loanDays: rowData.value.borrowDay, // 贷款天数
+		loanDayRatio: rowData.value.dayRate, // 贷款天数比率
+		interest: rowData.value.interest, // 利息
+		repaymentAmount: plusForValueDecimal(rowData.value.borrowAmount, rowData.value.interest), // 还款金额
+		latePaymentFee: rowData.value.overdueRate, // 滞纳金
+		signImg: rowData.value.signatureImageUrl, // 签名照片地址
 	}
 	if (type === 'contract') {
 		showContactPop.value = true
@@ -245,13 +277,13 @@ const userKycRecord = async () => {
 	}
 }
 
-const { balance: tokenBalance, getBalance } = useToken()
+const { getBalance } = useToken()
 const userWalletBalance = ref(0)
 const showUserBalancePop = ref(false)
 const showUserBalance = () => {
 	showPop.value = false
-	getBalance(rowData.value.orderCurrency, (val) => {
-		userWalletBalance.value = val || tokenBalance.value || 0
+	getBalance(rowData.value.walletToken, (val) => {
+		userWalletBalance.value = val || 0
 		showUserBalancePop.value = true
 	})
 }
@@ -298,6 +330,17 @@ onMounted(() => {
 					color: #000;
 					font-size: 28px;
 					font-weight: 500;
+				}
+				.order-status {
+					margin-left: auto;
+					font-size: 28px;
+
+					&.wait {
+						color: #82a9f9;
+					}
+					&.fail {
+						color: #d42121;
+					}
 				}
 
 				.img-css {

@@ -34,21 +34,20 @@ const web3Store = useWeb3Store(),
 
 const showCurrency = computed(() => {
 	if (props.hideSelected) {
-		console.log('showCurrency', currentCurrency.value)
-		return currencyList.value.filter((currency) => currency.id !== currentCurrency.value.id).filter((item) => item.address)
+		return currencyList.value.filter((currency) => currency.id !== currentCurrency.value.id && currency.contractAddress)
 	} else {
 		// return currencyList.value.filter((item) => item.address)
-		return currencyList.value.filter((d) => d.tokenName.toLowerCase() !== 'eth')
+		return currencyList.value.filter((d) => d.tokenName.toLowerCase() !== 'eth' && d.contractAddress)
 	}
 })
 
 const onChange = async (currency) => {
-	console.log('onChange', currency)
+	console.log('token-onChange', currency)
 	loading.loading()
 	try {
 		await onChangeCurrency(currency)
 		loading.clearLoading()
-		emits('signed', currency)
+		emits('signed')
 	} catch (error) {
 		loading.clearLoading()
 		console.log(error)

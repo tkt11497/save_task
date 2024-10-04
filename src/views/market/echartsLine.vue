@@ -9,8 +9,8 @@ import * as echarts from 'echarts/core'
 import { LineChart } from 'echarts/charts'
 import { DatasetComponent, GridComponent } from 'echarts/components'
 import { CanvasRenderer } from 'echarts/renderers'
-import { klieListApi } from '@/apiService'
 import { formatDate } from '@/utils'
+import { fetchKlineListApi } from '@/apis/optionAndContract.js'
 
 echarts.use([LineChart, GridComponent, DatasetComponent, CanvasRenderer])
 
@@ -22,7 +22,7 @@ const props = defineProps({
 	rowData: {
 		type: Object,
 		default: () => ({
-			productName: '',
+			symbol: '',
 		}),
 	},
 })
@@ -126,29 +126,20 @@ const option = ref({
 	animation: true,
 })
 
-function randomData() {
-	now = new Date(+now + oneDay)
-	value = value + Math.random() * 21 - 10
-	return {
-		name: now.toString(),
-		value: [[now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'), Math.round(value)],
-	}
-}
-
 let myChart = shallowRef(null)
 const klineHistoryList = ref([])
-const klieList = async () => {
+const getKlineList = async () => {
 	try {
 		const params = {
 			pageNum: 1,
 			pageSize: 100,
-			symbol: rowData.value.productName,
-			type: '5m',
+			symbol: rowData.value.symbol,
+			type: '5min',
 		}
-		const response = await klieListApi(params) // Fetch data from API
-		klineHistoryList.value = response.data?.records.slice().reverse() || []
-		const data2 = dataFormat(response.data.records.slice().reverse())
-		// console.log('dddd', data2, randomData())
+		const response = await fetchKlineListApi(params) // Fetch data from API
+		klineHistoryList.value = response.data || []
+
+		const data2 = dataFormat(klineHistoryList.value)
 		myChart.value = echarts.init(document.getElementById(props.lineId))
 		option.value.xAxis.data = data2.dateArr
 		option.value.series[0].data = data2.dataArr
@@ -176,7 +167,7 @@ const dataFormat = (records) => {
 }
 
 watch(
-	() => rowData.value.productName,
+	() => rowData.value.symbol,
 	(val) => {
 		if (val) {
 			try {
@@ -187,7 +178,7 @@ watch(
 			} catch (error) {
 				console.log(error)
 			}
-			klieList()
+			getKlineList()
 		}
 	},
 	{

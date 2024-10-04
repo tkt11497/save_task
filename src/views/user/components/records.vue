@@ -16,9 +16,9 @@
 		</div>
 		<div>
 			<div class="main-container">
-				<div v-show="activeName == 3">
+				<div v-show="activeName === 'option'">
 					<!-- ================= 期权 ==================== -->
-					<div v-if="optionList.length == 0" class="container">
+					<div v-if="!optionList.length" class="container">
 						<div class="notice">
 							<img src="@/assets/images/user/notice.png" alt="notice" />
 						</div>
@@ -31,21 +31,20 @@
 					<div v-else class="each-block" v-for="(list, ind1) in optionList" :key="ind1">
 						<div class="each-container">
 							<div class="title-row title-row1">
-								<p class="day-text">{{ list.productCode.toUpperCase() }}</p>
-								<img v-if="list.userType == 1" src="@/assets/images/record/shield-01.png" class="img-css success-img" alt="notice" />
-								<img v-if="list.userType == 0" src="@/assets/images/record/shield-02.png" class="img-css" alt="notice" />
-								<!-- <img src="@/assets/images/user/record-blue.png" class="img-css" alt="notice"> -->
-								<!-- <img src="../../../assets/images/user/record-red.png" class="img-css" alt="notice"> -->
+								<p class="day-text">{{ list.symbol.toUpperCase() }}</p>
+								<img v-if="list.exchangeDirection === 1" src="@/assets/images/record/shield-01.png" class="img-css success-img" alt="notice" />
+								<img v-if="list.exchangeDirection === 0" src="@/assets/images/record/shield-02.png" class="img-css" alt="notice" />
 							</div>
 							<div class="content-row">
 								<p class="left-text">{{ t('类型') }}:</p>
-								<p class="right-text uptext" v-if="list.userType == 1">{{ t('上涨') }}</p>
-								<p class="right-text downtext" v-if="list.userType == 0">{{ t('下跌') }}</p>
+								<p class="right-text uptext" v-if="list.exchangeDirection === 1">{{ t('上涨') }}</p>
+								<p class="right-text downtext" v-if="list.exchangeDirection === 0">{{ t('下跌') }}</p>
 							</div>
 							<div class="content-row">
 								<p class="left-text">{{ t('金额') }}:</p>
-								<p class="right-text">{{ toFixedDecimal(list.orderAmount || 0, 8) }}{{ list.orderCurrency }}</p>
+								<p class="right-text">{{ toFixedDecimal(list.orderAmount || 0, 8) }}{{ list.orderToken }}</p>
 							</div>
+							<!--   todo 价格字段确认-->
 							<div class="content-row">
 								<p class="left-text">{{ t('开盘价格') }}:</p>
 								<p class="right-text">{{ list.openPrice }}</p>
@@ -60,11 +59,11 @@
 							</div>
 							<div class="content-row">
 								<p class="left-text">{{ t('费用') }}:</p>
-								<p class="right-text">${{ list.transactionFee }}</p>
+								<p class="right-text">${{ list.feeAmount }}</p>
 							</div>
 							<div class="content-row">
 								<p class="left-text">{{ t('预期') }}:</p>
-								<p class="right-text">{{ list.lossAmountPrice }}{{ list.orderCurrency }}</p>
+								<p class="right-text">{{ list.profitLossAmount }}{{ list.orderToken }}</p>
 							</div>
 							<div class="content-row">
 								<p class="left-text">{{ t('创建时间2') }}:</p>
@@ -74,7 +73,7 @@
 					</div>
 				</div>
 
-				<van-pull-refresh v-show="activeName != 3" v-model="refreshing" @refresh="onRefresh" :loosing-text="t('释放即可刷新')">
+				<van-pull-refresh v-show="activeName !== 'option'" v-model="refreshing" @refresh="onRefresh" :loosing-text="t('释放即可刷新')">
 					<van-list
 						v-model:loading="listLoading"
 						v-model:error="listError"
@@ -86,9 +85,9 @@
 						<template #loading>
 							<van-loading class="custom-page-loading" type="spinner" />
 						</template>
-						<div v-if="activeName == 0">
+						<div v-if="['deposit', 'withdraw', 'exchange'].indexOf(activeName) !== -1">
 							<!-- =======================账户======================= -->
-							<div v-if="!listError && accountList.length == 0" class="container">
+							<div v-if="!listError && !accountList.length" class="container">
 								<div class="notice">
 									<img src="../../../assets/images/user/notice.png" alt="notice" />
 								</div>
@@ -101,10 +100,10 @@
 							<div v-else class="each-block" v-for="(list, ind1) in accountList" :key="ind1">
 								<div class="each-container">
 									<!-- 充值 -->
-									<div class="title1-row" v-if="orderTypeArr[list.changeType]">
-										<img :src="orderTypeArr[list.changeType].img" class="img-css" alt="notice" />
+									<div class="title1-row" v-if="orderTypeArr[activeName]">
+										<img :src="orderTypeArr[activeName].img" class="img-css" alt="notice" />
 										<span>
-											<p class="day-text">{{ orderTypeArr[list.changeType].label }}</p>
+											<p class="day-text">{{ orderTypeArr[activeName].label }}</p>
 										</span>
 									</div>
 									<div class="title1-row" v-else>
@@ -114,28 +113,65 @@
 										</span>
 									</div>
 
-									<div class="content-row">
-										<p class="left-text">{{ t('发币') }}:</p>
-										<p class="right-text">{{ toFixedDecimal(list.changeAmount, 8) }} {{ list.currency }}</p>
+									<template v-if="activeName === 'deposit'">
+										<div class="content-row">
+											<p class="left-text">{{ t('发币') }}:</p>
+											<p class="right-text">{{ toFixedDecimal(list.rechargeAmount, 8) }} {{ list.rechargeToken }}</p>
+										</div>
+										<div class="content-row">
+											<p class="left-text">{{ t('收币') }}:</p>
+											<p class="right-text">{{ toFixedDecimal(list.rechargeAmount, 8) }} {{ list.rechargeToken }}</p>
+										</div>
+										<div class="content-row">
+											<p class="left-text">{{ t('时间') }}:</p>
+											<p class="right-text">{{ formatDate(list.createTime) }}</p>
+										</div>
+									</template>
+
+									<template v-if="activeName === 'withdraw'">
+										<div class="content-row">
+											<p class="left-text">{{ t('发币') }}:</p>
+											<p class="right-text">{{ toFixedDecimal(list.withdrawAmount, 8) }} {{ list.withdrawToken }}</p>
+										</div>
+										<div class="content-row">
+											<p class="left-text">{{ t('收币') }}:</p>
+											<p class="right-text">{{ toFixedDecimal(list.withdrawAmount, 8) }} {{ list.withdrawToken }}</p>
+										</div>
+										<div class="content-row">
+											<p class="left-text">{{ t('时间') }}:</p>
+											<p class="right-text">{{ formatDate(list.ceateTime) }}</p>
+										</div>
+									</template>
+
+									<template v-if="activeName === 'exchange'">
+										<div class="content-row">
+											<p class="left-text">{{ t('发币') }}:</p>
+											<p class="right-text">{{ toFixedDecimal(list.fromAmount, 8) }} {{ list.fromToken }}</p>
+										</div>
+										<div class="content-row">
+											<p class="left-text">{{ t('收币') }}:</p>
+											<p class="right-text">{{ toFixedDecimal(list.toAmount, 8) }} {{ list.toToken }}</p>
+										</div>
+										<div class="content-row">
+											<p class="left-text">{{ t('时间') }}:</p>
+											<p class="right-text">{{ formatDate(list.createTime) }}</p>
+										</div>
+									</template>
+
+									<div class="content-row" v-if="['deposit', 'withdraw'].indexOf(activeName) !== -1">
+										<p class="left-text">{{ t('状态') }}:</p>
+										<p class="right-text">
+											<Status v-if="list.orderStatus === 0" status="process" />
+											<Status v-else-if="list.orderStatus === 1" status="success" />
+											<Status v-else-if="list.orderStatus === 2" status="fail" />
+										</p>
 									</div>
-									<div class="content-row">
-										<p class="left-text">{{ t('收币') }}:</p>
-										<p class="right-text">{{ toFixedDecimal(list.receiveCoinAmount, 8) }} {{ list.receiveCoinName }}</p>
-									</div>
-									<div class="content-row">
-										<p class="left-text">{{ t('时间') }}:</p>
-										<p class="right-text">{{ list.changeTime }}</p>
-									</div>
-									<!-- <div class="content-row">
-                    <p class="left-text">Status:</p>
-                    <p class="right-text">{{list.todayIncome}}</p>
-                  </div> -->
 								</div>
 							</div>
 						</div>
-						<div v-else-if="activeName == 1">
+						<div v-else-if="activeName === 'interest'">
 							<!-- ================= 理财 计息 ==================== -->
-							<div v-if="!listError && financialClientList.length == 0" class="container">
+							<div v-if="!listError && !financialClientList.length" class="container">
 								<div class="notice">
 									<img src="@/assets/images/user/notice.png" alt="notice" />
 								</div>
@@ -145,58 +181,70 @@
 								</div>
 								<div class="info">{{ t('列表为空') }}</div>
 							</div>
-							<div v-else class="each-block" v-for="(list, ind1) in financialClientList" :key="ind1">
+							<div v-else class="each-block" v-for="(list, ind1) in financialClientList" :key="list.stakeOrderId">
 								<div class="each-container">
 									<div class="title-row title-row1">
-										<p class="day-text">{{ list.financialManagementDays }}{{ $t('天') }}</p>
+										<p class="day-text">{{ list.stakeDay }}{{ $t('天') }}</p>
 										<img src="@/assets/images/user/verified_user.svg" class="img-css" alt="notice" />
 									</div>
 									<div class="content-row">
 										<p class="left-text">{{ t('金额') }}:</p>
-										<p class="right-text">{{ toFixedDecimal(list.investAmount, 8) }} {{ list.financialCurrency }}</p>
+										<p class="right-text">{{ toFixedDecimal(list.stakeAmount || 0, 8) }} {{ list.stakeToken }}</p>
 									</div>
 									<div class="content-row">
 										<p class="left-text">{{ t('期限') }}:</p>
-										<p class="right-text">{{ list.financialManagementDays }}{{ $t('天') }}</p>
-									</div>
-									<div class="content-row">
-										<p class="left-text">{{ t('质押收益') }}:</p>
-										<p class="right-text">
-											{{ timesForValueDecimal(list.minRateInterest, 100) }}-{{ timesForValueDecimal(list.maxRateInterest, 100) }}%
-										</p>
-									</div>
-									<div class="content-row">
-										<p class="left-text">{{ t('今天的收入') }}:</p>
-										<p class="right-text">{{ toFixedDecimal(list.todayIncome || 0, 8) }} {{ list.financialCurrency }}</p>
+										<p class="right-text">{{ list.stakeDay }}{{ $t('天') }}</p>
 									</div>
 									<div class="content-row">
 										<p class="left-text">{{ t('总收入') }}:</p>
-										<p class="right-text">{{ toFixedDecimal(list.todayRevenue || 0, 8) }} {{ list.financialCurrency }}</p>
+										<p class="right-text">{{ toFixedDecimal(list.awardAmout || 0, 8) }} {{ list.awardToken }}</p>
 									</div>
 									<div class="content-row">
 										<p class="left-text">{{ t('订单编号') }}:</p>
-										<p class="right-text">{{ list.orderNumber }}</p>
+										<p class="right-text">{{ list.stakeOrderId }}</p>
 									</div>
 									<div class="content-row">
 										<p class="left-text">{{ t('创建时间') }}:</p>
-										<p class="right-text">{{ list.createTime }}</p>
+										<p class="right-text">{{ formatDate(list.orderStartTime) }}</p>
 									</div>
 									<div class="content-row">
 										<p class="left-text">{{ t('到期日期') }}:</p>
-										<p class="right-text">{{ list.expireDate }}</p>
+										<p class="right-text">{{ formatDate(list.orderEndTime) }}</p>
+									</div>
+									<!--  未结束、质押中的质押单状态-->
+									<div class="content-row" v-if="[1, 2].indexOf(list.orderStatus) === -1">
+										<p class="left-text">{{ t('状态') }}:</p>
+										<p class="right-text">
+											<Status :status="getStakeOrderStatus(list.orderStatus)" />
+										</p>
 									</div>
 								</div>
-								<!-- 0 or '0'? -->
-								<div class="confirm-btn confirm-btn2" v-if="list.earlyRedemptionButton">
-									<el-button plain @click="showInterestPopupFunc(list)" class="btn-css">
+								<div class="confirm-btn confirm-btn2">
+									<el-button
+										v-if="[1, 4, 5].indexOf(list.orderStatus) !== -1"
+										:disabled="list.orderStatus === 5"
+										plain
+										@click="showInterestPopupFunc(list)"
+										class="btn-css"
+									>
 										<p class="">{{ t('赎回') }}</p>
+									</el-button>
+
+									<el-button
+										v-if="[2, 7, 9].indexOf(list.orderStatus) !== -1"
+										:disabled="list.orderStatus === 7"
+										plain
+										@click="onClaimRewards(list)"
+										class="btn-css"
+									>
+										<p class="">{{ t('领取奖励') }}</p>
 									</el-button>
 								</div>
 							</div>
 						</div>
-						<div v-else-if="activeName == 2">
+						<div v-else-if="activeName === 'stake'">
 							<!-- ================= 质押 ==================== -->
-							<div v-if="!listError && pledgeClientList.length == 0" class="container">
+							<div v-if="!listError && !pledgeClientList.length" class="container">
 								<div class="notice">
 									<img src="@/assets/images/user/notice.png" alt="notice" />
 								</div>
@@ -211,51 +259,59 @@
 							<div v-else class="each-block" v-for="(list, ind1) in pledgeClientList" :key="ind1">
 								<div class="each-container">
 									<div class="title-row title-row1">
-										<!-- <p class="day-text">{{list.pledgeType}}</p> -->
-										<span v-for="item in PledgeTypeArr" :key="item">
-											<span v-if="item.value == list.pledgeType">
-												<p class="day-text">{{ item.label }}</p>
-											</span>
-										</span>
+										<span class="day-text">{{ PledgeTypeArr[list.stakeType].label }}</span>
 										<img src="@/assets/images/record/shield-01.png" class="img-css success-img" :width="18" :height="22" alt="notice" />
 									</div>
 									<div class="content-row">
 										<p class="left-text">{{ t('金额') }}:</p>
-										<p class="right-text">{{ list.pledgeAmount }} {{ list.baseSymbol }}</p>
-									</div>
-									<div class="content-row">
-										<p class="left-text">{{ t('收益') }}:</p>
-										<p class="right-text">
-											{{ timesForValueDecimal(list.minMassInterestRatio, 100) }}-{{ timesForValueDecimal(list.maxMassInterestRatio, 100) }}%
-										</p>
-									</div>
-									<div class="content-row">
-										<p class="left-text">{{ t('今天的收入') }}:</p>
-										<p class="right-text">+{{ toFixedDecimal(list.todayIncome || 0, 8) }} {{ list.baseSymbol }}</p>
+										<p class="right-text">{{ toFixedDecimal(list.stakeAmount || 0, 8) }} {{ list.stakeToken }}</p>
 									</div>
 									<div class="content-row">
 										<p class="left-text">{{ t('总收入') }}:</p>
-										<p class="right-text">{{ toFixedDecimal(list.totalProfit || 0, 8) }} {{ list.baseSymbol }}</p>
+										<p class="right-text">{{ toFixedDecimal(list.awardAmout || 0, 8) }} {{ list.awardToken }}</p>
 									</div>
 									<div class="content-row">
 										<p class="left-text">{{ t('质押时间') }}:</p>
-										<p class="right-text">{{ list.startTime }}</p>
+										<p class="right-text">{{ formatDate(list.orderStartTime) }}</p>
 									</div>
 									<div class="content-row">
 										<p class="left-text">{{ t('释放时间') }}:</p>
-										<p class="right-text">{{ list.expirationTime }}</p>
+										<p class="right-text">{{ formatDate(list.orderEndTime) }}</p>
+									</div>
+									<!--  未结束、质押中的质押单状态-->
+									<div class="content-row" v-if="[1, 2].indexOf(list.orderStatus) === -1">
+										<p class="left-text">{{ t('状态') }}:</p>
+										<p class="right-text">
+											<Status :status="getStakeOrderStatus(list.orderStatus)" />
+										</p>
 									</div>
 								</div>
-								<div class="confirm-btn confirm-btn2" v-if="list.earlyExitButton">
-									<el-button plain @click="showPopupFunc(list)" class="btn-css">
+								<div class="confirm-btn confirm-btn2">
+									<el-button
+										v-if="[1, 4, 5].indexOf(list.orderStatus) !== -1"
+										:disabled="list.orderStatus === 5"
+										plain
+										@click="showInterestPopupFunc(list)"
+										class="btn-css"
+									>
 										<p class="">{{ t('赎回') }}</p>
+									</el-button>
+
+									<el-button
+										v-if="[2, 7, 9].indexOf(list.orderStatus) !== -1"
+										:disabled="list.orderStatus === 7"
+										plain
+										@click="onClaimRewards(list)"
+										class="btn-css"
+									>
+										<p class="">{{ t('领取奖励') }}</p>
 									</el-button>
 								</div>
 							</div>
 						</div>
-						<div v-else-if="activeName == 4">
+						<div v-else-if="activeName === 'contract'">
 							<!-- ================= 合约 ==================== -->
-							<div v-if="!listError && contractList.length == 0" class="container">
+							<div v-if="!listError && !contractList.length" class="container">
 								<div class="notice">
 									<img src="@/assets/images/user/notice.png" alt="notice" />
 								</div>
@@ -329,81 +385,77 @@
 			</div>
 			<!-- 质押赎回确认 -->
 			<div class="confirm-btn">
-				<el-dialog v-model="centerDialogVisible" width="350" align-center class="popup-css">
-					<template #header>
-						<div class="dialog-title">
-							<!-- <img src="@/assets/images/user/warning.png" class="waning-css" alt="notice"> -->
-							<span class="title-text">⚠ {{ t('警告') }}</span>
-						</div>
-					</template>
-					<span class="text">
-						{{
-							t('如果提前终止交易，您将支付本金{比例}%的罚款，这是 {金额}。', {
-								rate: timesDecimal(pledgeEmissionRate, 100, 2),
-								amount: timesDecimal(eachData.pledgeAmount, pledgeEmissionRate),
-								baseSymbol: eachData.baseSymbol,
-							})
-						}}
-					</span>
-					<template #footer>
-						<div class="dialog-footer">
-							<el-button :plain="true" @click="putFinancialData()" class="confirm1-btn">{{ t('确认') }}</el-button>
-							<el-button class="cancel-btn" @click="centerDialogVisible = false">{{ t('取消') }}</el-button>
-						</div>
-					</template>
-				</el-dialog>
-			</div>
-			<!-- 理财 interest dialog Form -->
-			<div class="confirm-btn">
 				<el-dialog v-model="interestDialogVisible" width="350" align-center class="popup-css">
 					<template #header>
 						<div class="dialog-title">
-							<!-- <img src="@/assets/images/user/warning.png" class="waning-css" alt="notice"> -->
 							<span class="title-text">⚠ {{ t('警告') }}</span>
 						</div>
 					</template>
 					<span class="text">
 						{{
-							t('如果提前终止交易，您将支付本金{比例}的罚款，这是 {金额}。', {
-								rate: timesDecimal(interestEmissionRate, 100, 2),
-								amount: timesDecimal(eachData.investAmount, interestEmissionRate),
-								baseSymbol: eachData.financialCurrency,
+							t('如果提前终止交易，您将无法获得完整的收益 {金额}。', {
+								amount: eachData.stakeAmount,
+								symbol: eachData.stakeToken,
 							})
 						}}
 					</span>
 					<template #footer>
 						<div class="dialog-footer">
-							<el-button :plain="true" @click="updateInterestStakting()" class="confirm1-btn">{{ t('确认') }}</el-button>
+							<el-button :plain="true" @click="onPledgeRedemption()" class="confirm1-btn">{{ t('确认') }}</el-button>
 							<el-button class="cancel-btn" @click="interestDialogVisible = false">{{ t('取消') }}</el-button>
 						</div>
 					</template>
 				</el-dialog>
 			</div>
+			<!-- 质押奖励领取 -->
+			<!--			<div class="confirm-btn">-->
+			<!--				<el-dialog v-model="interestDialogVisible" width="350" align-center class="popup-css">-->
+			<!--					<template #header>-->
+			<!--						<div class="dialog-title">-->
+			<!--							<span class="title-text">⚠ {{ t('警告') }}</span>-->
+			<!--						</div>-->
+			<!--					</template>-->
+			<!--					<span class="text">-->
+			<!--						&lt;!&ndash;						{{&ndash;&gt;-->
+			<!--						&lt;!&ndash;							t('如果提前终止交易，您将支付本金{比例}的罚款，这是 {金额}。', {&ndash;&gt;-->
+			<!--						&lt;!&ndash;								rate: timesDecimal(interestEmissionRate, 100, 2),&ndash;&gt;-->
+			<!--						&lt;!&ndash;								amount: timesDecimal(eachData.investAmount, interestEmissionRate),&ndash;&gt;-->
+			<!--						&lt;!&ndash;								baseSymbol: eachData.financialCurrency,&ndash;&gt;-->
+			<!--						&lt;!&ndash;							})&ndash;&gt;-->
+			<!--						&lt;!&ndash;						}}&ndash;&gt;-->
+			<!--					</span>-->
+			<!--					<template #footer>-->
+			<!--						<div class="dialog-footer">-->
+			<!--							<el-button :plain="true" @click="updateInterestStakting()" class="confirm1-btn">{{ t('确认') }}</el-button>-->
+			<!--							<el-button class="cancel-btn" @click="interestDialogVisible = false">{{ t('取消') }}</el-button>-->
+			<!--						</div>-->
+			<!--					</template>-->
+			<!--				</el-dialog>-->
+			<!--			</div>-->
 		</div>
 	</div>
 </template>
 
-<script setup name="Records">
-import { onMounted, onUnmounted, ref } from 'vue'
+<script setup>
+import { onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import arrow from '@/assets/images/user/arrow.png'
 import { userStore } from '@/store'
-import {
-	fetchAccountPageList,
-	fetchContractOrderList,
-	fetchInterestDataList,
-	fetchInterestEmissionRateApi,
-	fetchPledgeEmissionRateApi,
-	fetchPosStakingDataList,
-	manualClosePositionApi,
-	optionOrderClientList,
-	updateInterestData,
-	updatePosStaingData,
-} from '@/apiService'
+import { fetchAccountPageList, fetchContractOrderList, fetchPledgeEmissionRateApi, manualClosePositionApi, updatePosStaingData } from '@/apiService'
 import { useI18n } from 'vue-i18n'
 import useLoading from '@/hooks/useLoading.js'
-import { timesDecimal, timesForValueDecimal, toFixedDecimal } from '../../../utils/index.js'
+import { formatDate, timesDecimal, toFixedDecimal } from '@/utils/index.js'
 import { dayjs } from 'element-plus'
+import usePage from '@/hooks/usePage.js'
+import { fetchOptionsListApi } from '@/apis/optionAndContract.js'
+import { claimRewardsApi, fetchStakeOrderListApi, pledgeRedemptionApi } from '@/apis/stake.js'
+import Status from '@/components/Status/index.vue'
+import { showToast } from 'vant'
+import { fetchExchangeOrderListApi, fetchRechargeOrderListApi, fetchWithdrawOrderListApi } from '@/apis/user.js'
+
+defineOptions({
+	name: 'Records',
+})
 // 初始化仓库
 const store = userStore()
 const { t } = useI18n()
@@ -411,11 +463,7 @@ const { t } = useI18n()
 const router = useRouter()
 const route = useRoute()
 const loading = useLoading()
-// tab选中参数
-const activeName = ref('0')
-const data = ref({
-	'userId': store.userId,
-})
+
 const eachData = ref({})
 const intervalId = ref(null)
 const centerDialogVisible = ref(false)
@@ -426,53 +474,71 @@ const financialClientList = ref([])
 const pledgeClientList = ref([])
 const optionList = ref([])
 const contractList = ref([])
-// tab数据
 
+// tab选中参数
+const activeName = ref('deposit')
+// tab数据
 const tabList = ref([
 	{
-		label: t('账户'),
-		value: 0,
+		label: t('充值'),
+		value: 'deposit',
+	},
+	{
+		label: t('提现'),
+		value: 'withdraw',
+	},
+	{
+		label: t('兑换'),
+		value: 'exchange',
 	},
 	{
 		label: t('计息'),
-		value: 1,
+		value: 'interest',
 	},
 	{
 		label: t('POS质押'),
-		value: 2,
+		value: 'stake',
 	},
 	{
 		label: t('期权2'),
-		value: 3,
+		value: 'option',
 	},
-	{
-		label: t('合约'),
-		value: 4,
-	},
+	// {
+	// 	label: t('合约'),
+	// 	value: 'contract',
+	// },
 ])
-const PledgeTypeArr = ref([
-	{
+const PledgeTypeArr = ref({
+	0: {
 		label: t('个人质押'),
-		value: '1',
-	},
-	{
-		label: t('联合质押'),
 		value: '0',
 	},
-])
+	1: {
+		label: t('智能合约'),
+		value: '1',
+	},
+	2: {
+		label: t('理财质押'),
+		value: '2',
+	},
+	3: {
+		label: t('联合质押'),
+		value: '3',
+	},
+})
 
 const orderTypeArr = ref({
-	'1': {
+	deposit: {
 		label: t('充值'),
 		value: '1',
 		img: new URL(`@/assets/images/record/card-add.png`, import.meta.url).href,
 	},
-	'2': {
+	withdraw: {
 		label: t('提现'),
 		value: '2',
 		img: new URL(`@/assets/images/record/card-minus.png`, import.meta.url).href,
 	},
-	'20': {
+	exchange: {
 		label: t('兑换'),
 		value: '20',
 		img: new URL(`@/assets/images/user/exchange.png`, import.meta.url).href,
@@ -501,108 +567,69 @@ const onClickTab = ({ name }) => {
 	activeName.value = name
 
 	// 非期权tab，清空期权轮询，开始分页查询
-	if (name !== 3) {
+	if (name !== 'option') {
 		stopPolling()
 
 		onRefresh()
 	} else {
-		pageData.value.pageNum = 0
+		pageData.pageNum = 0
 		getOptionList()
 	}
 }
-// list 滚动加载
-const pageData = ref({
-	pageSize: 20,
-	pageNum: 0,
-	total: 0,
-})
-const listError = ref(false)
-const listLoading = ref(false)
-const finished = ref(false)
-const refreshing = ref(false)
-const isEmptyList = ref(false)
-const onLoad = async () => {
-	try {
-		isEmptyList.value = false
 
-		if (refreshing.value) {
-			refreshing.value = false
+const getRecordApi = (data) => {
+	let fetchApi, commonData
+	console.log(activeName.value)
+	if (activeName.value === 'deposit') {
+		fetchApi = fetchRechargeOrderListApi
+	} else if (activeName.value === 'withdraw') {
+		fetchApi = fetchWithdrawOrderListApi
+	} else if (activeName.value === 'exchange') {
+		fetchApi = fetchExchangeOrderListApi
+	} else if (activeName.value === 'interest') {
+		fetchApi = fetchStakeOrderListApi
+		// 0:个人质押,1:用户定制产品,2:理财产品,3:联合质押
+		commonData = {
+			stakeTypes: [2],
 		}
-
-		let currentList, fetchApi
-		if (activeName.value == 0) {
-			fetchApi = showTuserList
+	} else if (activeName.value === 'stake') {
+		fetchApi = fetchStakeOrderListApi
+		// 0:个人质押,1:用户定制产品,2:理财产品,3:联合质押
+		commonData = {
+			stakeTypes: [0, 1, 3],
+		}
+	}
+	// else if (activeName.value === 'contract') {
+	// 	fetchApi = getContractOrderList
+	// }
+	return fetchApi({
+		pageNum: data.pageNum,
+		pageSize: data.pageSize,
+		...commonData,
+	})
+}
+const { onRefresh, onLoad, listLoading, listError, finished, isEmptyList, refreshing, dataList, pageData } = usePage(getRecordApi)
+watch(
+	() => dataList.value,
+	(val) => {
+		let currentList
+		if (['deposit', 'withdraw', 'exchange'].indexOf(activeName.value) !== -1) {
 			currentList = accountList
-		} else if (activeName.value == 1) {
-			fetchApi = getInterestList
+		} else if (activeName.value === 'interest') {
 			currentList = financialClientList
-		} else if (activeName.value == 2) {
-			fetchApi = getPosStakingDataList
+		} else if (activeName.value === 'stake') {
 			currentList = pledgeClientList
-		} else if (activeName.value == 4) {
-			fetchApi = getContractOrderList
+		} else if (activeName.value === 'contract') {
 			currentList = contractList
 		}
-
-		if (pageData.value.pageNum == 0) {
-			currentList.value = []
-			pageData.value.total = 0
-			finished.value = false
-		}
-
-		const response = await fetchApi({
-			pageSize: pageData.value.pageSize,
-			pageNum: pageData.value.pageNum + 1,
-		})
-
-		listError.value = false
-		pageData.value.pageNum += 1
-		pageData.value.total = response.total
-
-		if (currentList.value.length >= response.total) {
-			finished.value = true
-		} else {
-			finished.value = false
-		}
-		if (!response.total) {
-			isEmptyList.value = true
-		}
-	} catch (e) {
-		listError.value = true
-	} finally {
-		listLoading.value = false
+		currentList.value = val
 	}
-}
-
-const onRefresh = async () => {
-	// 清空列表数据
-	finished.value = false
-	listLoading.value = true
-	// 重新加载数据
-	pageData.value.pageNum = 0
-	onLoad()
-}
+)
 
 const showTuserList = async (pageData) => {
 	try {
 		const response = await fetchAccountPageList(pageData)
 		accountList.value = accountList.value.concat(response.rows || [])
-		return response
-	} catch (err) {
-		console.log(err)
-		throw err
-	}
-}
-
-const getInterestList = async (pageData) => {
-	try {
-		const response = await fetchInterestDataList({
-			...data.value,
-			...pageData,
-		}) // Fetch data from API
-		// daysList.value = response.data;
-		financialClientList.value = financialClientList.value.concat(response.rows || [])
-		console.log('Records Financial client list is ')
 		return response
 	} catch (err) {
 		console.log(err)
@@ -616,22 +643,6 @@ const isEarlyRedemption = (data) => {
 	return !data.earlyRedemptionTime && dayjs(data.expireDate).isAfter(Date.now())
 }
 
-// const getPledgeOrderList = async () => {
-const getPosStakingDataList = async (pageData) => {
-	try {
-		// const response = await fetchPledgeOrderClientList(data.value);
-		const response = await fetchPosStakingDataList({
-			...data.value,
-			...pageData,
-		})
-		console.log('Records Financial client list is ')
-		pledgeClientList.value = pledgeClientList.value.concat(response.rows || [])
-		return response
-	} catch (err) {
-		console.log(err)
-		throw err
-	}
-}
 // Function to stop polling
 const stopPolling = () => {
 	if (intervalId.value) {
@@ -644,7 +655,8 @@ const getOptionList = async () => {
 		if (!intervalId.value) {
 			loading.loading()
 		}
-		const response = await optionOrderClientList({
+		// todo 轮询确认
+		const response = await fetchOptionsListApi({
 			pageNum: 1,
 			pageSize: 1000,
 		}) // Fetch data from API
@@ -652,7 +664,7 @@ const getOptionList = async () => {
 			loading.clearLoading()
 		}
 
-		optionList.value = response.rows || []
+		optionList.value = response.data || []
 	} catch (err) {
 		console.log(err)
 	}
@@ -666,7 +678,6 @@ const getOptionList = async () => {
 const getContractOrderList = async (pageData) => {
 	try {
 		const response = await fetchContractOrderList({
-			...data.value,
 			...pageData,
 		})
 		contractList.value = contractList.value.concat(response.rows || [])
@@ -711,41 +722,92 @@ const putFinancialData = async () => {
 }
 // ========= 质押赎回 end ============
 
-// ========= 理财赎回 begin ============
+// ========= 质押赎回 begin ============
+const getStakeOrderStatus = (status) => {
+	let statusText
+	// 0-新建订单 2-质押结束 1-质押审核通过  4-质押审核不通过
+	// 3-赎回申请成功 5-赎回申请 6-赎回申请失败
+	// 7-领取申请 8-领取成功 9-领取失败
+	switch (status) {
+		case 0:
+		case 5:
+		case 7:
+			statusText = 'process'
+			break
+		case 1:
+		case 3:
+		case 8:
+			statusText = 'success'
+			break
+		case 4:
+		case 6:
+		case 9:
+			statusText = 'fail'
+			break
+	}
+	return statusText
+}
 // 理财赎回罚款
 const interestEmissionRate = ref(0)
 // update dialog interest
 const showInterestPopupFunc = async (list) => {
-	try {
-		loading.loading()
-		const response = await fetchInterestEmissionRateApi()
-		loading.clearLoading()
-		interestEmissionRate.value = response.data || 0
-		eachData.value = list
-		interestDialogVisible.value = true
-	} catch (e) {
-		console.log(e)
-	}
+	eachData.value = list
+	interestDialogVisible.value = true
+	// try {
+	// 	loading.loading()
+	// 	const response = await fetchInterestEmissionRateApi()
+	// 	loading.clearLoading()
+	// 	interestEmissionRate.value = response.data || 0
+	// 	eachData.value = list
+	// 	interestDialogVisible.value = true
+	// } catch (e) {
+	// 	console.log(e)
+	// }
 }
 
-const updateInterestStakting = async () => {
-	let temp = {
-		id: eachData.value.id,
-	}
-	console.log('update insterest staking data', eachData.value.id)
+// 质押赎回
+const onPledgeRedemption = async () => {
 	try {
 		loading.loading()
-		const response = await updateInterestData(temp)
+		await pledgeRedemptionApi({
+			orderId: eachData.value.stakeOrderId,
+		})
 		loading.clearLoading()
 		interestDialogVisible.value = false
 
-		onClickTab({ name: 1 })
+		showToast({
+			icon: 'info',
+			message: t('操作成功'),
+			onClose: () => {
+				onClickTab({ name: activeName.value })
+			},
+		})
 	} catch (error) {
 		console.log(error)
 	}
 }
+// ========= 质押赎回 end ============
 
-// ========= 理财赎回 end ============
+// 领取奖励
+const onClaimRewards = async (stakeOrder) => {
+	try {
+		loading.loading()
+		await claimRewardsApi({
+			orderId: stakeOrder.stakeOrderId,
+		})
+		loading.clearLoading()
+
+		showToast({
+			icon: 'info',
+			message: t('操作成功'),
+			onClose: () => {
+				onClickTab({ name: activeName.value })
+			},
+		})
+	} catch (e) {
+		console.log(e)
+	}
+}
 
 // 平仓
 const manualClosePosition = async (item) => {
@@ -754,10 +816,16 @@ const manualClosePosition = async (item) => {
 			id: item.id,
 		}
 		loading.loading()
-		const res = await manualClosePositionApi(params)
+		await manualClosePositionApi(params)
 		loading.clearLoading()
 
-		onClickTab({ name: 4 })
+		showToast({
+			icon: 'info',
+			message: t('操作成功'),
+			onClose: () => {
+				onClickTab({ name: activeName.value })
+			},
+		})
 	} catch (error) {
 		console.log(error)
 	}
@@ -766,9 +834,9 @@ const manualClosePosition = async (item) => {
 onMounted(() => {
 	store.SET_PATH_DATA('no')
 
-	let currentTab = 0
+	let currentTab = activeName.value
 	if (route.query?.tab) {
-		currentTab = route.query.tab * 1
+		currentTab = route.query.tab
 	}
 	onClickTab({ name: currentTab })
 })
@@ -1049,11 +1117,19 @@ defineExpose({})
 			background: var(--01, #82a9f9);
 			border-radius: 0.45rem;
 			width: 90%;
-		}
 
-		.btn-css:focus {
-			background: #1d2a5e;
-			background: var(--01, #82a9f9);
+			&:focus {
+				background: #1d2a5e;
+				background: var(--01, #82a9f9);
+			}
+			&:active {
+				border-color: var(--01, #82a9f9);
+			}
+
+			&.is-disabled,
+			&.is-disabled:hover {
+				opacity: 0.7;
+			}
 		}
 
 		.waning-css {

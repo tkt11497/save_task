@@ -4,15 +4,15 @@
 		<div class="market_list">
 			<div class="list_info">
 				<div class="item" v-for="(item, index) in coinList" :key="index" @click="popupShow(item)">
-					<div class="item_img" v-if="item && item.productLogPath">
-						<img :src="$imgpath + item.productLogPath" alt="" />
+					<div class="item_img">
+						<img :src="$imgpath + item.mainTokenIconUrl" alt="" />
 					</div>
 					<div class="coin">
-						<div class="name">{{ item.productName }}</div>
-						<div>{{ item.productFullname }}</div>
+						<div class="name">{{ item.symbol }}</div>
+						<div>{{ item.mainTokenName }}</div>
 					</div>
 					<div class="echarts">
-						<EchartsLine :line-id="item.productName || `line-${index}`" :row-data="item" />
+						<EchartsLine :line-id="item.symbol || `line-${index}`" :row-data="item" />
 						<!-- <img src="../../assets/images/home/echarts.png" alt="echarts" /> -->
 					</div>
 					<MarketLatestData :row-data="item" />
@@ -23,20 +23,18 @@
 						<template #header>
 							<div class="dialog-title">
 								<img @click="centerDialogVisible = false" src="@/assets/images/market/back.png" class="back-css" alt="" />
-								<span class="title-text">{{ marketEachData.productName }}</span>
+								<span class="title-text">{{ marketEachData.symbol }}</span>
 								<img src="@/assets/images/market/back.png" class="back-css" style="visibility: hidden" alt="" />
 							</div>
 						</template>
 						<div class="charts-top">
 							<div class="coin-info">
-								<!-- {{marketEachData}} -->
 								<div class="coin-row">
 									<div class="coin-left">
-										<img :src="$imgpath + marketEachData.productLogPath" class="coin-css" alt="" />
-										<!-- <img src="../../assets/images/market/back-arrow.png" class="coin-css" alt="" /> -->
+										<img :src="$imgpath + marketEachData.mainTokenIconUrl" class="coin-css" alt="" />
 										<div class="coin-name">
-											<p class="name">{{ marketEachData.productName }}</p>
-											<p>{{ marketEachData.productFullname }}</p>
+											<p class="name">{{ marketEachData.symbol }}</p>
+											<p>{{ marketEachData.mainTokenName }}</p>
 										</div>
 									</div>
 									<div class="coin-right">
@@ -79,16 +77,9 @@
 						</div>
 						<div>
 							<EchartsMarket ref="echartsMarketRef" :kline-data="klineHistoryList" :symbol-info="symbolInfo" />
-							<!-- <img src="../../assets/images/market/pie-chart.png" class="pie-css" alt="pie icon"> -->
-							<!-- <div class="date-time">
-								<p>07/28 04:30</p>
-								<p>07/28 09:30</p>
-								<p>07/28 13:30</p>
-								<p>07/28 17:30</p>
-							</div> -->
 						</div>
 						<template #footer>
-							<div class="dialog-footer" v-if="isProductfinalconfig">
+							<div class="dialog-footer">
 								<el-button class="up-btn" @click="popupFromLower('0')">{{ t('上涨') }}</el-button>
 								<el-button class="down-btn" @click="popupFromLower('1')">{{ t('下跌') }}</el-button>
 							</div>
@@ -113,10 +104,10 @@
 							</div>
 							<div class="coin-row">
 								<div class="coin-left">
-									<img :src="$imgpath + marketEachData.productLogPath" class="coin-css" alt="" @click="childDialogVisible = false" />
+									<img :src="$imgpath + marketEachData.mainTokenIconUrl" class="coin-css" alt="" @click="childDialogVisible = false" />
 									<div class="coin-name">
-										<p class="name">{{ marketEachData.productName }}</p>
-										<p>{{ marketEachData.productFullname }}</p>
+										<p class="name">{{ marketEachData.symbol }}</p>
+										<p>{{ marketEachData.mainTokenName }}</p>
 									</div>
 								</div>
 								<div class="coin-right">
@@ -127,30 +118,28 @@
 								</div>
 							</div>
 						</div>
-						<div v-if="selectTab == 'option'">
+						<div v-if="selectTab === 'option'">
 							<p class="time-css">{{ t('时间') }}</p>
 							<template v-if="optionStatus === 'wait'">
 								<div class="scroll-container">
 									<div class="measure-block measure-block2">
 										<div
-											v-for="(list, index) in prodFinalList"
+											v-for="(prodFina, index) in prodFinalList"
 											class="each-measure"
 											:key="index"
-											:class="selectProductFinalConfig.id == list.id ? 'activeTime' : ''"
-											@click="prodActiveFunc(list)"
+											:class="selectProductFinalConfig.id === prodFina.id ? 'activeTime' : ''"
+											@click="prodActiveFunc(prodFina)"
 										>
-											<p class="upper-txt">{{ list.time }} s</p>
-											<p class="lower-txt">Ror:{{ timesForValueDecimal(list.odds, 100) }}%</p>
+											<p class="upper-txt">{{ prodFina.time }} s</p>
+											<p class="lower-txt">Ror:{{ prodFina.oddsRate || 0 }}%</p>
 										</div>
 									</div>
 								</div>
 								<div class="trans-div">
 									<p class="transaction-css">{{ t('交易费') }}:</p>
-									<p class="transaction-amount">$ {{ timesForValueDecimal(marketEachData.feeRatio, numVal) }}</p>
+									<p class="transaction-amount">$ {{ timesForValueDecimal(marketEachData.feeRate, buyAmount) }}</p>
 								</div>
 								<div class="money-num">
-									<!-- margin = (lots * oneAmount)/leverage -->
-									<!-- {{selectCoinOption}}-{{coinOptions[selectCoinOption].label}} -->
 									<el-select v-model="selectCoinOption" placeholder="Select" class="wallet-select" popper-class="wallet-select-popper">
 										<el-option v-for="item in coinOptions" :key="item.value" :label="item.label" :value="item.value">
 											<template #default="{ option }">
@@ -169,12 +158,14 @@
 									<span class="money-css">USDC</span>
 									</div> -->
 									<div class="step-input">
-										<el-input-number v-model="numVal" :min="0" class="custom-input-number" @blur="formatterNumVal" />
+										<el-input-number v-model="buyAmount" :min="0" class="custom-input-number" @blur="formatterNumVal" />
 									</div>
 								</div>
 								<div class="trans-div trans-div2">
 									<p class="transaction-css">{{ t('可用余额') }}:</p>
-									<p class="transaction-amount">{{ plusDecimal(foundObject.balance || 0) }} {{ foundObject.coinCode || '' }}</p>
+									<p class="transaction-amount">
+										{{ plusDecimal(platformAccountOfOptionsType.balance || 0) }} {{ platformAccountOfOptionsType.tokenName || '' }}
+									</p>
 								</div>
 							</template>
 							<template v-if="optionStatus === 'pending'">
@@ -182,13 +173,13 @@
 									<template v-if="optionOrderProgress !== 100">
 										<div class="des">
 											<p class="p1"><van-count-down :time="optionOrderData.period * 1000" format="ss" @change="countDownChange" /> s</p>
-											<p class="p2">ROI:{{ selectProductFinalConfig.odds * 100 }}%</p>
+											<p class="p2">ROI:{{ selectProductFinalConfig.oddsRate * 100 }}%</p>
 										</div>
 										<div class="progress">
 											<van-progress :percentage="optionOrderProgress" :show-pivot="false" track-color="#F4F4F4" color="82A9F9" stroke-width="8px" />
 										</div>
 									</template>
-									<div v-else class="num" :class="{ up: expectedSymbol === '+' }">{{ expectedSymbol }}{{ optionOrderData.lossAmountPrice }}$</div>
+									<div v-else class="num" :class="{ up: expectedSymbol === '+' }">{{ expectedSymbol }}${{ optionOrderData.lossAmountPrice }}</div>
 								</div>
 								<div class="statics-block" v-if="optionOrderData && optionOrderData.orderAmount">
 									<div class="item1">
@@ -219,13 +210,12 @@
 							</template>
 						</div>
 
-						<div v-else-if="selectTab == 'contract'">
+						<div v-else-if="selectTab === 'contract'">
 							<div class="block1">
 								<span class="demonstration">{{ t('杠杆') }}: {{ leverageVal }}X</span>
 								<el-slider v-model="leverageVal" :min="1" :max="marketEachData.leverageTimes" show-stops :marks="marks"> </el-slider>
 							</div>
 							<div class="money-num money-num2">
-								<!-- {{selectContractCoin}}-{{coinOptions[selectContractCoin].label}} -->
 								<el-select v-model="selectContractCoin" placeholder="Select" class="wallet1-select">
 									<el-option v-for="item in coinOptions" :key="item.value" :label="item.label" :value="item.value">
 										<template #default="{ option }">
@@ -250,7 +240,7 @@
 								<div class="buy-row">
 									<p class="numcss" v-if="!tradeTypeSwitchVal">{{ symbolInfo.closePlain || symbolInfo.close }}</p>
 									<van-field class="numcss" v-else v-model="tradeOpeningPrice" center placeholder=""></van-field>
-									<p>{{ marketEachData.productName }}</p>
+									<p>{{ marketEachData.symbol }}</p>
 								</div>
 							</div>
 							<div>
@@ -273,40 +263,40 @@
 								<div class="margin-commission">
 									<!-- margin = (lots * oneAmount)/leverage  margin = oneAmount*purchaseLots/leverageRatio  -->
 									<p>{{ t('所需保证金') }}:{{ marginAmount }}</p>
-									<p>{{ t('手续费') }}:{{ timesForValueDecimal(marginAmount, marketEachData.feeRatio) }}</p>
+									<p>{{ t('手续费') }}:{{ timesForValueDecimal(marginAmount, marketEachData.feeRate) }}</p>
 								</div>
 							</div>
 							<div class="swit-row">
 								<p>{{ t('设置止盈/止损') }}</p>
 								<el-switch
-									v-model="takeProfitStopLossSwitchVal2"
+									v-model="takeProfitStopLossSwitch"
 									size="large"
 									active-color="#13ce66"
 									inactive-color="#ff4949"
-									@change="takeProfitStopLossChange"
+									@change="onTakeProfitStopLossChange"
 								>
 								</el-switch>
 							</div>
-							<div v-if="takeProfitStopLossSwitchVal2" class="profit-stop">
+							<div v-if="takeProfitStopLossSwitch" class="profit-stop">
 								<div class="profitcss">
 									<p>{{ t('止盈价') }}</p>
 									<el-input placeholder="" v-model="profitPrice"></el-input>
 								</div>
 								<div class="losscss">
 									<p>{{ t('止损价') }}</p>
-									<el-input placeholder="" v-model="stoplossPrice"></el-input>
+									<el-input placeholder="" v-model="stopLossPrice"></el-input>
 								</div>
 							</div>
 						</div>
 						<template #footer>
 							<div class="dialog-footer">
-								<template v-if="selectTab == 'option'">
-									<el-button v-if="optionStatus === 'wait'" class="buy-btn" :class="{ 'down-btn': priceChanDir === '1' }" @click="buyupFunc()">{{
+								<template v-if="selectTab === 'option'">
+									<el-button v-if="optionStatus === 'wait'" class="buy-btn" :class="{ 'down-btn': priceChanDir === '1' }" @click="buyOptionFunc()">{{
 										priceChanDir === '0' ? t('买涨') : t('买跌')
 									}}</el-button>
 									<el-button v-else class="buy-btn" @click="continueHandle">{{ t('继续') }}</el-button>
 								</template>
-								<el-button v-else-if="selectTab == 'contract'" class="buy-btn" @click="addContractFunc()">{{ t('确认') }}</el-button>
+								<el-button v-else-if="selectTab === 'contract'" class="buy-btn" @click="addContractFunc()">{{ t('确认') }}</el-button>
 							</div>
 						</template>
 					</el-dialog>
@@ -317,19 +307,9 @@
 </template>
 
 <script setup>
-import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import BTC from '@/assets/images/home/BTC.png'
-import {
-	addContractOrder,
-	clientgetPlatformClient,
-	fetchProdFinalClientList,
-	getCoinList,
-	getOptionOrderDetailApi,
-	getSymbolInfo,
-	klieListApi,
-	optionClientAdd,
-} from '@/apiService'
+import { addContractOrder } from '@/apiService'
 import { userStore } from '@/store'
 import Socket from '@/utils/socket.js'
 import EchartsMarket from './echartsMarket.vue'
@@ -340,6 +320,15 @@ import { useI18n } from 'vue-i18n'
 import useLoading from '@/hooks/useLoading.js'
 import { onClickOutside } from '@vueuse/core'
 import { dividedForValueDecimal, getImageUrl, plusDecimal, timesForValueDecimal } from '@/utils'
+import {
+	buyOptionApi,
+	fetchKlineListApi,
+	fetchOptionsProduceListApi,
+	fetchTradingPairDetailApi,
+	fetchTradingPairListApi,
+	getOptionDetailApi,
+} from '@/apis/optionAndContract.js'
+import { useToken } from '@/hooks/useToken.js'
 
 // 初始化仓库
 const uStore = userStore()
@@ -349,22 +338,12 @@ const loading = useLoading()
 // 变量区
 const router = useRouter()
 const route = useRoute()
-const priceChanDir = ref(undefined)
-const profitPrice = ref('')
-const stoplossPrice = ref('')
-const leverageVal = ref(1)
-const tradeTypeSwitchVal = ref(false)
-const takeProfitStopLossSwitchVal2 = ref(false)
-const selectProductFinalConfig = ref({})
-const selectTab = ref('option')
-const coinList = ref([])
-const prodFinalList = ref([])
-const platformaccount = ref([])
-const marketEachData = ref({})
-const centerDialogVisible = ref(false)
-const childDialogVisible = ref(false)
-const numVal = ref(0)
-const buyVolAmount = ref(0)
+
+// 选择的期权交易币种
+const selectCoinOption = ref('0')
+// 选择的合约交易币种
+const selectContractCoin = ref('0')
+// 期权和合约的交易币种
 const coinOptions = [
 	{
 		value: '0',
@@ -376,188 +355,111 @@ const coinOptions = [
 		label: 'USDT',
 		image: getImageUrl('market/USDT.png'),
 	},
-	// , {
-	//   value: '0',
-	//   label: 'BTC',
-	//   image: '../../src/assets/images/market/BTC.png'
-	// },
-	// {
-	//   value: '2',
-	//   label: 'StETH',
-	//   image: '../../src/assets/images/market/stETH.png'
-	// }, {
-	//   value: '3',
-	//   label: 'AAVE',
-	//   image: '../../src/assets/images/market/AAVE.png'
-	// }, {
-	//   value: '4',
-	//   label: 'UNI',
-	//   image: '../../src/assets/images/market/UNI.png'
-	// }, {
-	//   value: '5',
-	//   label: 'DAI',
-	//   image: '../../src/assets/images/market/DAI.png'
-	// }, {
-	//   value: '6',
-	//   label: 'XAUT',
-	//   image: '../../src/assets/images/market/TAUT.png'
-	// }, {
-	//   value: '7',
-	//   label: 'RenBTC',
-	//   image: '../../src/assets/images/market/RenBTC.png'
-	// }, {
-	//   value: '8',
-	//   label: 'StkAAVE',
-	//   image: '../../src/assets/images/market/stkAAVE.png'
-	// }
 ]
-const selectCoinOption = ref('0')
-const selectContractCoin = ref('0')
-const foundObject = ref({
-	balance: '',
-	coinCode: '',
-})
-const foundObjecContract = ref({})
-// 市场列表
-const list = ref([
-	{
-		title: 'BTC/USD11',
-		text: 'Bitcoin',
-		img: BTC,
-	},
-	{
-		title: 'ETH/USD',
-		text: 'Bitcoin',
-		img: BTC,
-	},
-	{
-		title: 'ATOM/USD',
-		text: 'Bitcoin',
-		img: BTC,
-	},
-	{
-		title: 'LTC/USD',
-		text: 'Bitcoin',
-		img: BTC,
-	},
-	{
-		title: 'BTC/USD',
-		text: 'Bitcoin',
-		img: BTC,
-	},
-	{
-		title: 'LTC/USD',
-		text: 'Bitcoin',
-		img: BTC,
-	},
-])
 
-// 保证金
-const marginAmount = computed(() => {
-	return dividedForValueDecimal(timesForValueDecimal(buyVolAmount.value, marketEachData.value.oneAmount), leverageVal.value) || 0
-})
-
-watch(
-	() => selectCoinOption.value,
-	(newValue, oldValue) => {
-		console.log('Selected value changed from', oldValue, 'to', newValue)
-		const labelToFind = coinOptions[selectCoinOption.value].label
-		if (platformaccount.value && platformaccount.value.length > 0) {
-			foundObject.value = platformaccount.value.find((obj) => obj.coinCode && obj.coinCode.toLowerCase() === labelToFind.toLowerCase())
-		} else {
-			foundObject.value = {
-				balance: '0',
-				coinCode: labelToFind.toLowerCase(),
-			}
-		}
-	},
-	{ immediate: true }
-)
-watch(
-	() => selectContractCoin.value,
-	(newValue, oldValue) => {
-		console.log('Selected value changed from', oldValue, 'to', newValue)
-		const labelToFind = coinOptions[selectContractCoin.value].label
-		if (platformaccount.value && platformaccount.value.length > 0) {
-			foundObjecContract.value = platformaccount.value.find((obj) => obj.coinCode && obj.coinCode.toLowerCase() === labelToFind.toLowerCase())
-		} else {
-			foundObjecContract.value = {
-				balance: '0',
-				coinCode: labelToFind.toLowerCase(),
-			}
-		}
-	},
-	{ immediate: true }
-)
-
+// 当前选择的交易对
+const marketEachData = ref({})
+// 交易对详情弹窗
+const centerDialogVisible = ref(false)
+// 期权合约购买弹窗
+const childDialogVisible = ref(false)
+// 交易杠杆
+const leverageVal = ref(1)
+// 查看交易对详情
 const popupShow = (data) => {
 	marketEachData.value = data
 	leverageVal.value = data.leverageTimes
 	centerDialogVisible.value = true
 	getSymbolInfoFun()
+	getKlineList()
 	resetData()
 }
 const childDialogRef = ref(null)
 const handleCloseDialog = () => {
 	onClickOutside(childDialogRef, (e) => {
-		// console.log('click outside!', e);
 		if (e?.target.className === 'el-overlay') {
 			childDialogVisible.value = false
 			childDialogClose()
 		}
 	})
 }
+
+// 买涨或跌  1涨 0跌
+const priceChanDir = ref(undefined)
+// 期权和交易弹窗
 const popupFromLower = (val) => {
 	priceChanDir.value = val
 	getProdFinalList()
-	getPlatformList()
+	getPlatformAccountList()
 	childDialogVisible.value = true
 	handleCloseDialog()
 	resetData()
 }
 const childDialogClose = () => {
-	console.log('childDialogClose')
 	clearInterval(getOrderTimer.value)
-	clearTimeout(toastTimer.value)
 }
+
+// 合约买入手数
+const buyVolAmount = ref(0)
+// 买入 手数格式化
+const formatterBuyVolAmount = (value) => {
+	// val = val.replace(/\d/g, '')
+	return `${Math.round(parseFloat(value) / 10) * 10}`
+}
+// 保证金
+const marginAmount = computed(() => {
+	return dividedForValueDecimal(timesForValueDecimal(buyVolAmount.value, marketEachData.value.oneAmount), leverageVal.value) || 0
+})
 const decreIncreFunc = (val) => {
-	if (val == 'minus' && buyVolAmount.value > 0) {
+	if (val === 'minus' && buyVolAmount.value > 0) {
 		buyVolAmount.value = buyVolAmount.value * 1 - 10
-	} else if (val == 'plus') {
+	} else if (val === 'plus') {
 		buyVolAmount.value = buyVolAmount.value * 1 + 10
 	}
 }
-const getPlatformList = async () => {
+
+const { getPlatformTokenList } = useToken()
+// 平台账户列表
+const platformAccountList = ref([])
+// 期权交易币种的平台账户信息
+const platformAccountOfOptionsType = computed(() => {
+	const labelToFindO = coinOptions[selectCoinOption.value].label
+	return (
+		platformAccountList.value.find((obj) => {
+			return obj.tokenName && obj.tokenName.toLowerCase() === labelToFindO.toLowerCase()
+		}) || {
+			balance: 0,
+			tokenName: labelToFindO.toLowerCase(),
+		}
+	)
+})
+// 期权交易币种的平台账户信息
+const platformAccountOfContractType = computed(() => {
+	const labelToFindC = coinOptions[selectContractCoin.value].label
+	return (
+		platformAccountList.value.find((obj) => {
+			return obj.tokenName && obj.tokenName.toLowerCase() === labelToFindC.toLowerCase()
+		}) || {
+			balance: 0,
+			tokenName: labelToFindC.toLowerCase(),
+		}
+	)
+})
+// 获取平台账户列表
+const getPlatformAccountList = async () => {
 	try {
 		loading.loading()
-		const response = await clientgetPlatformClient()
+		platformAccountList.value = await getPlatformTokenList()
 		loading.clearLoading()
-		platformaccount.value = response.data
-		const labelToFindO = coinOptions[selectCoinOption.value].label
-		const labelToFindC = coinOptions[selectContractCoin.value].label
-
-		// console.log('dddsssss', labelToFindO, labelToFindC, foundObject, foundObjecContract)
-		if (response.data && response.data.length > 0) {
-			foundObject.value = response.data.find((obj) => obj.coinCode && obj.coinCode.toLowerCase() === labelToFindO.toLowerCase())
-			foundObjecContract.value = response.data.find((obj) => obj.coinCode && obj.coinCode.toLowerCase() === labelToFindC.toLowerCase())
-		} else {
-			foundObject.value = {
-				balance: '0',
-				coinCode: labelToFindO.toLowerCase(),
-			}
-			foundObjecContract.value = {
-				balance: '0',
-				coinCode: labelToFindC.toLowerCase(),
-			}
-		}
 	} catch (err) {
 		console.log(err)
 	}
 }
+
 // 杠杆
 const marks = computed(() => {
 	let obj = {}
-	if (marketEachData.value?.leverageTimes) {
+	if (marketEachData.value && marketEachData.value.leverageTimes) {
 		let leverageTimes = marketEachData.value.leverageTimes * 1
 		obj = {
 			1: '1X',
@@ -577,18 +479,7 @@ const marks = computed(() => {
 	}
 	return obj
 })
-// 买入 手数格式化
-const formatterBuyVolAmount = (value) => {
-	// val = val.replace(/\d/g, '')
-	return `${Math.round(parseFloat(value) / 10) * 10}`
-}
-// 期权买入金额格式化
-const formatterNumVal = (e) => {
-	console.log('ddd', e)
-	let match = e.target.value.match(/^\d+$/)
-	e.target.value = match ? parseInt(match[0], 10) : 0
-	numVal.value = e.target.value * 1
-}
+
 // wait pending confirm
 const optionStatus = ref('wait')
 const optionOrderData = ref({
@@ -597,73 +488,72 @@ const optionOrderData = ref({
 	period: '',
 	id: '',
 })
-const buyupFunc = () => {
-	if (numVal.value * 1 <= 0) {
+
+// 期权购买金额
+const buyAmount = ref(0)
+// 期权买入金额格式化
+const formatterNumVal = (e) => {
+	let match = e.target.value.match(/^\d+$/)
+	e.target.value = match ? parseInt(match[0], 10) : 0
+	buyAmount.value = e.target.value * 1
+}
+// 购买
+const buyOptionFunc = async () => {
+	if (buyAmount.value * 1 <= 0) {
 		showToast({ message: t('金额输入有误，请输入大于0的金额'), icon: 'info' })
 		return
 	}
-	if (!selectProductFinalConfig.value.encryCoinId || !selectProductFinalConfig.value.id) {
+	if (!selectProductFinalConfig.value.productId) {
 		return showToast({ message: t('产品期权配置信息异常'), icon: 'info' })
 	}
-	if (numVal.value > foundObject.value.balance) {
+	if (buyAmount.value > platformAccountOfOptionsType.value.balance) {
 		showToast({ message: t('操作失败，您的代币余额不足'), icon: 'info' })
 		return
 	}
 
 	let data = {
-		priceChangeDirection: priceChanDir.value,
-		orderAmount: numVal.value,
-		optionConfigurationId: selectProductFinalConfig.value.id,
-		orderCurrency: coinOptions[selectCoinOption.value].label,
-		encryCoinId: selectProductFinalConfig.value.encryCoinId,
-		openPrice: symbolInfo.value.close,
-		coinSymbol: marketEachData.value.productName,
+		amount: buyAmount.value, // 购买金额
+		currency: platformAccountOfOptionsType.value.tokenName, // 交易币种
+		symbolId: marketEachData.value.symbolId, // 交易对ID
+		exchangeDirection: parseInt(priceChanDir.value), // 买涨：1 买跌0
+		productId: selectProductFinalConfig.value.productId, // 产品ID
 	}
-	addOption(data)
-}
-const addOption = async (data) => {
+
 	try {
 		loading.loading()
-		const res = await optionClientAdd(data)
+		const res = await buyOptionApi(data)
 		loading.clearLoading()
-		// optionOrderData.value.period = 60
-		// optionStatus.value = 'pending'
-		console.log('addOption', res)
-		showToast({ message: t('成功'), icon: 'info' })
-		if (res?.data) {
-			const { orderAmount, transactionFee, id } = res.data
-			optionStatus.value = 'pending'
-			optionOrderData.value = {
-				orderAmount: orderAmount || numVal.value,
-				transactionFee: transactionFee || marketEachData.value.feeRatio * numVal.value,
-				period: selectProductFinalConfig.value.time,
-				lossAmountPrice: (orderAmount * selectProductFinalConfig.value.odds).toFixed(4),
-				id: id,
-			}
-		} else {
-			optionStatus.value = 'pending'
-			optionOrderData.value = {
-				orderAmount: numVal.value,
-				transactionFee: marketEachData.value.feeRatio * numVal.value,
-				period: selectProductFinalConfig.value.time,
-				id: '',
-			}
+		const { orderAmount, transactionFee, orderId, orderToken } = res.data || {}
+		optionStatus.value = 'pending'
+		optionOrderData.value = {
+			orderToken: orderToken || platformAccountOfOptionsType.value.tokenName,
+			orderAmount: orderAmount || buyAmount.value, // 订单金额
+			transactionFee: transactionFee || marketEachData.value.feeRate * buyAmount.value,
+			period: selectProductFinalConfig.value.time,
+			lossAmountPrice: (orderAmount * selectProductFinalConfig.value.oddsRate).toFixed(4),
+			orderId: orderId,
 		}
 
-		updateBalance()
-		computedExpectedPrice(optionOrderData.value)
+		showToast({
+			message: t('操作成功'),
+			icon: 'info',
+			onClose: () => {
+				// 刷新余额
+				getPlatformAccountList()
+				computedExpectedPrice()
+			},
+		})
 	} catch (err) {
 		console.log(err)
 	}
 }
+
 // 倒计时
 const optionOrderProgress = ref(0)
 const countDownChange = (time) => {
-	// console.log('dddd', time, optionOrderProgress.value)
-	// || optionOrderProgress.value >= 100
 	if (time.total && time.seconds === 0) {
 		optionOrderProgress.value = 100
-		getOptionOrderDetail(optionOrderData.value.id)
+		getOptionOrderDetail(optionOrderData.value.orderId)
 	} else {
 		// optionOrderProgress.value += Number(Math.floor(100 / optionOrderData.value.period))
 		// if (optionOrderProgress.value < 50) {
@@ -675,43 +565,41 @@ const countDownChange = (time) => {
 // 获取订单详情
 const getOrderTimer = ref(null)
 const getOptionOrderDetail = async (id) => {
+	clearOrderDetailLoop()
+
 	try {
 		if (!id) return
-		loading.loading()
-		const res = await getOptionOrderDetailApi(id)
-		loading.clearLoading()
-		// console.log('getOptionOrderDetail', res)
-		if (res.data) {
-			if (res.data.lossAmountPrice == null || res.data.closePrice == null) {
-				clearInterval(getOrderTimer.value)
-				getOrderTimer.value = setInterval(() => {
-					getOptionOrderDetail(optionOrderData.value.id)
-				}, 2000)
-			} else {
-				clearInterval(getOrderTimer.value)
-				optionOrderData.value.lossAmountPrice = res.data.lossAmountPrice
-				optionOrderData.value.openPrice = res.data.openPrice
-				optionOrderData.value.closePrice = res.data.closePrice
-				optionOrderData.value.orderNo = res.data.orderNo
-				computedExpectedPrice(optionOrderData.value)
-			}
+		// loading.loading()
+		const res = await getOptionDetailApi(id)
+		const orderData = res.data
+		// loading.clearLoading()
+		if (orderData.close) {
+			getOrderTimer.value = setTimeout(() => {
+				getOptionOrderDetail(optionOrderData.value.orderId)
+			}, 2000)
+		} else {
+			optionOrderData.value.lossAmountPrice = orderData.lossAmountPrice
+			optionOrderData.value.openPrice = orderData.openPrice
+			optionOrderData.value.closePrice = orderData.closePrice
+			optionOrderData.value.orderNo = orderData.orderNo
+			computedExpectedPrice()
 		}
 		optionStatus.value = 'pending'
 	} catch (err) {
 		console.log(err)
-		clearInterval(getOrderTimer.value)
-	} finally {
-		loading.clearLoading()
 	}
 }
+const clearOrderDetailLoop = () => {
+	getOrderTimer.value && clearTimeout(getOrderTimer.value)
+}
+
 const continueHandle = () => {
 	optionStatus.value = 'wait'
 	childDialogVisible.value = false
-	// router.push('/records?tab=3')
 	resetData()
 }
 
-const toastTimer = ref(null)
+// 购买合约
 const addContractFunc = async (data) => {
 	// Required Margin=Buy Volume/Leverage*Lots
 	// 永续合约的盈亏金额=（平仓价 - 入仓价）*一手数量 * 手数*杠杆倍数
@@ -725,74 +613,84 @@ const addContractFunc = async (data) => {
 
 	let temp = {
 		priceChangeDirection: priceChanDir.value,
-		baseSymbol: foundObjecContract.value.coinCode,
+		baseSymbol: platformAccountOfContractType.value.tokenName,
+		encryCoinId: prodFinalList.value[0].encryCoinId,
 		tradeOpeningPrice: tradeOpeningPrice.value,
 		leverageRatio: leverageVal.value > 0 ? leverageVal.value : 1,
-		tradeType: tradeTypeSwitchVal.value == true ? '1' : '0',
-		encryCoinId: prodFinalList.value[0].encryCoinId,
+		tradeType: tradeTypeSwitchVal.value === true ? '1' : '0',
 		purchaseLots: buyVolAmount.value,
 		takeProfitPrice: profitPrice.value,
-		stopLossPrice: stoplossPrice.value,
-		takeProfitStopLoss: takeProfitStopLossSwitchVal2.value,
-		coinSymbol: marketEachData.value.productName,
+		stopLossPrice: stopLossPrice.value,
+		takeProfitStopLoss: takeProfitStopLossSwitch.value,
+		coinSymbol: marketEachData.value.symbol,
 	}
 	try {
 		loading.loading()
-		const res = await addContractOrder(temp)
+		await addContractOrder(temp)
 		loading.clearLoading()
-		clearTimeout(toastTimer.value)
-		toastTimer.value = setTimeout(() => {
-			showToast({ message: t('成功'), icon: 'info' })
-		}, 1000)
-		updateBalance()
+		showToast({
+			message: t('成功'),
+			icon: 'info',
+			onClose: () => {
+				getPlatformAccountList()
+			},
+		})
 	} catch (err) {
 		console.log(err)
 	}
 }
-const prodActiveFunc = (val) => {
-	// console.log('Shal Shal ', val)
-	selectProductFinalConfig.value = val
-}
 
+// 期权合约tab选择
+const selectTab = ref('option')
 const tabFunc = (val) => {
 	selectTab.value = val
 	resetData()
 }
+
+// 是否限价委托
+const tradeTypeSwitchVal = ref(false)
+// 是否止盈或止损
+const takeProfitStopLossSwitch = ref(false)
+// 止盈价
+const profitPrice = ref('')
+// 止损价
+const stopLossPrice = ref('')
 // 设置止盈止损
 // 比如用户买跌，要判断止盈价格需要小于买入价格，止跌价格大于买入价格。
 // 比如用户买涨，要判断止盈价格需要大于买入价格，止跌价格小于买入价格。
-const takeProfitStopLossChange = (val) => {
+const onTakeProfitStopLossChange = (val) => {
 	if (val) {
 		if (priceChanDir.value === '1') {
 			profitPrice.value = (symbolInfo.value.close * 1 * 0.9).toFixed(2)
-			stoplossPrice.value = (symbolInfo.value.close * 1 * 1.1).toFixed(2)
+			stopLossPrice.value = (symbolInfo.value.close * 1 * 1.1).toFixed(2)
 		} else {
 			profitPrice.value = (symbolInfo.value.close * 1 * 1.1).toFixed(2)
-			stoplossPrice.value = (symbolInfo.value.close * 1 * 0.9).toFixed(2)
+			stopLossPrice.value = (symbolInfo.value.close * 1 * 0.9).toFixed(2)
 		}
 	}
 }
-const tradeOpeningPrice = ref('')
-const tradeTypeChange = (val) => {
-	// console.log('tradeTypeChange', val)
-	if (val) {
-		tradeOpeningPrice.value = symbolInfo.value.closePlain * 1
-	} else {
-		tradeOpeningPrice.value = symbolInfo.value.closePlain * 1
-	}
+// 限价委托的 限价
+const tradeOpeningPrice = ref(0)
+// 默认限价为收盘价
+const tradeTypeChange = () => {
+	tradeOpeningPrice.value = symbolInfo.value.closePlain * 1
 }
+
 // 代码区
+// 交易对列表
+const coinList = ref([])
+// 获取交易对
 const getMarketList = async () => {
 	try {
 		loading.loading()
-		const res = await getCoinList()
+		const res = await fetchTradingPairListApi()
 		loading.clearLoading()
 		coinList.value = res.data
 	} catch (err) {
 		console.log(err)
 	}
 }
-// 最近行情数据
+// 交易对详情 最近行情数据
 const symbolInfo = ref({
 	close: 0,
 	dailyChange: 0,
@@ -802,47 +700,47 @@ const symbolInfo = ref({
 })
 const getSymbolInfoFun = async () => {
 	try {
-		const symbol = marketEachData.value.productCode || 'btcusdt'
+		const symbol = marketEachData.value.symbolId || 'btcusdt'
 		loading.loading()
-		const res = await getSymbolInfo(symbol)
+		const res = await fetchTradingPairDetailApi(symbol)
 		loading.clearLoading()
-		if (res.data) {
-			symbolInfo.value = res.data
-		}
-		klieList()
+		symbolInfo.value = res.data || {}
 	} catch (err) {
 		console.log(err)
 	}
 }
-const isProductfinalconfig = ref(true)
+
+// 期权配置列表
+const prodFinalList = ref([])
+// 获取期权配置列表
 const getProdFinalList = async () => {
 	try {
 		loading.loading()
-		const res = await fetchProdFinalClientList({ encryCoinId: marketEachData.value.id })
+		const res = await fetchOptionsProduceListApi(marketEachData.value.symbolId)
 		loading.clearLoading()
 
+		prodFinalList.value = res.data || []
 		if (res.data.length === 0) {
-			isProductfinalconfig.value = true
 			return showToast({ message: t('产品期权配置信息异常'), icon: 'info' })
 		}
-
-		prodFinalList.value = res.data
 		selectProductFinalConfig.value = res.data[0]
 		optionOrderData.value.period = res.data[0].time
 	} catch (err) {
 		console.log(err)
 	}
 }
-// 更新可用余额
-const updateBalance = () => {
-	getPlatformList()
+// 当前选中期权产品
+const selectProductFinalConfig = ref({})
+const prodActiveFunc = (val) => {
+	selectProductFinalConfig.value = val
 }
+
 // 现在的价格比下单价格高：买涨，就是正盈利，买跌就说负盈利。现在的价格比下单价格低：买涨，就是负盈利，买跌就说正盈利。盈利计算公式：+/-(amount*roi）
 const expectedSymbol = ref('')
-const computedExpectedPrice = (order) => {
+const computedExpectedPrice = () => {
 	expectedSymbol.value = ''
-	if (order?.orderNo) {
-		expectedSymbol.value = order.lossAmountPrice * 1 >= 0 ? '+' : ''
+	if (optionOrderData.value?.orderNo) {
+		expectedSymbol.value = optionOrderData.value.lossAmountPrice * 1 >= 0 ? '+' : ''
 	} else {
 		if (priceChanDir.value === '0') {
 			expectedSymbol.value = symbolInfo.value.close * 1 >= symbolInfo.value.open * 1 ? '+' : '-'
@@ -854,10 +752,10 @@ const computedExpectedPrice = (order) => {
 
 // 重置数据
 const resetData = () => {
-	numVal.value = 0
+	buyAmount.value = 0
 	buyVolAmount.value = 0
 	profitPrice.value = ''
-	stoplossPrice.value = ''
+	stopLossPrice.value = ''
 	optionOrderProgress.value = 0
 	tradeOpeningPrice.value = symbolInfo.value.closePlain || symbolInfo.value.close
 	optionStatus.value = 'wait'
@@ -870,52 +768,53 @@ const resetData = () => {
 }
 
 // kline
-const klineType = ref('5m')
+
+// 5min 30min 60min 1day 1week
 const klineTypeList = [
 	{
-		key: '5m',
+		key: '5min',
 		value: '5M',
 	},
 	{
-		key: '30m',
+		key: '30min',
 		value: '30M',
 	},
 	{
-		key: '1h',
+		key: '60min',
 		value: '1H',
 	},
 	{
-		key: '1d',
+		key: '1day',
 		value: '1D',
 	},
 	{
-		key: '1w',
+		key: '1week',
 		value: '1W',
 	},
 ]
+const klineType = ref(klineTypeList[0].key)
 const checkKlineType = (item) => {
 	klineType.value = item.key
-	klieList()
+	getKlineList()
 }
 
 // kline线历史数据
 const klineHistoryList = ref([])
 const echartsMarketRef = ref(null)
-const klieList = async () => {
+const getKlineList = async () => {
 	try {
 		const params = {
 			pageNum: 1,
 			pageSize: 100,
-			symbol: marketEachData.value.productName,
+			symbol: marketEachData.value.symbol,
 			type: klineType.value,
 		}
 		loading.loading()
-		const res = await klieListApi(params)
+		const res = await fetchKlineListApi(params)
 		loading.clearLoading()
-		// console.log('klieList ', res.data)
-		klineHistoryList.value = res.data?.records.slice().reverse() || []
+		klineHistoryList.value = res.data || []
 		await nextTick()
-		echartsMarketRef.value && echartsMarketRef.value.updateChart(res.data?.records.slice().reverse() || [])
+		echartsMarketRef.value && echartsMarketRef.value.updateChart(res.data || [])
 
 		getSocket()
 	} catch (err) {
@@ -928,7 +827,7 @@ const getSocket = () => {
 	closeSoecket()
 
 	// symbol
-	const symbol = marketEachData.value.productName.replace('/', '-') || 'BTC-USD'
+	const symbol = marketEachData.value.symbol.replace('/', '-') || 'BTC-USD'
 	// 5m 30m 1h 1d 1w
 	const type = klineType.value
 	const url = `/ws/kline/${symbol}/${type}`
@@ -973,8 +872,7 @@ onMounted(() => {
 
 onUnmounted(() => {
 	closeSoecket()
-	clearInterval(getOrderTimer.value)
-	clearTimeout(toastTimer.value)
+	clearOrderDetailLoop()
 })
 
 // 将组件中的数据进行暴露出去
@@ -1032,7 +930,7 @@ defineExpose({})
 					flex: 0 0 140px;
 					color: #bbb;
 					font-size: 24px;
-					margin-right: 52px;
+					margin-right: 20px;
 
 					.name {
 						font-size: 28px;
@@ -1044,13 +942,7 @@ defineExpose({})
 				}
 
 				.echarts {
-					width: 150px;
-					height: 80px;
-
-					img {
-						width: 100%;
-						height: 100%;
-					}
+					width: 160px;
 				}
 
 				.num {

@@ -9,7 +9,7 @@
 		</div>
 		<!-- 交易详情  -->
 		<div class="transaction_details">
-			<div class="transaction_details_left" @click="handleRouter('/records?tab=0')">
+			<div class="transaction_details_left" @click="handleRouter('/records')">
 				<div class="icon-box">
 					<img src="@/assets/images/user/card.svg" />
 				</div>
@@ -19,16 +19,16 @@
 				</div>
 			</div>
 			<div>
-				<van-icon name="arrow" color="#000" size="15" @click="handleRouter('/records?tab=0')" />
+				<van-icon name="arrow" color="#000" size="15" @click="handleRouter('/records')" />
 			</div>
 		</div>
 		<div class="tab-box">
 			<van-tabs v-model:active="active" @change="tabChange">
-				<!-- 快捷充值 -->
-				<van-tab :title="t('快捷充值')" class="quickpay-tab">
+				<!-- 快捷充值 ETH不显示-->
+				<van-tab :title="t('快捷充值')" class="quickpay-tab" v-if="selectCoinInfo.tokenName !== 'ETH'">
 					<div class="receive-title">{{ t('存款金额') }}:</div>
 					<div class="address-box">
-						<van-field clearable type="number" v-model="quickPayParams.rechargeAmount" :placeholder="t('输入存款金额')">
+						<van-field clearable type="number" v-model.number="quickPayParams.rechargeAmount" :placeholder="t('输入存款金额')">
 							<template #right-icon>
 								{{ selectCoinInfo.tokenName }}
 							</template>
@@ -91,7 +91,7 @@
 						</div>
 					</div>
 					<div class="input-box">
-						<van-field clearable type="number" v-model="withdrawParams.withdrawAmount" :placeholder="t('输入提现金额')">
+						<van-field clearable type="number" v-model.number="withdrawParams.withdrawAmount" :placeholder="t('输入提现金额')">
 							<template #right-icon>
 								{{ selectCoinInfo.tokenName }}
 							</template>
@@ -102,7 +102,7 @@
 					</div>
 					<div class="receive-title">{{ t('接收地址') }}：</div>
 					<div class="address-box">
-						<van-field v-model="withdrawParams.withdrawAddress" label="" :placeholder="t('请输入钱包地址')" />
+						<van-field v-model="withdrawParams.withdrawAddress" disabled label="" :placeholder="t('请输入钱包地址')" />
 					</div>
 					<div class="rate-box">
 						1{{ selectCoinInfo.tokenName }} ≈ $<span>{{ selectExchangeRate }}</span>
@@ -124,7 +124,14 @@
 						<div class="text" @click="maxHandle">{{ t('最大') }}</div>
 					</div>
 					<div class="input-box">
-						<van-field clearable v-model="exchangeAmount" @input="inputExchangeAmount" type="number" :placeholder="t('输入兑换金额')">
+						<van-field
+							ref="exchangeAmountRef"
+							clearable
+							v-model.number="exchangeAmount"
+							@input="inputExchangeAmount"
+							type="number"
+							:placeholder="t('输入兑换金额')"
+						>
 							<template #right-icon>
 								{{ selectCoinInfo.tokenName }}
 							</template>
@@ -183,15 +190,15 @@
 <script setup name="Lang">
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { userStore } from '@/store'
+import { userStore, useWeb3Store } from '@/store'
 import arrow from '@/assets/images/user/arrow.png'
-import { currencyProtocol, exchangeRateFromTo, withdrawOrderApplyApi } from '@/apiService'
+import { currencyProtocol } from '@/apiService'
 import { showToast } from 'vant'
 import { useClipboard } from '@vueuse/core'
 import { useQRCode } from '@vueuse/integrations/useQRCode'
 import { useI18n } from 'vue-i18n'
 import useLoading from '@/hooks/useLoading.js'
-import { fetchWalletConfig, getAllCoinTypeApi, walletExchangeApi, walletSpeedRechargeApi } from '@/apis/wallet.js'
+import { fetchWalletConfig, getAllCoinTypeApi, walletExchangeApi, walletSpeedRechargeApi, walletWithdrawApi } from '@/apis/wallet.js'
 import { useToken } from '@/hooks/useToken.js'
 import { fetchExchangeRateApi } from '@/apis/common.js'
 
@@ -235,16 +242,15 @@ const quickPayHandle = async () => {
 		loading.loading()
 		await walletSpeedRechargeApi(quickPayParams.value)
 		loading.clearLoading()
-		const timeout = setTimeout(() => {
-			showToast({
-				message: t('操作成功'),
-				icon: 'info',
-			})
-			clearTimeout(timeout)
+		quickPayParams.value.rechargeAmount = ''
 
-			quickPayParams.value.rechargeAmount = ''
-			router.push('/user')
-		}, 1000)
+		showToast({
+			message: t('操作成功'),
+			icon: 'info',
+			onClose: () => {
+				router.push('/user')
+			},
+		})
 	} catch (err) {
 		console.log(err)
 	}
@@ -285,7 +291,7 @@ const protocolList = ref([])
 const getChargeProtocolList = async () => {
 	try {
 		loading.loading()
-		// todo 协议待对接
+		// todo kevin 协议接口待对接
 		const response = await currencyProtocol(coinId.value) // Fetch data from API
 		loading.clearLoading()
 		// 默认选中第一个协议
@@ -314,9 +320,19 @@ const paymentAddressSetting = async () => {
 }
 // 前往充值协议
 const openUploadProof = () => {
+	// todo 协议接口待接入
 	let filterList = protocolList.value.filter((item) => {
 		return item.protocol === checkedProtocol.value
 	})
+
+	usersStore.SET_STATE_DATA('rechargeData', {
+		protocolId: filterList[0]?.id,
+		currency: selectCoinInfo.value.tokenName,
+		targetAddress: rechargeAddress.value,
+	})
+	router.push({ path: '/uploadProof' })
+	return
+
 	if (filterList.length && filterList[0].id) {
 		router.push({
 			query: { pid: filterList[0].id, currency: selectCoinInfo.value.tokenName },
@@ -330,11 +346,12 @@ const openUploadProof = () => {
 	}
 }
 
+const web3store = useWeb3Store()
 // 提现参数
 const withdrawParams = ref({
 	withdrawAmount: 0,
 	withdrawToken: '',
-	withdrawAddress: '',
+	withdrawAddress: web3store.address,
 })
 // 提现操作
 const withdrawHandle = async () => {
@@ -348,31 +365,22 @@ const withdrawHandle = async () => {
 		} else if (!parseFloat(withdrawParams.value.withdrawAmount)) {
 			showToast({ message: t('金额输入有误，请输入大于0的金额'), icon: 'info' })
 			return
-		} else if (!withdrawParams.value.withdrawAddress) {
-			showToast({
-				message: t('请输入钱包地址'),
-				icon: 'info',
-			})
-			return
 		}
-		const params = {
-			withdrawToken: selectCoinInfo.value.tokenName,
-			...withdrawParams.value,
-		}
+
 		loading.loading()
-		await withdrawOrderApplyApi(params)
+		await walletWithdrawApi({
+			withdrawToken: selectCoinInfo.value.tokenName,
+			withdrawAmount: withdrawParams.value.withdrawAmount,
+		})
 		loading.clearLoading()
+
+		withdrawParams.value.withdrawAmount = 0
+
 		showToast({
 			message: t('操作成功'),
 			icon: 'info',
+			onClose: platformAccountClientList,
 		})
-		withdrawParams.value.withdrawAmount = 0
-
-		// 操作成功后，更新余额
-		const timeout = setTimeout(() => {
-			platformAccountClientList()
-			clearTimeout(timeout)
-		}, 1000)
 	} catch (error) {
 		console.log(error)
 	}
@@ -420,6 +428,7 @@ const platformAccountClientList = async () => {
 	}
 }
 
+const exchangeAmountRef = ref(null)
 // 兑换-原金额
 const exchangeAmount = ref(0)
 // 兑换-换算金额
@@ -448,9 +457,9 @@ const selectCurrency = async (item) => {
 }
 // 兑换-输入计算
 const inputExchangeAmount = () => {
-	if (!exchangeAmount.value) {
-		exchangeAmount.value = 1
-	}
+	// if (!exchangeAmount.value) {
+	// 	exchangeAmount.value = 1
+	// }
 	if (exchangeSelectCoinInfo.value.tokenName) {
 		toExchangeAmount.value = exchangeAmount.value * exchangeReceiveRate.value
 	}
@@ -471,13 +480,15 @@ const exchangeFun = async () => {
 			showToast({ message: t('请选择接受币种'), icon: 'info' })
 			return
 		}
-		if (exchangeAmount.value * 1 > platformAccount.value.balance * 1) {
-			showToast({
-				message: t('余额不足,超出最大值'),
-				icon: 'info',
-			})
-			return
-		}
+
+		// todo 测试去掉
+		// if (exchangeAmount.value * 1 > platformAccount.value.balance * 1) {
+		// 	showToast({
+		// 		message: t('余额不足,超出最大值'),
+		// 		icon: 'info',
+		// 	})
+		// 	return
+		// }
 
 		const dataInfo = {
 			fromAmount: parseFloat(exchangeAmount.value),
@@ -487,18 +498,13 @@ const exchangeFun = async () => {
 		loading.loading()
 		await walletExchangeApi(dataInfo)
 		loading.clearLoading()
-		let timeout = setTimeout(() => {
-			showToast({
-				message: t('申请成功'),
-				icon: 'info',
-			})
-			clearTimeout(timeout)
-
-			timeout = setTimeout(() => {
+		showToast({
+			message: t('申请成功'),
+			icon: 'info',
+			onClose: () => {
 				router.go(-1)
-				clearTimeout(timeout)
-			}, 1000)
-		}, 300)
+			},
+		})
 	} catch (e) {
 		console.log(e)
 	}

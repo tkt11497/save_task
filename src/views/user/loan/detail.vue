@@ -87,7 +87,7 @@
 					</div>
 					<div class="item">
 						<span class="label">{{ t('总利息金额') }}:</span>
-						<span class="value">{{ totalInterest }}USDC</span>
+						<span class="value">{{ totalInterest }} USDC</span>
 					</div>
 				</div>
 				<div class="btns">
@@ -113,7 +113,7 @@ import { computed, onMounted, ref } from 'vue'
 import { userStore } from '@/store'
 import { storeToRefs } from 'pinia'
 import arrow from '@/assets/images/user/arrow.png'
-import { base64ToBlob, dividedForValueDecimal, formatDate, timesDecimal, timesForValueDecimal } from '@/utils'
+import { base64ToBlob, dividedForValueDecimal, formatDate, plusForValueDecimal, timesDecimal, timesForValueDecimal } from '@/utils'
 import vueEsign from 'vue-esign'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
@@ -208,7 +208,7 @@ const loanData = ref({
 	loanDate: Date.now(), // 贷款日期
 	loanAmount: 0, // 贷款金额
 	loanDays: 0, // 贷款天数
-	loanDayRatio: '0%', // 贷款天数比率
+	loanDayRatio: '0', // 贷款天数比率
 	interest: 0, // 利息
 	repaymentAmount: 0, // 还款金额
 	latePaymentFee: 0, // 滞纳金
@@ -237,7 +237,7 @@ const continueHandle = () => {
 				loanDays: loanOrder.value.changeProductInfo.borrowDay, // 贷款天数
 				loanDayRatio: loanOrder.value.changeProductInfo.dayRate, // 贷款天数比率
 				interest: totalInterest.value, // 利息
-				repaymentAmount: loanOrder.value.loanAmount, // 还款金额
+				repaymentAmount: plusForValueDecimal(loanOrder.value.loanAmount, totalInterest.value), // 还款金额
 				latePaymentFee: loanOrder.value.changeProductInfo.overdueRate, // 滞纳金
 				signImg: esignImg.value, // 签名照片地址
 			}

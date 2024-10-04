@@ -1,6 +1,5 @@
 import { ref } from 'vue'
 import BigNumber from 'bignumber.js'
-import { useLocalStorage } from '@vueuse/core'
 import { getAllPlatformTokenBalanceApi, getSingleChainTokenBalanceApi } from '@/apis/wallet.js'
 import { useWeb3Store } from '@/store/index.js'
 import { storeToRefs } from 'pinia'
@@ -11,12 +10,8 @@ export function useToken() {
 	// 账户余额
 	let balance = ref(0)
 
-	const tokenClientList = useLocalStorage('tokenClientList', [])
-
 	const getBalance = async (checkedCurrency, callback) => {
 		console.log('================getBalance begin============')
-		await web3Store.initWallet()
-
 		console.log('useToken-当前选择币种：', checkedCurrency, callback)
 		console.log('useToken-当前选择地址：', address.value)
 
@@ -37,8 +32,9 @@ export function useToken() {
 	const getPlatformTokenList = async () => {
 		try {
 			let tokenRes = await getAllPlatformTokenBalanceApi()
-			tokenClientList.value = tokenRes.data?.tokenList || []
-			console.log('useToken', '获取平台所有币种余额', tokenClientList.value)
+			const tokenClientList = tokenRes.data || []
+			console.log('useToken', '获取平台所有币种余额', tokenClientList)
+			return tokenClientList
 		} catch (e) {
 			console.log('useToken', '获取平台所有币种余额失败', e)
 		}
@@ -58,7 +54,6 @@ export function useToken() {
 	return {
 		balance,
 		getBalance,
-		tokenClientList,
 		getPlatformTokenList,
 		getPlatformTokenByCoinType,
 	}

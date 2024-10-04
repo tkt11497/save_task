@@ -488,4 +488,19 @@ export default {
 	'请求失败，点击重新加载': 'Request failed, click to reload',
 	'选择新类型': 'Select new type',
 	'请正确连接你的钱包': 'Please connect your wallet correctly',
+
+	'审核状态': {
+		'待审核': 'Not reviewed',
+		'成功': 'Succeeded',
+		'失败': 'Fail',
+		'审核中': 'Under review',
+	},
+	'状态': 'Status',
+	'借款状态': 'Borrowing status',
+	'还款状态': 'Repayment status',
+	'理财质押': 'Financial',
+	'领取奖励': 'Claim Rewards',
+	'领取': 'Receive',
+	'如果提前终止交易，您将无法获得完整的收益 {金额}。':
+		'If the transaction is terminated early, you will not receive the full benefit {amount}{symbol}.',
 }

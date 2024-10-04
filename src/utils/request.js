@@ -23,7 +23,6 @@ request.interceptors.request.use(
 		// todo 添加语言
 		config.headers['Accept-Language'] = usStore.languageCode
 
-		console.log('请求拦截', config.url, userId.value)
 		if (config.url !== '/user/login' && userId.value) {
 			config.headers['Authorization'] = userId.value
 		}
@@ -46,8 +45,7 @@ request.interceptors.response.use(
 			res.data.success = true
 			return Promise.resolve(res.data)
 		} else if (401 === status) {
-			// todo 默认调用login
-			console.log(`request-请求401-${res.config.url}`)
+			console.warn(`request-请求401-${res.config.url}`)
 			userStoreObj
 				.loginAction()
 				.then(() => {
@@ -59,11 +57,11 @@ request.interceptors.response.use(
 					})
 				})
 				.then((apiData) => {
-					console.log(`request-请求401-${res.config.url}，重新请求成功`, apiData)
+					console.warn(`request-请求401-${res.config.url}，重新请求成功`, apiData)
 					return Promise.resolve(apiData)
 				})
 				.catch((e) => {
-					console.log(`request-请求401-${res.config.url}失败`, e)
+					console.warn(`request-请求401-${res.config.url}失败`, e)
 					loadingStoreObj.clearCount()
 					closeToast()
 
@@ -89,6 +87,7 @@ request.interceptors.response.use(
 			// 	message: status !== 500 && res.data.msg ? res.data.msg : i18n.global.t('错误提示.服务错误'),
 			// 	icon: 'info',
 			// })
+			console.error('接口返回失败', res.config.url, res.data)
 			return Promise.reject(res.data)
 		}
 	},

@@ -60,7 +60,7 @@ export default function (pageApi) {
 	const fetchPageData = async () => {
 		try {
 			const res = await pageApi(pageData)
-			dataList.value = dataList.value.concat(res.data || [])
+			dataList.value = dataList.value.concat(res.pageInfo || res.data || [])
 			return res
 		} catch (err) {
 			console.log(err)
@@ -68,13 +68,16 @@ export default function (pageApi) {
 	}
 
 	return {
-		onRefresh,
-		onLoad,
 		listLoading,
 		listError,
 		finished,
 		refreshing,
 		isEmptyList,
+
+		pageData,
 		dataList,
+
+		onRefresh,
+		onLoad,
 	}
 }

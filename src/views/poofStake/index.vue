@@ -232,14 +232,16 @@ const insertPledge = async () => {
 		await addStakeOrder(data)
 		loading.clearLoading()
 
-		showToast({ message: t('质押成功'), icon: 'info' })
 		stakeAmount.value = currentBase.value
 		centerDialogVisible.value = false
 
-		let timeout = setTimeout(() => {
-			getPoofStakeAccountInfo(true)
-			clearTimeout(timeout)
-		}, 2000)
+		showToast({
+			message: t('质押成功'),
+			icon: 'info',
+			onClose: () => {
+				getPoofStakeAccountInfo(true)
+			},
+		})
 	} catch (err) {
 		console.log(err)
 	} finally {

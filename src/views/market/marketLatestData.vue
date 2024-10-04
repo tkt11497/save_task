@@ -14,8 +14,7 @@ const props = defineProps({
 	rowData: {
 		type: Object,
 		default: () => ({
-			productName: '',
-			randomRange: '',
+			symbol: '',
 		}),
 	},
 })
@@ -32,9 +31,9 @@ const getSocket = () => {
 	closeSoecket()
 
 	// symbol
-	const symbol = rowData.value.productName.replace('/', '-')
-	// 5m 30m 1h 1d 1w
-	const type = '5m'
+	const symbol = rowData.value.symbol.replace('/', '-')
+	// 5min 30min 60min 1day 1week
+	const type = '5min'
 	const url = `/ws/kline/${symbol}/${type}`
 	klineListSocket.value = new Socket(url)
 	klineListSocket.value.init()
@@ -49,7 +48,7 @@ const getSocket = () => {
 }
 // 清除socket
 const closeSoecket = () => {
-	if (rowData.value.productName) {
+	if (rowData.value.symbol) {
 		klineListSocket.value && klineListSocket.value.close()
 	}
 }

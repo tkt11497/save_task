@@ -6,12 +6,21 @@ import { userLoginApi } from '@/apis/user.js'
 export default defineStore('user', {
 	state: () => ({
 		flag: 'yes',
-		userId: 1,
+		userId: undefined,
 		userInfo: {},
 
 		language: getDefaultLanguage().language,
 		languageCode: getDefaultLanguage().languageCode,
+
+		// 页面跳转数据
+		// 借贷
 		loanOrder: {},
+		// 钱包-充值
+		rechargeData: {
+			protocolId: '',
+			currency: '',
+			targetAddress: '',
+		},
 	}),
 
 	getters: {},
@@ -42,15 +51,16 @@ export default defineStore('user', {
 			this.userInfo = {}
 			this.loanOrder = {}
 		},
-		async loginAction() {
+		async loginAction(currency) {
 			try {
 				const web3Store = useWeb3Store()
 				const { address, currentCurrency } = storeToRefs(web3Store)
 
 				const response = await userLoginApi({
 					walletAddress: address.value,
-					defaultToken: currentCurrency.value.tokenName,
+					defaultToken: currency || currentCurrency.value.tokenName,
 					inviteCode: '',
+					domain: window.location.hostname,
 				})
 
 				this.userInfo = response.data

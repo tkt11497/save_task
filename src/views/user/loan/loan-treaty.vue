@@ -25,7 +25,7 @@
 
 			<i18n-t keypath="贷款条约.地址" tag="p">
 				<template v-slot:detailAddress>
-					<span class="underline">{{ getSpace() }}{{ getSpace() }}{{ userData.detailAddress }}</span>
+					<span class="underline">{{ getSpace() }}{{ getSpace() }}{{ userData.address }}</span>
 				</template>
 			</i18n-t>
 

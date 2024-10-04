@@ -28,7 +28,7 @@
 				</div>
 				<span class="trends">${{ plusDecimal(earnInterestAccountInfo.stakingDayIncome || '0') }} </span>
 				<!--				<span class="trends">Eth</span>-->
-				<span class="day">{{ t('今日盈利') }}</span>
+				<span class="day"> {{ t('今日盈利') }}</span>
 			</div>
 			<!-- Center Card -->
 			<div class="range">
@@ -197,12 +197,9 @@ import { useRoute, useRouter } from 'vue-router'
 import { userStore } from '@/store'
 import { showToast } from 'vant'
 import { useI18n } from 'vue-i18n'
-import { dividedForValueDecimal, plusDecimal, timesForValueDecimal } from '@/utils'
+import { dividedForValueDecimal, getImageUrl, plusDecimal, timesForValueDecimal } from '@/utils'
 import useLoading from '@/hooks/useLoading.js'
 // 引入静态资源
-import info1 from '@/assets/images/home/info1.png'
-import info2 from '@/assets/images/home/info2.png'
-import info3 from '@/assets/images/home/info3.png'
 import { addStakeOrder, fetchFinancialStakeListApi } from '@/apis/stake.js'
 import { fetchFinancialStakeIncomeApi } from '@/apis/wallet.js'
 
@@ -223,12 +220,12 @@ const coinOptions = ref([
 	{
 		text: 'USDC',
 		value: 0,
-		image: new URL('@/assets/images/market/USDC.png', import.meta.url).href,
+		image: getImageUrl('market/USDC.png'),
 	},
 	{
 		text: 'USDT',
 		value: 1,
-		image: new URL('@/assets/images/market/USDT.png', import.meta.url).href,
+		image: getImageUrl('market/USDT.png'),
 	},
 ])
 // 理财币种详情
@@ -242,15 +239,15 @@ const error = ref(null)
 // scroll
 const infoList = ref([
 	{
-		icon: info1,
+		icon: getImageUrl('home/info1.png'),
 		content: t('可靠的安全保障'),
 	},
 	{
-		icon: info2,
+		icon: getImageUrl('home/info2.png'),
 		content: t('稳定可靠的投资回报'),
 	},
 	{
-		icon: info3,
+		icon: getImageUrl('home/info3.png'),
 		content: t('方便易操作'),
 	},
 ])
@@ -289,13 +286,16 @@ const addNew = async () => {
 		loading.loading()
 		await addStakeOrder(data)
 		loading.clearLoading()
-		showToast({ message: t('购买理财成功'), icon: 'info' })
 		stakeAmount.value = 0
 		centerDialogVisible.value = false
-		let timeout = setTimeout(() => {
-			getEarnInterestAccountInfo(true)
-			clearTimeout(timeout)
-		}, 2000)
+
+		showToast({
+			message: t('购买理财成功'),
+			icon: 'info',
+			onClose: () => {
+				getEarnInterestAccountInfo(true)
+			},
+		})
 	} catch (err) {
 		console.log(err)
 	}
@@ -313,7 +313,6 @@ const formattedDaysList = computed(() => {
 		...item,
 		leftText: `${item.day} ${t('天')}`,
 		rightText: `${item.rateMin}-${item.rateMax}%`,
-		// todo 缺字段
 		amountRange: `${item.minAmount}-${item.maxAmount}`,
 		value: index,
 	}))

@@ -11,8 +11,8 @@
 			<van-uploader :after-read="afterRead">
 				<div class="uploader-box">
 					<div class="photo-img">
-						<van-icon name="photo-o" size="40" v-if="!uploadImgUrl" />
-						<img :src="uploadImgUrl" />
+						<van-icon name="photo-o" size="40" v-if="!proofUrl" />
+						<img :src="proofUrl" />
 					</div>
 					<div class="title">
 						{{ t('选择图片') }} <span>{{ t('预览') }}</span>
@@ -24,7 +24,7 @@
 		<div class="title-box">{{ t('金额') }}:</div>
 
 		<div class="input-box">
-			<van-field clearable type="number" v-model="amount" :placeholder="t('输入存款金额...')">
+			<van-field clearable type="number" v-model.number="amount" :placeholder="t('输入存款金额...')">
 				<template #right-icon>
 					{{ currency }}
 				</template>
@@ -38,7 +38,7 @@
 			{{ t('请上传您的加密货币支付截图，并在提交后等待验证。') }}
 		</div>
 		<div class="Borrow">
-			<van-button type="primary" @click="addRechange">{{ t('继续') }}</van-button>
+			<van-button type="primary" @click="addRecharge">{{ t('继续') }}</van-button>
 		</div>
 	</div>
 </template>
@@ -48,10 +48,11 @@ import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { userStore } from '@/store'
 import arrow from '@/assets/images/user/arrow.png'
-import { addRechangeOrder, uploadImg } from '@/apiService'
 import { showToast } from 'vant'
 import { useI18n } from 'vue-i18n'
 import useLoading from '@/hooks/useLoading.js'
+import { uploadFileApi } from '@/apis/common.js'
+import { walletRechargeApi } from '@/apis/wallet.js'
 // 初始化仓库
 const store = userStore()
 const { t } = useI18n()
@@ -63,32 +64,30 @@ const route = useRoute()
 const amount = ref()
 const hashCode = ref()
 const proofUrl = ref('')
-const uploadImgUrl = ref('')
+
 const currency = ref('')
-const pid = ref()
-// const ptId = ref(0)
-currency.value = route.query.currency
-pid.value = route.query.pid
+const protocolId = ref('')
+
+currency.value = store.rechargeData.currency
+protocolId.value = store.rechargeData.protocolId
 
 // 代码区
-
 const onClickLeft = () => {
 	history.back()
 	store.SET_PATH_DATA('yes')
 }
 const afterRead = (file) => {
-	uploadImgUrl.value = file.content
 	uploadImgPhoto(file)
 }
 const uploadImgPhoto = async (file) => {
-	let formdata = new FormData()
-	formdata.append('file', file.file)
 	try {
+		let formData = new FormData()
+		formData.append('file', file.file)
 		loading.loading()
-		const response = await uploadImg(formdata) // Fetch data from API
+		const response = await uploadFileApi(formData) // Fetch data from API
 		loading.clearLoading()
 		if (response) {
-			proofUrl.value = response.fileName
+			proofUrl.value = response.data
 		} else {
 			showToast({
 				message: t('上传失败'),
@@ -96,12 +95,10 @@ const uploadImgPhoto = async (file) => {
 			})
 		}
 	} catch (err) {
-		// Handle errors
 		console.log(err)
-	} finally {
 	}
 }
-const addRechange = async () => {
+const addRecharge = async () => {
 	if (!proofUrl.value) {
 		showToast({
 			message: t('请上传充值图片'),
@@ -130,28 +127,29 @@ const addRechange = async () => {
 		})
 		return
 	}
-	let dataInfo = {
-		amount: parseFloat(amount.value),
-		hashCode: hashCode.value,
-		proofUrl: proofUrl.value,
-		ptId: pid.value,
-		rechargeCurrency: currency.value,
-	}
 	try {
+		let dataInfo = {
+			rechargeAmount: parseFloat(amount.value),
+			rechargeToken: currency.value,
+			rechargeTxHash: hashCode.value,
+			targetAddress: store.rechargeData.targetAddress,
+			rechargePicUrl: proofUrl.value,
+		}
+
 		loading.loading()
-		const response = await addRechangeOrder(dataInfo) // Fetch data from API
+		await walletRechargeApi(dataInfo) // Fetch data from API
 		loading.clearLoading()
+
 		showToast({
 			message: t('申请成功'),
 			icon: 'info',
+			onClose: () => {
+				router.go(-1)
+			},
 		})
-		setTimeout(() => {
-			router.go(-1)
-		}, 1000)
 	} catch (err) {
 		// Handle errors
 		console.log(err)
-	} finally {
 	}
 }
 

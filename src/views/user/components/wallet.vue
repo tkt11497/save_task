@@ -20,9 +20,8 @@
 						</div>
 					</div>
 					<div class="right">
-						<span class="num">{{ toFixedDecimal(item.balanceCoinType?.balance || 0, 8) }}</span>
-						<!--  todo 字段待接入-->
-						<span class="usd">${{ item.balanceCoinType?.balanceToUsdt || 0 }}</span>
+						<span class="num">{{ toFixedDecimal(item.platformAccount?.balance || 0, 8) }}</span>
+						<span class="usd">${{ item.platformAccount?.exchangeUSDCBalance || 0 }}</span>
 					</div>
 				</div>
 			</div>
@@ -30,7 +29,7 @@
 	</div>
 </template>
 
-<script setup name="Wallet">
+<script setup>
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import arrow from '@/assets/images/user/arrow.png'
@@ -75,7 +74,7 @@ const getPlatformCoinBalanceList = async () => {
 		let arr = res.data
 		coinList.value.forEach((item) => {
 			const balanceCoinType = arr.find((item2) => {
-				return item2.coinCode && item.currency.toLowerCase() === item2.coinCode.toLowerCase()
+				return item2.tokenName && item.tokenName.toLowerCase() === item2.tokenName.toLowerCase()
 			})
 			item.platformAccount = balanceCoinType || {}
 		})
@@ -100,6 +99,9 @@ onMounted(() => {
 
 // 将组件中的数据进行暴露出去
 defineExpose({})
+defineOptions({
+	name: 'Wallet',
+})
 </script>
 
 <style lang="scss" scoped>

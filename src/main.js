@@ -33,7 +33,7 @@ setToastDefaultOptions({ position: 'top', className: 'toptoast' })
 // 注册App
 const app = createApp(App)
 app.component('Nav', Nav)
-app.config.globalProperties.$imgpath = IMAGE_URL
+app.config.globalProperties.$imgpath = IMAGE_URL || ''
 app.use(i18n)
 app.use(ElementPlus)
 app.use(store)

@@ -22,7 +22,7 @@
 			</div>
 			<!-- Number -->
 			<div class="contant">
-				<div class="number">${{ plusDecimal(platformAccount.totalBalance || 0) }}</div>
+				<div class="number">${{ plusDecimal(userStaticIncome.balance || 0) }}</div>
 
 				<!-- Precentage -->
 				<div class="precentage">
@@ -36,8 +36,8 @@
 					<img src="@/assets/images/home/trends.png" alt="trends" />
 				</div>
 				<div>
-					<span class="trends">${{ plusDecimal(userInfo.todayProfit || '0') }}</span>
-					<span class="trends">{{ userInfo.profitCurrency }}</span>
+					<span class="trends">${{ plusDecimal(userStaticIncome.todayBalance || '0') }}</span>
+					<!--					<span class="trends">{{ userStaticIncome.tokenName }}</span>-->
 					<span class="trends">{{ t('今日盈利') }}</span>
 				</div>
 			</div>
@@ -94,41 +94,23 @@
 import { onMounted, onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { userStore, useWeb3Store } from '@/store'
-import { addInvitesetData, fetchArticleDetail, fetchCountryAll, fetchInvitationCode, fetchUserInfo, fetchUserTotalBalanceApi } from '@/apiService'
 import { useI18n } from 'vue-i18n'
-import Web3 from 'web3'
-import { showToast } from 'vant'
 import { storeToRefs } from 'pinia'
 import { getImageUrl, plusDecimal } from '@/utils'
 import useLoading from '@/hooks/useLoading.js'
+import { fetchUserStaticIncomeApi } from '@/apis/user.js'
 // 初始化仓库
 const usersStore = userStore()
 const { t } = useI18n()
 const { currentCurrency, address } = storeToRefs(useWeb3Store())
 
 const loading = useLoading()
-const inviteCode = ref([])
 // 变量区
 const router = useRouter()
 const route = useRoute()
 // 搜索参数
 const value = ref('')
 
-// scroll
-const infoList = ref([
-	{
-		icon: getImageUrl('home/info1.png'),
-		content: 'Rellable Security Guarantee',
-	},
-	{
-		icon: getImageUrl('home/info2.png'),
-		content: 'Stable andReliable Investment',
-	},
-	{
-		icon: getImageUrl('home/info3.png'),
-		content: 'Convenient  and Easy Operation',
-	},
-])
 // General
 const generalList = ref([
 	{
@@ -166,107 +148,20 @@ const handleRouter = (path) => {
 	router.push(`${path}`)
 }
 
-const userInfo = ref({})
-const getUserInfo = async () => {
-	try {
-		loading.loading()
-		const response = await fetchUserInfo()
-		loading.clearLoading()
-		let temp = response.data || {}
-		usersStore.SET_USERID_DATA(temp.id)
-		usersStore.SET_USER_INFO(temp)
-		userInfo.value = temp
-	} catch (err) {
-		console.log(err)
-	}
-}
-
 // 获取平台账户
-const platformAccount = ref({
-	currency: '',
-	totalBalance: 0,
+const userStaticIncome = ref({
+	balance: 0,
+	todayBalance: 0,
+	tokenName: '',
 })
-const getPlatformAccount = async (isFirst) => {
+const getUserStaticIncome = async (isFirst) => {
 	try {
 		isFirst && loading.loading()
-		const res = await fetchUserTotalBalanceApi(currentCurrency.value.tokenName)
-		platformAccount.value = res.data
+		const res = await fetchUserStaticIncomeApi()
+		userStaticIncome.value = res.data
 		isFirst && loading.clearLoading()
 	} catch (err) {
 		console.log(err)
-	}
-}
-
-const getArticleDetail = async () => {
-	try {
-		const type = 'privacy' // Example
-		const languageId = 1
-		loading.loading()
-		const response = await fetchArticleDetail(type, languageId)
-		loading.clearLoading()
-	} catch (err) {
-		console.log(err)
-	}
-}
-const getCountryAll = async () => {
-	try {
-		loading.loading()
-		const response = await fetchCountryAll()
-		loading.clearLoading()
-	} catch (err) {
-		console.log(err)
-	}
-}
-
-const getInvitationCode = async () => {
-	try {
-		loading.loading()
-		const response = await fetchInvitationCode()
-		loading.clearLoading()
-		inviteCode.value = response.data
-	} catch (err) {
-		console.log(err)
-	}
-}
-
-const insertInviteset = async (data) => {
-	let temp = {
-		currency: 'string',
-		id: 0,
-		params: {},
-		remark: 'string',
-		sendNum: 0,
-		successInviteNum: 0,
-		userCategory: 'string',
-	}
-	try {
-		loading.loading()
-		const response = await addInvitesetData(temp)
-		loading.clearLoading()
-	} catch (err) {
-		console.log(err)
-	}
-}
-// 钱包连接
-const web3account = ref(null)
-const walletAddress = ref('')
-const web3accountBalance = ref(null)
-const walletConnect = () => {
-	if (typeof window.ethereum !== 'undefined') {
-		web3account.value = new Web3(window.ethereum)
-		if (web3account.value) {
-			walletAddress.value = web3account.value.currentProvider.selectedAddress
-
-			if (walletAddress.value) {
-				web3account.value.eth.getBalance(walletAddress.value).then((balance) => {
-					const etherBalance = web3account.value.utils.fromWei(balance, 'ether')
-					web3accountBalance.value = etherBalance
-				})
-			} else {
-				showToast('未选择合适的钱包地址')
-				router.push('/')
-			}
-		}
 	}
 }
 
@@ -274,23 +169,13 @@ const balanceTimer = ref(null)
 const balanceInterval = () => {
 	if (balanceTimer.value) clearInterval(balanceTimer.value)
 	balanceTimer.value = setInterval(() => {
-		getPlatformAccount()
+		getUserStaticIncome()
 	}, 5000)
 }
 
 onMounted(() => {
-	getUserInfo()
-
-	getArticleDetail()
-
-	getInvitationCode()
-	insertInviteset()
-
-	getCountryAll()
-
-	getPlatformAccount(true)
+	getUserStaticIncome(true)
 	balanceInterval()
-	// walletConnect()
 })
 
 onUnmounted(() => {

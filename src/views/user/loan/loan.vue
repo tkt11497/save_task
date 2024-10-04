@@ -101,7 +101,6 @@ import { useI18n } from 'vue-i18n'
 import useLoading from '@/hooks/useLoading.js'
 import { dividedForValueDecimal, timesDecimal, timesForValueDecimal, toFixedDecimal } from '@/utils/index.js'
 import { fetchLoanProductListApi } from '@/apis/loan.js'
-import { fetchUserKycApi } from '@/apis/user.js'
 import { storeToRefs } from 'pinia'
 
 // 初始化仓库
@@ -185,14 +184,13 @@ const addLoad = async () => {
 		return
 	}
 
-	// todo 检验测试
-	// if (userKycRecordData.value.approvalStatus !== '1') {
-	// 	showToast({
-	// 		message: t('需要kyc审核通过'),
-	// 		icon: 'info',
-	// 	})
-	// 	return
-	// }
+	if (userKycRecordData.value.approvalStatus !== '1') {
+		showToast({
+			message: t('需要kyc审核通过'),
+			icon: 'info',
+		})
+		return
+	}
 
 	let dataInfo = {
 		userId: usersStore.userInfo.id,
@@ -219,20 +217,13 @@ const handleRouter = (path) => {
 const userKycRecordData = ref({
 	approvalStatus: '0',
 })
-// 查询用户kyc记录
+// 查询用户是否申请过kyc
 const userKycRecord = async () => {
 	try {
 		loading.loading()
-		const res = await fetchUserKycApi()
-		loading.clearLoading()
-		if (!res.data.id) {
-			return
-		}
-
-		loading.loading()
 		await usersStore.loginAction()
-		loading.clearLoading()
 		userKycRecordData.value.approvalStatus = userInfo.value.isKyc + ''
+		loading.clearLoading()
 	} catch (error) {
 		console.log(error)
 	}
@@ -243,7 +234,7 @@ const userLoanAmount = ref(0)
 const getUserLoanAccountInfo = async () => {
 	try {
 		loading.loading()
-		// todo 接口待对接
+		// todo kevin 借贷页面-借贷金额接口待对接
 		const response = await fetchLoanAccountInfoApi() // Fetch data from API
 		loading.clearLoading()
 		userLoanAmount.value = response.data
@@ -258,7 +249,7 @@ const interestFreeDays = ref(0)
 const getInterestFreeDays = async () => {
 	try {
 		loading.loading()
-		// todo 待接接口
+		// todo kevin 免息天数待接接口
 		const response = await fetchInterestFreeDaysApi() // Fetch data from API
 		loading.clearLoading()
 		interestFreeDays.value = response.data
