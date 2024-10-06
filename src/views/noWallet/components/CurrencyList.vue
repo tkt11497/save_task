@@ -64,15 +64,13 @@ const onChange = async (currency) => {
 		loading.loading()
 		const isAuthToken = await onChangeCurrency(currency)
 		loading.clearLoading()
-		if (isAuthToken) {
-			if (route.name !== 'home') {
-				router.push('/home')
-			}
+		emits('signed')
+		if (isAuthToken && route.name !== 'home') {
+			router.push('/home')
 		}
 	} catch (error) {
 		loading.clearLoading()
 		console.log(error)
-	} finally {
 		emits('signed')
 	}
 }

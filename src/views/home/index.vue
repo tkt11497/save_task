@@ -24,7 +24,7 @@
 			<div class="content">
 				<div class="title2">{{ currentCurrency.tokenName || '' }} {{ t('余额') }}</div>
 				<div class="number">
-					<span class="amount">{{ tokenBalance }}</span>
+					<span class="amount ellipsis-col">{{ tokenBalance }}</span>
 					<span class="unit">&nbsp;{{ currentCurrency.tokenName || '' }}</span>
 				</div>
 				<!--				<div class="precentage">-->
@@ -223,13 +223,16 @@ const listComputed = computed(() => {
 })
 
 const tokenBalance = ref('0')
-const changeWallet = () => {
+const changeWallet = async () => {
 	currencyPopup.value = false
 	// 获取链上余额
-	getChainBalanceByTokenName(currentCurrency.value.tokenName, (val) => {
-		console.log('changeWallet', currentCurrency.value.tokenName)
-		tokenBalance.value = val
-	})
+	try {
+		loading.loading()
+		await getChainBalance(currentCurrency.value.tokenName)
+		loading.clearLoading()
+	} finally {
+		loading.clearLoading()
+	}
 }
 // scroll
 const infoList = ref([
@@ -287,7 +290,6 @@ const balanceInterval = () => {
 const getChainBalance = async () => {
 	try {
 		const balance = await getChainBalanceByTokenName(currentCurrency.value.tokenName)
-		console.log('balanceInterval定时器获取余额', currentCurrency.value.tokenName, balance)
 		tokenBalance.value = balance
 		return balance
 	} catch (e) {

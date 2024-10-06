@@ -1,46 +1,55 @@
-import BigNumber from 'bignumber.js'
 import { getAllPlatformTokenBalanceApi } from '@/apis/wallet.js'
 import { useWeb3Store } from '@/store/index.js'
 import { storeToRefs } from 'pinia'
 import { getContract, getTokenBalance } from '@/utils/web3.js'
 import { ref } from 'vue'
+import { toFixedDecimal } from '@/utils/index.js'
 
+// 保存需要token的合约对象
+let tokenContractCacheList = {}
 export function useToken() {
 	const web3Store = useWeb3Store()
 	const { address } = storeToRefs(web3Store)
 
-	// 查询过的币种、合约
-	let currentContractTokenName
-	let currentContractInstance
 	// 获取链上指定币种余额
 	const getChainBalanceByTokenName = async (checkedCurrency) => {
 		console.log('================getChainBalanceByTokenName begin============')
 		console.log('useToken-当前选择币种：', checkedCurrency)
 		console.log('useToken-当前选择地址：', address.value)
 
-		let balance = 0
+		let tokenContractCache = tokenContractCacheList[checkedCurrency]
+
 		try {
 			const config = await getPlatformTokenByCoinType(checkedCurrency)
 
-			if (currentContractTokenName !== checkedCurrency) {
-				currentContractInstance = getContract({
+			if (!tokenContractCache || tokenContractCache.contractInstance) {
+				tokenContractCache = {
+					tokenName: checkedCurrency,
+					contractInstance: null,
+					balance: toFixedDecimal(0, config.decimals),
+				}
+				tokenContractCache.contractInstance = getContract({
 					contractAddress: config.contractAddress,
 					tokenName: checkedCurrency,
 				})
+
+				tokenContractCacheList[checkedCurrency] = tokenContractCache
 			}
 
-			balance = await getTokenBalance({
+			const balance = await getTokenBalance({
 				tokenName: checkedCurrency,
-				contract: currentContractInstance,
+				contract: tokenContractCache.contractInstance,
 				ownerAddress: address.value,
 				balanceDecimals: config.decimals,
 			})
-			currentContractTokenName = checkedCurrency
+
+			tokenContractCache.balance = balance
 			console.log('useToken-', `${checkedCurrency}代币余额:`, balance)
+			return balance
 		} catch (e) {
-			console.log('useToken-', `${checkedCurrency}获取链上余额失败`, e)
+			console.error('useToken-', `${checkedCurrency}获取链上余额失败`, e)
+			return tokenContractCache?.balance || 0
 		}
-		return balance
 	}
 
 	// 获取币种配置列表====平台所有币种余额
@@ -70,9 +79,14 @@ export function useToken() {
 		}
 	}
 
+	const resetContracts = () => {
+		tokenContractCacheList = {}
+	}
+
 	return {
 		getChainBalanceByTokenName,
 		getPlatformTokenList,
 		getPlatformTokenByCoinType,
+		resetContracts,
 	}
 }

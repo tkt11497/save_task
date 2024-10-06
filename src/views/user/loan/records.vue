@@ -177,24 +177,6 @@
 				</div>
 			</div>
 		</van-popup>
-
-		<!--		<van-popup class="user-balance-pop" overlay-class="user-balance-pop-layer" v-model:show="showUserBalancePop" @closed="closed">-->
-		<!--			<div class="node-add">-->
-		<!--				<div class="title">-->
-		<!--					<img src="@/assets/images/record/loan.png" class="icon" alt="" />-->
-		<!--					<span class="h1">{{ t('还款') }}</span>-->
-		<!--					<span>{{ t('您的钱包余额') }}</span>-->
-		<!--				</div>-->
-		<!--				&lt;!&ndash; <van-divider /> &ndash;&gt;-->
-		<!--				<div class="rich-conetent">-->
-		<!--					<div class="each-row">-->
-		<!--						<p class="left-text">{{ rowData.walletToken?.toUpperCase() }}:</p>-->
-		<!--						<p class="right-text balance">{{ userWalletBalance }}</p>-->
-		<!--					</div>-->
-		<!--				</div>-->
-		<!--				<van-button block round type="primary" @click="confirmRepayment">{{ t('确认') }}</van-button>-->
-		<!--			</div>-->
-		<!--		</van-popup>-->
 	</div>
 </template>
 <script setup>
@@ -291,17 +273,6 @@ const userKycRecord = async () => {
 		console.log(error)
 	}
 }
-
-// const { getChainBalanceByTokenName } = useToken()
-// const userWalletBalance = ref(0)
-// const showUserBalancePop = ref(false)
-// const showUserBalance = () => {
-// 	showPop.value = false
-// 	getChainBalanceByTokenName(rowData.value.walletToken).then((val) => {
-// 		userWalletBalance.value = val || 0
-// 		showUserBalancePop.value = true
-// 	})
-// }
 
 const onClickLeft = () => {
 	router.back()

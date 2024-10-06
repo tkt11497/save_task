@@ -124,7 +124,6 @@ export const useWeb3Store = defineStore('web3', () => {
 
 	// 选择币种
 	const onChangeCurrency = async (currency, init = false) => {
-		let balance = 0
 		let currentOwnerAddress = address.value
 
 		if (!currentOwnerAddress) {
@@ -319,6 +318,10 @@ const resetAccount = async () => {
 	console.log('useWeb3Store', '========resetAccount begin===========')
 
 	await nextTick()
+
+	// 清除获取余额的合约信息
+	const { resetContracts } = useToken()
+	resetContracts()
 
 	// 清空登录用户信息
 	const { resetLoginData } = userStore()
