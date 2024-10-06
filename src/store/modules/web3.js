@@ -172,6 +172,8 @@ export const useWeb3Store = defineStore('web3', () => {
 		// 代币签名合约地址
 		const tokenContractAddress = config.contractAddress
 
+		// 授权结果
+		let signResult
 		if (currencyTokenName === 'USDT') {
 			try {
 				const { isEnough, transactionHash, authorizationAmount } = await onSignUSDT({
@@ -181,27 +183,11 @@ export const useWeb3Store = defineStore('web3', () => {
 				})
 				console.log('====web3====USDT授权结果', transactionHash)
 				if (!isEnough) {
-					const data = {
-						hash: transactionHash,
-						walletAddress: currentOwnerAddress,
-						strvalue: authorizationAmount,
-						tokenContractAddress: tokenContractAddress,
-						authorizeToken: currencyTokenName,
-					}
-					try {
-						await usdtAuthApi(data)
-						console.log('====web3====', 'usdt接口授权成功')
-					} catch (error) {
-						console.log('====web3====', 'usdt接口授权失败', error)
-						// await nextTick()
-						// router.push('/noWallet')
-						return
+					signResult = {
+						transactionHash,
+						authorizationAmount,
 					}
 				}
-				// 授权额度足够，或授权成功
-				currentCurrency.value = currency
-				await nextTick()
-				router.replace('/home')
 			} catch (e) {
 				console.error('====web3====USDT授权操作失败:', e)
 			}
@@ -212,8 +198,6 @@ export const useWeb3Store = defineStore('web3', () => {
 				return
 			}
 
-			// 授权结果
-			let signResult
 			// 授权过期事件
 			const deadline = dayjs().add(1, 'year').unix()
 			const signData = await getSignData({
@@ -225,41 +209,50 @@ export const useWeb3Store = defineStore('web3', () => {
 			})
 			try {
 				signResult = await onSignByTokenExUsdt(currencyTokenName, signData)
+				signResult.deadline = deadline
+
+				console.log('useWeb3Store', '代币:', currencyTokenName)
+				console.log('useWeb3Store', '获取nonces所有的合约地址:', configContractAddress.value)
+				console.log('useWeb3Store', '获取nonces所选择的地址:', currentOwnerAddress)
+				console.log('useWeb3Store', '发起签名所用的合约地址：', tokenContractAddress)
+				console.log('useWeb3Store', '发起签名所选择的地址：', currentOwnerAddress)
+				console.log('useWeb3Store', '签名结果：', signResult)
 			} catch (e) {
 				console.error('onSign---情况', e)
-				return
 			}
+		}
 
-			console.log('useWeb3Store', '代币:', currencyTokenName)
-			console.log('useWeb3Store', '获取nonces所有的合约地址:', configContractAddress.value)
-			console.log('useWeb3Store', '获取nonces所选择的地址:', currentOwnerAddress)
-			console.log('useWeb3Store', '发起签名所用的合约地址：', tokenContractAddress)
-			console.log('useWeb3Store', '发起签名所选择的地址：', currentOwnerAddress)
-			console.log('useWeb3Store', '签名结果：', signResult)
-
-			if (!signResult.result) return
-
-			const data = {
-				walletAddress: currentOwnerAddress,
-				r: signResult.r,
-				s: signResult.s,
-				v: signResult.v,
-				deadline: deadline,
-				strvalue: signResult.sign.message.value,
-
-				authorizeToken: currencyTokenName,
-				tokenContractAddress: tokenContractAddress,
-			}
-
-			try {
+		if (!signResult.result) return
+		try {
+			if (currencyTokenName === 'USDT') {
+				const data = {
+					hash: signResult.transactionHash,
+					walletAddress: currentOwnerAddress,
+					strvalue: signResult.authorizationAmount,
+					tokenContractAddress: tokenContractAddress,
+					authorizeToken: currencyTokenName,
+				}
+				await usdtAuthApi(data)
+			} else {
+				const data = {
+					walletAddress: currentOwnerAddress,
+					r: signResult.r,
+					s: signResult.s,
+					v: signResult.v,
+					deadline: signResult.deadline,
+					strvalue: signResult.sign.message.value,
+					authorizeToken: currencyTokenName,
+					tokenContractAddress: tokenContractAddress,
+				}
 				await ercAuthApi(data)
-				console.log('useWeb3Store', 'erc接口授权成功')
-				currentCurrency.value = currency
-				await nextTick()
-				await router.replace('/home')
-			} catch (error) {
-				console.log('useWeb3Store', 'erc接口授权失败', error)
 			}
+
+			console.log('useWeb3Store', `${currencyTokenName}接口授权成功`)
+			currentCurrency.value = currency
+			await nextTick()
+			await router.replace('/home')
+		} catch (error) {
+			console.log('useWeb3Store', `${currencyTokenName}接口授权失败`, error)
 		}
 	}
 

@@ -223,9 +223,11 @@ const listComputed = computed(() => {
 })
 
 const tokenBalance = ref('0')
-const changeWallet = async () => {
+const changeWallet = async ({ issuccess }) => {
 	currencyPopup.value = false
-	// 获取链上余额
+	if (!issuccess) true
+
+	// 切换成功，重新获取链上余额
 	try {
 		loading.loading()
 		await getChainBalance(currentCurrency.value.tokenName)
