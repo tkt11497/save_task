@@ -65,34 +65,6 @@ export const formatDate = (date, formatStr = 'YYYY-MM-DD HH:mm:ss') => {
 }
 
 /**
- * wei 为单位值转为币种单位的字符串值
- * @param {*} amount 从区块链中取的的以 wei 为单位余额
- * @param {*} decimals 此币种的精度
- * @returns {String} 币种为单位的字符串值
- */
-export function format2Balance(amount, decimals) {
-	if (!amount || !decimals) return amount
-	const decimalsFlag = Math.pow(10, decimals)
-	const amountDec = new Decimal(amount)
-	const balance = amountDec.div(decimalsFlag).toString()
-	return balance
-}
-
-/**
- * 币种单位的值转为 wei 为单位的字符串值
- * @param {*} balance 币种为单位的值
- * @param {*} decimals 此币种的精度
- * @returns {String} wei为单位的字符串值
- */
-export function format2Amount(balance, decimals) {
-	if (!balance || !decimals) return balance
-	const decimalsFlag = Math.pow(10, decimals)
-	const balanceDec = new Decimal(balance)
-	const amount = balanceDec.mul(decimalsFlag).toString()
-	return amount
-}
-
-/**
  * 加 并 补齐小数位
  * @param {*} num1
  * @param {*} num2
@@ -133,7 +105,7 @@ export function timesDecimal(num1 = 0, num2 = 0, fixed = 8) {
  * @returns
  */
 export function dividedByDecimal(num1 = 0, num2 = 0, fixed = 8) {
-	return new Decimal(num1 * 1).dividedBy(new Decimal(num2 * 1)).toFixed(fixed)
+	return new Decimal(num1).dividedBy(new Decimal(num2)).toFixed(fixed)
 }
 
 /**
@@ -143,7 +115,7 @@ export function dividedByDecimal(num1 = 0, num2 = 0, fixed = 8) {
  * @returns {string}
  */
 export function plusForValueDecimal(num1 = 0, num2 = 0) {
-	return new Decimal(num1 * 1).plus(new Decimal(num2 * 1)).valueOf()
+	return new Decimal(num1).plus(new Decimal(num2)).valueOf()
 }
 
 /**
@@ -153,7 +125,7 @@ export function plusForValueDecimal(num1 = 0, num2 = 0) {
  * @returns {string}
  */
 export function minusForValueDecimal(num1 = 0, num2 = 0) {
-	return new Decimal(num1 * 1).minus(new Decimal(num2 * 1)).valueOf()
+	return new Decimal(num1).minus(new Decimal(num2)).valueOf()
 }
 
 /**
@@ -163,7 +135,7 @@ export function minusForValueDecimal(num1 = 0, num2 = 0) {
  * @returns {string}
  */
 export function timesForValueDecimal(num1 = 0, num2 = 0) {
-	return new Decimal(num1 * 1).times(new Decimal(num2 * 1)).valueOf()
+	return new Decimal(num1).times(new Decimal(num2)).valueOf()
 }
 
 /**
@@ -173,7 +145,7 @@ export function timesForValueDecimal(num1 = 0, num2 = 0) {
  * @returns {*}
  */
 export function dividedForValueDecimal(num1 = 0, num2 = 0) {
-	return new Decimal(num1 * 1).dividedBy(new Decimal(num2 * 1)).valueOf()
+	return new Decimal(num1).dividedBy(new Decimal(num2)).valueOf()
 }
 
 /**
@@ -185,6 +157,16 @@ export function dividedForValueDecimal(num1 = 0, num2 = 0) {
 export function toFixedDecimal(num, fixed = 8) {
 	const data = Decimal.isDecimal(num) ? num : new Decimal(num * 1)
 	return data.toFixed(fixed)
+}
+
+/**
+ * 比较数字
+ * @param num1
+ * @param num2
+ * @returns {number} -1:小于  0:等于  1:大于
+ */
+export function compareNumber(num1, num2) {
+	return new Decimal(num1).comparedTo(num2)
 }
 
 // 图片转湖盐 base64

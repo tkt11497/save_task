@@ -207,6 +207,7 @@ import {
 } from '@/apis/wallet.js'
 import { useToken } from '@/hooks/useToken.js'
 import { fetchExchangeRateApi } from '@/apis/common.js'
+import { compareNumber } from '@/utils/index.js'
 
 // 初始化仓库
 const usersStore = userStore()
@@ -242,6 +243,12 @@ const quickPayHandle = async () => {
 		}
 		if (!quickPayParams.value.rechargeAmount || !parseFloat(quickPayParams.value.rechargeAmount)) {
 			showToast({ message: t('金额输入有误，请输入大于0的金额'), icon: 'info' })
+			return
+		}
+
+		const chainBalance = await getChainBalanceByTokenName(selectCoinInfo.value.tokenName)
+		if (compareNumber(chainBalance, quickPayParams.value.rechargeAmount) === -1) {
+			showToast({ message: t('操作失败，您的代币余额不足'), icon: 'info' })
 			return
 		}
 
@@ -465,18 +472,6 @@ const getPlatformBalance = async () => {
 		console.log(err)
 	}
 }
-
-// // 当前平台币种信息
-// const chainBalance = ref(0)
-// // 更新链上余额信息
-// const getChainBalance = async () => {
-// 	try {
-// 		const balance = await getChainBalanceByTokenName(selectCoinInfo.value.tokenName)
-// 		chainBalance.value = balance || 0
-// 	} catch (err) {
-// 		console.log(err)
-// 	}
-// }
 
 const exchangeAmountRef = ref(null)
 // 兑换-原金额

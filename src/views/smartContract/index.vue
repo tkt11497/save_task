@@ -89,7 +89,7 @@
 <script setup>
 import { onMounted, onUnmounted, ref } from 'vue'
 import { userStore, useWeb3Store } from '@/store'
-import { dividedForValueDecimal, getImageUrl, timesForValueDecimal } from '@/utils/index.js'
+import { compareNumber, dividedForValueDecimal, getImageUrl, timesForValueDecimal } from '@/utils/index.js'
 import { showToast } from 'vant'
 import { storeToRefs } from 'pinia'
 import { useI18n } from 'vue-i18n'
@@ -149,8 +149,7 @@ const fixactivityClientAdd = async () => {
 	}
 	if (!parseFloat(amount.value)) {
 		return showToast({ message: t('金额输入有误，请输入大于0的金额'), icon: 'info' })
-	}
-	if (amount.value * 1 > tokenBalance * 1) {
+	} else if (compareNumber(tokenBalance, amount.value) === -1) {
 		return showToast({ message: t('操作失败，您的代币余额不足'), icon: 'info' })
 	}
 	try {

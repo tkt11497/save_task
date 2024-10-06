@@ -7,15 +7,15 @@ import { ref } from 'vue'
 
 export function useToken() {
 	const web3Store = useWeb3Store()
-	const { address, configContractAddress } = storeToRefs(web3Store)
+	const { address } = storeToRefs(web3Store)
 
 	// 查询过的币种、合约
 	let currentContractTokenName
 	let currentContractInstance
 	// 获取链上指定币种余额
-	const getChainBalanceByTokenName = async (checkedCurrency, callback) => {
+	const getChainBalanceByTokenName = async (checkedCurrency) => {
 		console.log('================getChainBalanceByTokenName begin============')
-		console.log('useToken-当前选择币种：', checkedCurrency, callback)
+		console.log('useToken-当前选择币种：', checkedCurrency)
 		console.log('useToken-当前选择地址：', address.value)
 
 		let balance = 0
@@ -24,12 +24,12 @@ export function useToken() {
 
 			if (currentContractTokenName !== checkedCurrency) {
 				currentContractInstance = getContract({
-					contractAddress: configContractAddress.value,
+					contractAddress: config.contractAddress,
 					tokenName: checkedCurrency,
 				})
 			}
 
-			const balance = await getTokenBalance({
+			balance = await getTokenBalance({
 				tokenName: checkedCurrency,
 				contract: currentContractInstance,
 				ownerAddress: address.value,

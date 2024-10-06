@@ -23,13 +23,14 @@
 			</div>
 			<div class="content">
 				<div class="title2">{{ currentCurrency.tokenName || '' }} {{ t('余额') }}</div>
-				<div class="number ellipsis-col ellipsis-col2">
-					{{ plusDecimal(tokenBalance) }} <span class="unit">{{ currentCurrency.tokenName || '' }}</span>
+				<div class="number">
+					<span class="amount">{{ tokenBalance }}</span>
+					<span class="unit">&nbsp;{{ currentCurrency.tokenName || '' }}</span>
 				</div>
-				<!-- <div class="precentage">
-                    <img src="../../assets/images/user/up2.png" alt="" />
-                    {{ '0.00%' }}
-                </div> -->
+				<!--				<div class="precentage">-->
+				<!--					<img src="../../assets/images/user/up2.png" alt="" />-->
+				<!--					{{ '0.00%' }}-->
+				<!--				</div>-->
 			</div>
 			<div class="bottom">
 				<div class="trend">
@@ -415,11 +416,15 @@ defineExpose({})
 
 			.number {
 				font-size: 62px;
-				height: 86px;
 				font-weight: 600;
 				color: #fefefe;
-				font-family: Poppins;
+				height: 86px;
 
+				.amount {
+					height: 100%;
+					display: inline-block;
+					max-width: 80%;
+				}
 				.unit {
 					font-size: 30px;
 					color: #fff;

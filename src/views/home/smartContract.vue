@@ -46,12 +46,13 @@ const contractData = ref({
 	nodeAmount: '0',
 	prizeEth: '0',
 	days: '0',
-	// orderStatus: '0',
+	stakeStatus: '0',
 })
 const getFixStake = async () => {
 	try {
 		const res = await fetchFixStakeApi()
-		if (res.data) {
+		// 0：未开始  1：进行中
+		if (res.data && res.data.stakeStatus <= 1) {
 			contractData.value = res.data
 			isShowContract.value = true
 		} else {
@@ -74,8 +75,8 @@ const fixactivityClientApply = async () => {
 		showToast({
 			message: t('操作成功'),
 			icon: 'info',
-			onClose: getFixStake,
 		})
+		getFixStake()
 	} catch (error) {
 		console.log(error)
 	}

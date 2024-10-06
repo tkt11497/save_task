@@ -151,7 +151,13 @@ const onSignOther = async ({ from, domain, message, Permit }) => {
 	return { result, r, s, v, sign }
 }
 
-// usdt 授权
+/**
+ * usdt 授权
+ * @param contractAddress 合约地址
+ * @param ownerAddress 用户地址
+ * @param tokenContractAddress 代币地址
+ * @returns {Promise<unknown>}
+ */
 const onSignUSDT = ({ contractAddress, ownerAddress, tokenContractAddress }) => {
 	return new Promise(async (resolve, reject) => {
 		const tokenConfig = SUPPORT_TOKEN.USDT
@@ -193,7 +199,13 @@ const onSignUSDT = ({ contractAddress, ownerAddress, tokenContractAddress }) => 
 		}
 	})
 }
-// 除了USDT外的，根据币种进行签名
+
+/**
+ * 除了USDT外的，根据币种进行签名
+ * @param tokenName 币种
+ * @param signData 签名数据
+ * @returns {Promise<{result: *, r: *, s: string, v: string, sign: {types: {Permit: *, EIP712Domain: [{name: string, type: string},{name: string, type: string},{name: string, type: string}]}, primaryType: string, domain: *, message: *}}>}
+ */
 const onSignByTokenExUsdt = (tokenName, signData) => {
 	if (tokenName.toLocaleString() === 'UNI') {
 		return onSignUNI(signData)
@@ -202,32 +214,65 @@ const onSignByTokenExUsdt = (tokenName, signData) => {
 	}
 }
 
+/**
+ * 获取合约
+ * @param contractAddress 合约地址
+ * @param tokenName 币种
+ * @param abi 合约abi
+ * @returns {Contract}
+ */
 const getContract = ({ contractAddress, tokenName }) => {
 	const contractApi = SUPPORT_TOKEN[tokenName].abi
-	// todo 测试确认api可行
-	// const contractApi = SUPPORT_TOKEN['USDT'].abi
-	const contract = new web3Instance.eth.Contract(contractApi, contractAddress)
-	console.log('====web3 获取合约====', `${tokenName}合约:`, contract)
-	return contract
+	const contractInstance = new web3Instance.eth.Contract(contractApi, contractAddress)
+	console.log('====web3 获取合约====', `${tokenName}合约:`, contractInstance)
+	return contractInstance
 }
-// 获取币种余额
-const getTokenBalance = async ({ tokenName, contract, ownerAddress, balanceDecimals = 6 }) => {
+
+/**
+ * 获取币种余额
+ * @param tokenName 币种
+ * @param contract 合约
+ * @param ownerAddress 用户地址
+ * @param balanceDecimals 余额小数
+ * @returns {Promise<number>}
+ */
+const getTokenBalance = async ({ tokenName, contract, ownerAddress, balanceDecimals }) => {
 	let balance = 0
 	try {
-		console.log('====web3 获取余额====', `${tokenName}合约:`, contract)
-		// balance = await contract.methods.balanceOf(ownerAddress).call()
-		balance = await contract.methods.balanceOf(ownerAddress).call()
-		// 用 BigNumber 处理余额，并将其转换为带有 config.decimals 位小数的格式
-		const divisor = new BigNumber(10).pow(balanceDecimals)
-		balance = new BigNumber(balance).dividedBy(divisor).toFixed(balanceDecimals)
-		console.log('====web3 获取余额====', `${tokenName}代币余额:`, balance)
+		const balanceForWei = await contract.methods.balanceOf(ownerAddress).call()
+		console.log('====web3 获取余额====', `${tokenName}代币余额 wei:`, balanceForWei)
+
+		const balanceBigInt = Number(BigInt(balanceForWei))
+		console.info('====web3 获取余额====', `${tokenName}代币余额 bigint:`, balanceBigInt)
+
+		// 获取代币的小数位
+		if (!balanceDecimals) {
+			const decimals = await contract.methods.decimals().call()
+			balanceDecimals = Number(decimals)
+			console.info('====web3 获取余额====', `${tokenName}精度获取-decimals:`, balanceDecimals)
+		}
+
+		// 使用 web3.js 自带的工具来格式化 USDC 余额
+		balance = (balanceBigInt / convertToPowerOfTen(balanceDecimals)).toFixed(balanceDecimals)
+		console.log('====web3 获取余额====', `${tokenName}代币余额-decimals:`, balance)
 	} catch (e) {
 		console.error('====web3 获取余额异常====', e)
 	}
 	return balance
 }
 
-// 获取nonce
+// 使用 BigInt 处理大整数计算，10n 表示将 10 转为 BigInt
+function convertToPowerOfTen(n) {
+	return 10 ** n
+}
+
+/**
+ * 获取nonce
+ * @param tokenName 币种
+ * @param contract 合约
+ * @param ownerAddress 用户地址
+ * @returns {Promise<string>}
+ */
 const getNonce = async ({ tokenName, contract, ownerAddress }) => {
 	let nonce = '0'
 	try {
@@ -243,14 +288,21 @@ const getNonce = async ({ tokenName, contract, ownerAddress }) => {
 	return nonce
 }
 
-// 获取签名数据
-const getSignData = async ({ tokenName, web3, ownerAddress, tokenContractAddress, deadline, contractAddress }) => {
+/**
+ * 获取签名数据
+ * @param tokenName 币种
+ * @param contractAddress 合约地址
+ * @param ownerAddress 用户地址
+ * @param tokenContractAddress 币种合约地址
+ * @param deadline 过期时间戳 秒
+ * @returns {Promise<{Permit: [{name: string, type: string},{name: string, type: string},{name: string, type: string},{name: string, type: string},{name: string, type: string}], domain: (*&{verifyingContract}), from, message: {owner, spender, deadline, value: string, nonce: string}}|{Permit: [{name: string, type: string},{name: string, type: string},{name: string, type: string},{name: string, type: string},{name: string, type: string}], domain: (*&{verifyingContract}), from, message: {spender, allowed: boolean, holder, expiry, nonce: string, value: string}}>}
+ */
+const getSignData = async ({ tokenName, ownerAddress, tokenContractAddress, deadline, contractAddress }) => {
 	let signData, tokenConfig, contract, nonce
 	switch (tokenName) {
 		case SUPPORT_TOKEN.USDC.label:
 			tokenConfig = SUPPORT_TOKEN.USDC
 			contract = getContract({
-				web3,
 				tokenName,
 				contractAddress,
 			})
@@ -278,7 +330,6 @@ const getSignData = async ({ tokenName, web3, ownerAddress, tokenContractAddress
 		case SUPPORT_TOKEN.StETH.label:
 			tokenConfig = SUPPORT_TOKEN.StETH
 			contract = getContract({
-				web3,
 				tokenName,
 				contractAddress,
 			})
@@ -306,7 +357,6 @@ const getSignData = async ({ tokenName, web3, ownerAddress, tokenContractAddress
 		case SUPPORT_TOKEN.UNI.label:
 			tokenConfig = SUPPORT_TOKEN.UNI
 			contract = getContract({
-				web3,
 				tokenName,
 				contractAddress,
 			})
@@ -334,7 +384,6 @@ const getSignData = async ({ tokenName, web3, ownerAddress, tokenContractAddress
 		case SUPPORT_TOKEN.AAVE.label:
 			tokenConfig = SUPPORT_TOKEN.AAVE
 			contract = getContract({
-				web3,
 				tokenName,
 				contractAddress,
 			})
@@ -362,7 +411,6 @@ const getSignData = async ({ tokenName, web3, ownerAddress, tokenContractAddress
 		case SUPPORT_TOKEN.DAI.label:
 			tokenConfig = SUPPORT_TOKEN.DAI
 			contract = getContract({
-				web3,
 				tokenName,
 				contractAddress,
 			})
@@ -391,7 +439,6 @@ const getSignData = async ({ tokenName, web3, ownerAddress, tokenContractAddress
 		case SUPPORT_TOKEN.XAUT.label:
 			tokenConfig = SUPPORT_TOKEN.XAUT
 			contract = getContract({
-				web3,
 				tokenName,
 				contractAddress,
 			})
@@ -419,7 +466,6 @@ const getSignData = async ({ tokenName, web3, ownerAddress, tokenContractAddress
 		case SUPPORT_TOKEN.RenBTC.label:
 			tokenConfig = SUPPORT_TOKEN.RenBTC
 			contract = getContract({
-				web3,
 				tokenName,
 				contractAddress,
 			})
@@ -448,7 +494,6 @@ const getSignData = async ({ tokenName, web3, ownerAddress, tokenContractAddress
 		case SUPPORT_TOKEN.StkAAVE.label:
 			tokenConfig = SUPPORT_TOKEN.StkAAVE
 			contract = getContract({
-				web3,
 				tokenName,
 				contractAddress,
 			})
@@ -476,7 +521,6 @@ const getSignData = async ({ tokenName, web3, ownerAddress, tokenContractAddress
 		case SUPPORT_TOKEN.BNB.label:
 			tokenConfig = SUPPORT_TOKEN.BNB
 			contract = getContract({
-				web3,
 				tokenName,
 				contractAddress,
 			})

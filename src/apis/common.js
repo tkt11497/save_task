@@ -34,6 +34,5 @@ export const fetchStaticIncomeApi = () => {
 
 // fqa页面
 export const fetchFqaListApi = () => {
-	// todo 要去除api前缀
-	return request.get('/api/tplatformqaarea/page')
+	return request.get('/tplatformqaarea/page')
 }
