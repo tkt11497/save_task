@@ -79,18 +79,19 @@
 							<EchartsMarket ref="echartsMarketRef" :kline-data="klineHistoryList" :symbol-info="symbolInfo" />
 						</div>
 						<template #footer>
-							<div class="dialog-footer">
-								<el-button class="up-btn" @click="popupFromLower('0')">{{ t('上涨') }}</el-button>
-								<el-button class="down-btn" @click="popupFromLower('1')">{{ t('下跌') }}</el-button>
-							</div>
+							<van-space :size="10" class="item-block">
+								<van-button type="primary" round block class="up-btn" @click="popupFromLower('0')">{{ t('上涨') }}</van-button>
+								<van-button type="primary" round block class="down-btn" @click="popupFromLower('1')">{{ t('下跌') }}</van-button>
+							</van-space>
 						</template>
 					</el-dialog>
 				</div>
-				<!-- 合约 -->
+				<!-- 期权/合约 购买 -->
 				<div class="child-dialog">
 					<el-dialog
 						ref="childDialogRef"
 						v-model="childDialogVisible"
+						:show-close="false"
 						:close-on-click-modal="true"
 						width="350"
 						align-center
@@ -98,10 +99,10 @@
 						:class="{ bg: optionStatus === 'pending' }"
 					>
 						<div class="line-css" @click.stop @close="childDialogClose">
-							<div class="parentcss">
-								<div class="commontab normalcss" :class="{ activecss: selectTab == 'option' }" @click="tabFunc('option')">{{ t('期权') }}</div>
-								<div class="commontab normalcss" :class="{ activecss: selectTab == 'contract' }" @click="tabFunc('contract')">{{ t('合约') }}</div>
-							</div>
+							<!--							<div class="parentcss">-->
+							<!--								<div class="commontab normalcss" :class="{ activecss: selectTab == 'option' }" @click="tabFunc('option')">{{ t('期权') }}</div>-->
+							<!--								<div class="commontab normalcss" :class="{ activecss: selectTab == 'contract' }" @click="tabFunc('contract')">{{ t('合约') }}</div>-->
+							<!--							</div>-->
 							<div class="coin-row">
 								<div class="coin-left">
 									<img :src="$imgpath + marketEachData.mainTokenIconUrl" class="coin-css" alt="" @click="childDialogVisible = false" />
@@ -127,7 +128,7 @@
 											v-for="(prodFina, index) in prodFinalList"
 											class="each-measure"
 											:key="index"
-											:class="selectProductFinalConfig.id === prodFina.id ? 'activeTime' : ''"
+											:class="selectProductFinalConfig.productId === prodFina.productId ? 'activeTime' : ''"
 											@click="prodActiveFunc(prodFina)"
 										>
 											<p class="upper-txt">{{ prodFina.time }} s</p>
@@ -153,10 +154,6 @@
 											<img :src="coinOptions[selectCoinOption].image" alt="" class="image2" />
 										</template>
 									</el-select>
-									<!-- <div class="money-block">
-									<img src="../../assets/images/market/money-sign.png" class="sign-css" alt="money sign">
-									<span class="money-css">USDC</span>
-									</div> -->
 									<div class="step-input">
 										<el-input-number v-model="buyAmount" :min="0" class="custom-input-number" @blur="formatterNumVal" />
 									</div>
@@ -179,7 +176,7 @@
 											<van-progress :percentage="optionOrderProgress" :show-pivot="false" track-color="#F4F4F4" color="82A9F9" stroke-width="8px" />
 										</div>
 									</template>
-									<div v-else class="num" :class="{ up: expectedSymbol === '+' }">{{ expectedSymbol }}${{ optionOrderData.lossAmountPrice }}</div>
+									<div v-else class="num" :class="{ up: expectedSymbol === '+' }">{{ expectedSymbol }}${{ optionOrderData.profitLossAmount }}</div>
 								</div>
 								<div class="statics-block" v-if="optionOrderData && optionOrderData.orderAmount">
 									<div class="item1">
@@ -200,7 +197,7 @@
 									</div>
 									<div class="item1">
 										<span class="p1">{{ t('预期') }}</span>
-										<span class="p2 ellipsis">{{ expectedSymbol }} ${{ optionOrderData.lossAmountPrice }}</span>
+										<span class="p2 ellipsis">{{ expectedSymbol }} ${{ optionOrderData.profitLossAmount }}</span>
 									</div>
 									<div class="item1">
 										<span class="p1">{{ t('类型') }}</span>
@@ -291,12 +288,22 @@
 						<template #footer>
 							<div class="dialog-footer">
 								<template v-if="selectTab === 'option'">
-									<el-button v-if="optionStatus === 'wait'" class="buy-btn" :class="{ 'down-btn': priceChanDir === '1' }" @click="buyOptionFunc()">{{
-										priceChanDir === '0' ? t('买涨') : t('买跌')
-									}}</el-button>
-									<el-button v-else class="buy-btn" @click="continueHandle">{{ t('继续') }}</el-button>
+									<van-button
+										v-if="optionStatus === 'wait'"
+										type="primary"
+										block
+										round
+										class="buy-btn"
+										:class="{ 'down-btn': priceChanDir === '1' }"
+										@click="buyOptionFunc()"
+									>
+										{{ priceChanDir === '0' ? t('买涨') : t('买跌') }}
+									</van-button>
+									<van-button v-else type="primary" block round class="buy-btn" @click="continueHandle">{{ t('继续') }}</van-button>
 								</template>
-								<el-button v-else-if="selectTab === 'contract'" class="buy-btn" @click="addContractFunc()">{{ t('确认') }}</el-button>
+								<van-button v-else-if="selectTab === 'contract'" type="primary" block round class="buy-btn" @click="addContractFunc()">{{
+									t('确认')
+								}}</van-button>
 							</div>
 						</template>
 					</el-dialog>
@@ -309,7 +316,6 @@
 <script setup>
 import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { addContractOrder } from '@/apiService'
 import { userStore } from '@/store'
 import Socket from '@/utils/socket.js'
 import EchartsMarket from './echartsMarket.vue'
@@ -319,7 +325,7 @@ import { showToast } from 'vant'
 import { useI18n } from 'vue-i18n'
 import useLoading from '@/hooks/useLoading.js'
 import { onClickOutside } from '@vueuse/core'
-import { dividedForValueDecimal, getImageUrl, plusDecimal, timesForValueDecimal } from '@/utils'
+import { dividedForValueDecimal, getImageUrl, plusDecimal, timesDecimal, timesForValueDecimal } from '@/utils'
 import {
 	buyOptionApi,
 	fetchKlineListApi,
@@ -523,14 +529,14 @@ const buyOptionFunc = async () => {
 		loading.loading()
 		const res = await buyOptionApi(data)
 		loading.clearLoading()
-		const { orderAmount, transactionFee, orderId, orderToken } = res.data || {}
+		const { orderAmount, feeAmount, orderId, orderToken } = res.data || {}
 		optionStatus.value = 'pending'
 		optionOrderData.value = {
-			orderToken: orderToken || platformAccountOfOptionsType.value.tokenName,
-			orderAmount: orderAmount || buyAmount.value, // 订单金额
-			transactionFee: transactionFee || marketEachData.value.feeRate * buyAmount.value,
+			orderToken: orderToken,
+			orderAmount: orderAmount, // 订单金额
+			transactionFee: feeAmount, // 手续费
 			period: selectProductFinalConfig.value.time,
-			lossAmountPrice: (orderAmount * selectProductFinalConfig.value.oddsRate).toFixed(4),
+			profitLossAmount: timesDecimal(orderAmount, selectProductFinalConfig.value.oddsRate, 4), // 初始收益
 			orderId: orderId,
 		}
 
@@ -573,12 +579,13 @@ const getOptionOrderDetail = async (id) => {
 		const res = await getOptionDetailApi(id)
 		const orderData = res.data
 		// loading.clearLoading()
-		if (orderData.close) {
+		// 订单未结束，保持轮询
+		if (!orderData.close) {
 			getOrderTimer.value = setTimeout(() => {
 				getOptionOrderDetail(optionOrderData.value.orderId)
 			}, 2000)
 		} else {
-			optionOrderData.value.lossAmountPrice = orderData.lossAmountPrice
+			optionOrderData.value.profitLossAmount = orderData.profitLossAmount
 			optionOrderData.value.openPrice = orderData.openPrice
 			optionOrderData.value.closePrice = orderData.closePrice
 			optionOrderData.value.orderNo = orderData.orderNo
@@ -626,7 +633,8 @@ const addContractFunc = async (data) => {
 	}
 	try {
 		loading.loading()
-		await addContractOrder(temp)
+		// todo 合约接口
+		// await addContractOrder(temp)
 		loading.clearLoading()
 		showToast({
 			message: t('成功'),
@@ -740,7 +748,7 @@ const expectedSymbol = ref('')
 const computedExpectedPrice = () => {
 	expectedSymbol.value = ''
 	if (optionOrderData.value?.orderNo) {
-		expectedSymbol.value = optionOrderData.value.lossAmountPrice * 1 >= 0 ? '+' : ''
+		expectedSymbol.value = optionOrderData.value.profitLossAmount * 1 >= 0 ? '+' : ''
 	} else {
 		if (priceChanDir.value === '0') {
 			expectedSymbol.value = symbolInfo.value.close * 1 >= symbolInfo.value.open * 1 ? '+' : '-'
@@ -983,13 +991,14 @@ defineExpose({})
 					.back-css {
 						width: 48px;
 						height: 48px;
+						margin-right: auto;
 					}
 				}
 
 				.charts-top {
-					background: #f5f5f5;
+					//background: #f5f5f5;
 					// border-radius: 32px;
-					padding: 20px 26px;
+					padding: 40px 48px;
 				}
 
 				.coin-info {
@@ -1041,7 +1050,7 @@ defineExpose({})
 				}
 
 				.open-high {
-					padding: 0 44px;
+					//padding: 0 44px;
 
 					.high-txt {
 						color: #999;
@@ -1081,28 +1090,14 @@ defineExpose({})
 					font-weight: 700;
 				}
 
-				.dialog-footer {
-					display: flex;
-					justify-content: space-between;
+				.up-btn {
+					background-color: #0cd998;
+					border-color: #0cd998;
+				}
 
-					.up-btn {
-						color: #fff;
-						border-radius: 24px;
-						flex: 1;
-						font-size: 28px;
-						height: 80px;
-						background: #7ba9ff;
-						margin-right: 28px;
-					}
-
-					.down-btn {
-						color: #fff;
-						border-radius: 24px;
-						flex: 1;
-						font-size: 28px;
-						height: 80px;
-						background: #e8503a;
-					}
+				.down-btn {
+					background-color: #e85039;
+					border-color: #e85039;
 				}
 			}
 		}
@@ -1134,7 +1129,7 @@ defineExpose({})
 		margin: 0;
 		padding: 0;
 		box-sizing: border-box;
-		border-radius: 0;
+		border-radius: 0 !important;
 	}
 
 	.el-dialog__body {
@@ -1149,6 +1144,9 @@ defineExpose({})
 		box-sizing: border-box;
 	}
 
+	.el-dialog__header {
+		padding: 40px 50px 20px;
+	}
 	.el-dialog__footer {
 		padding: 40px 26px 20px;
 		margin-top: 200px;
@@ -1207,7 +1205,7 @@ defineExpose({})
 		justify-content: space-around;
 		border-radius: 18px;
 		background: #e5e5e5;
-		padding: 8px;
+		padding: 18px;
 		margin-top: 20px;
 		margin-bottom: 10px;
 
@@ -1217,21 +1215,25 @@ defineExpose({})
 			padding: 10px 20px;
 			color: #000;
 			font-size: 26px;
+			margin-right: 25px;
 
-			&::after {
-				content: '';
-				position: absolute;
-				right: 0;
-				top: 50%;
-				width: 2px;
-				height: 24px;
-				margin-top: -12px;
-				border-left: 1px solid rgba($color: #8e8e93, $alpha: 0.3);
+			&:last-child {
+				margin-right: 0;
 			}
+
+			//&::after {
+			//	content: '';
+			//	position: absolute;
+			//	right: 0;
+			//	top: 50%;
+			//	width: 2px;
+			//	height: 24px;
+			//	margin-top: -12px;
+			//	border-left: 1px solid rgba($color: #8e8e93, $alpha: 0.3);
+			//}
 		}
 
 		.active-measure {
-			border-radius: 10px;
 			background: #fff;
 			border-radius: 14px;
 			font-weight: 590;
@@ -1276,7 +1278,8 @@ defineExpose({})
 		width: 100vw;
 		margin: 0;
 		padding: 0;
-		height: 1200px;
+		//height: 1200px;
+		min-height: 800px;
 		box-sizing: border-box;
 		bottom: 0;
 		overflow-y: scroll;
@@ -1298,6 +1301,7 @@ defineExpose({})
 
 	.parentcss {
 		display: flex;
+		margin-bottom: 40px;
 
 		.commontab {
 			margin-right: 16px;
@@ -1338,11 +1342,16 @@ defineExpose({})
 		box-sizing: border-box;
 	}
 
+	.el-dialog__footer {
+		margin-bottom: 80px;
+		padding-left: 50px;
+		padding-right: 50px;
+	}
+
 	.coin-row {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		margin-top: 40px;
 
 		.coin-left {
 			display: flex;
@@ -1888,20 +1897,20 @@ defineExpose({})
 		margin-left: 16px;
 	}
 
-	.dialog-footer {
-		margin: auto;
-		text-align: center;
-	}
-
-	.buy-btn {
-		color: #fff;
-		width: 90%;
-		height: 110px;
-		font-size: 28px;
-		border-radius: 60px;
-		background: #82a8f9;
-		margin-bottom: 120px;
-	}
+	//.dialog-footer {
+	//	margin: auto;
+	//	text-align: center;
+	//}
+	//
+	//.buy-btn {
+	//	color: #fff;
+	//	width: 90%;
+	//	height: 110px;
+	//	font-size: 28px;
+	//	border-radius: 60px;
+	//	background: #82a8f9;
+	//	margin-bottom: 120px;
+	//}
 	.down-btn {
 		background: #e8503a;
 	}

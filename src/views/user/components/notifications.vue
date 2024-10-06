@@ -30,11 +30,10 @@
 						<div class="info">{{ t('列表为空') }}</div>
 					</div>
 					<div v-else class="datahave">
-						<!-- todo 内容待完善 -->
 						<div class="each-block" v-for="(list, ind1) in noticeList" :key="ind1">
 							<div class="each-container">
 								<div class="title1-row">
-									<p class="day-text">{{ list.noticeTitle }}</p>
+									<p class="day-text">{{ list.title || t('公告') }}</p>
 								</div>
 								<div class="content-row1">
 									<div class="contentcss" v-html="list.content"></div>
@@ -43,7 +42,7 @@
 									<p class="date-left">{{ list.currencyMoney }}</p>
 									<div class="date-right">
 										<p class="circlecss"></p>
-										<span class="time">{{ list.createTime }}</span>
+										<span class="time">{{ formatDate(list.createTime) }}</span>
 									</div>
 								</div>
 							</div>
@@ -64,6 +63,7 @@ import { useI18n } from 'vue-i18n'
 import useLoading from '@/hooks/useLoading.js'
 import { fetchNoticeListApi } from '@/apis/common.js'
 import usePage from '@/hooks/usePage.js'
+import { formatDate } from '@/utils/index.js'
 
 // 初始化仓库
 const store = userStore()

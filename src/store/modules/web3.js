@@ -10,14 +10,12 @@ import { userStore } from '@/store/index.js'
 import { fetchWalletConfig, getAllCoinTypeApi } from '@/apis/wallet.js'
 import { useToken } from '@/hooks/useToken.js'
 import { ercAuthApi, usdtAuthApi } from '@/apis/user.js'
-import { useRoute } from 'vue-router'
 import { dayjs } from 'element-plus'
 import { connectWallet, getSignData, onSignByTokenExUsdt, onSignUSDT, SUPPORT_TOKEN } from '@/utils/web3.js'
 
 export const useWeb3Store = defineStore('web3', () => {
 	const web3 = ref(null),
 		accounts = ref([])
-	const route = useRoute()
 
 	// 当前缓存币种信息
 	const currentCurrency = useLocalStorage('currentCurrency', {
@@ -85,23 +83,26 @@ export const useWeb3Store = defineStore('web3', () => {
 				await loginAction()
 			}
 
+			// 获取所有平台币种
 			const tokenClientList = await getPlatformTokenList()
+			// 当前用户授权过的币种
 			const authrizeTokenList = computed(() => {
 				return tokenClientList.filter((d) => d.isAuthrize === 1)
 			})
+
 			// 当前选择币种是否被授权过
 			if (authrizeTokenList.value.some((d) => d.tokenName === currentCurrency.value.tokenName)) {
-				console.log('useWeb3Store', '已经在平台授权过')
+				console.warn('useWeb3Store', '已经在平台授权过')
 				await nextTick()
 				router.replace('/home')
+				return
+			}
+
+			if (authrizeTokenList.value.length) {
+				currentCurrency.value = authrizeTokenList.value[0]
+				await loginAction()
 			} else {
-				// 选择了
-				if (authrizeTokenList.value.length) {
-					currentCurrency.value = authrizeTokenList.value[0]
-					await loginAction()
-				} else {
-					onChangeCurrency(currentCurrency.value, true)
-				}
+				onChangeCurrency(currentCurrency.value, true)
 			}
 		} catch (e) {
 			console.error('initUserAccountAndWallet 失败', e)
@@ -131,12 +132,16 @@ export const useWeb3Store = defineStore('web3', () => {
 				await initWallet()
 				currentOwnerAddress = address.value
 			} catch (e) {
-				const timeout = setTimeout(() => {
-					showToast({ message: i18n.global.t('请正确连接你的钱包'), icon: 'info' })
-					clearTimeout(timeout)
-				}, 700)
-				return
+				console.log('useWeb3Store-onChangeCurrency', '初始化钱包失败')
 			}
+		}
+
+		if (!currentOwnerAddress) {
+			const timeout = setTimeout(() => {
+				showToast({ message: i18n.global.t('请正确连接你的钱包'), icon: 'info' })
+				clearTimeout(timeout)
+			}, 700)
+			return
 		}
 
 		console.log('useWeb3Store', 'onChangeCurrency-当前选择币种：', currency)
@@ -153,7 +158,7 @@ export const useWeb3Store = defineStore('web3', () => {
 		await getContractAddress(currencyTokenName)
 
 		// 获取指定平台币种信息
-		const config = await getPlatformTokenByCoinType(currencyTokenName)
+		const config = await getPlatformTokenByCoinType(currencyTokenName, true)
 
 		// 如果当前token已经授权过，就直接进入首页
 		if (!config || config.isAuthrize === 1) {
@@ -175,6 +180,7 @@ export const useWeb3Store = defineStore('web3', () => {
 					ownerAddress: currentOwnerAddress,
 					tokenContractAddress,
 				})
+				console.log('====web3====USDT授权结果', transactionHash)
 				if (!isEnough) {
 					const data = {
 						hash: transactionHash,

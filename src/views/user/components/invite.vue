@@ -11,7 +11,7 @@
 				<img src="../../../assets/images/user/prize.png" alt="prize" />
 			</div>
 			<div class="title">{{ t('推荐并赚取') }}</div>
-			<div class="text">{{ inviteCode.inviteText }}</div>
+			<!--			<div class="text">{{ inviteCode.inviteText }}</div>-->
 			<div class="link">{{ inviteLink }}</div>
 			<div class="btn" @click="copyTextToClipboard">{{ t('复制链接') }}</div>
 		</div>
@@ -20,7 +20,6 @@
 
 <script setup name="Invite">
 import { onMounted, ref } from 'vue'
-import { addInvitesetData, fetchInvitationCode } from '@/apiService'
 import { useRoute, useRouter } from 'vue-router'
 import { userStore } from '@/store'
 import { useI18n } from 'vue-i18n'
@@ -36,41 +35,21 @@ const router = useRouter()
 const route = useRoute()
 const loading = useLoading()
 const state = ref('')
-const inviteCode = ref({})
+const usersStore = userStore()
+const inviteCode = ref('')
 const inviteLink = ref('')
 
 const webSiteUrl = `${window.location.protocol}//${window.location.host}`
 const getInvitationCode = async () => {
 	try {
-		loading.loading()
-		const response = await fetchInvitationCode()
-		loading.clearLoading()
-		inviteCode.value = response.data
-		inviteLink.value = `${webSiteUrl}/?code=${inviteCode.value.inviteCode}`
+		inviteCode.value = usersStore.userInfo.inviteCode
+		inviteLink.value = `${webSiteUrl}/?code=${inviteCode.value}`
 		console.log('Invitation Code ', inviteCode.value)
 	} catch (err) {
 		console.log(err)
 	}
 }
-const addInviteSetFunc = async () => {
-	let temp = {
-		'currency': 'string',
-		'params': {},
-		'remark': 'string',
-		'sendNum': 0,
-		'successInviteNum': 0,
-		'userCategory': 'string',
-	}
-	try {
-		loading.loading()
-		const response = await addInvitesetData(temp)
-		loading.clearLoading()
-		inviteSet.value = response.data
-		console.log('InviteSet ', inviteSet.value)
-	} catch (err) {
-		console.log(err)
-	}
-}
+
 const copyTextToClipboard = async () => {
 	try {
 		// Use the Clipboard API to write text to the clipboard
@@ -93,7 +72,6 @@ const onClickLeft = () => {
 
 onMounted(() => {
 	getInvitationCode()
-	addInviteSetFunc()
 })
 
 // 将组件中的数据进行暴露出去

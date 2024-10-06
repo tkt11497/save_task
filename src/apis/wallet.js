@@ -17,7 +17,7 @@ export const getAllPlatformTokenBalanceApi = () => {
 
 // 获取链上单一token余额
 export const getSingleChainTokenBalanceApi = (walletToken) => {
-	return request.post('wallet/getSingleChainTokenBalance', { walletToken })
+	return request.post('/wallet/getSingleChainTokenBalance', { walletToken })
 }
 
 // 质押页面-获取质押收益金额
@@ -28,6 +28,11 @@ export const fetchStakeIncomeApi = () => {
 // 理财页面-获取理财质押收益金额
 export const fetchFinancialStakeIncomeApi = () => {
 	return request.get('/wallet/stake/financial')
+}
+
+// 用户页面-获取理财质押收益
+export const fetchUserStakeIncomeApi = () => {
+	return request.post('/wallet/stake/getUserWaller')
 }
 
 // 钱包-快捷充值

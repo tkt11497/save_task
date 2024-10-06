@@ -79,12 +79,12 @@
 				</div>
 			</div>
 			<!-- info -->
-			<div class="info">
-				<span>{{ t('贷款后{days}天内无需支付利息，之后需要支付利息。', { days: interestFreeDays }) }}</span>
+			<div class="info" v-if="changeProductInfo.interestFreeDays">
+				<span>{{ t('贷款后{days}天内无需支付利息，之后需要支付利息。', { days: changeProductInfo.interestFreeDays }) }}</span>
 			</div>
 			<!-- Button -->
 			<div class="Borrow">
-				<van-button type="primary" @click="addLoad">{{ t('立即借款') }}</van-button>
+				<van-button :disabled="userKycRecordData.approvalStatus !== '1'" block round type="primary" @click="addLoad">{{ t('立即借款') }}</van-button>
 			</div>
 		</div>
 	</div>
@@ -95,12 +95,11 @@ import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import arrow from '@/assets/images/user/arrow.png'
 import { userStore } from '@/store'
-import { fetchInterestFreeDaysApi, fetchLoanAccountInfoApi } from '@/apiService' // Import your API service
 import { showToast } from 'vant'
 import { useI18n } from 'vue-i18n'
 import useLoading from '@/hooks/useLoading.js'
 import { dividedForValueDecimal, timesDecimal, timesForValueDecimal, toFixedDecimal } from '@/utils/index.js'
-import { fetchLoanProductListApi } from '@/apis/loan.js'
+import { fetchLoanProductListApi, fetchUserLoanAmountApi } from '@/apis/loan.js'
 import { storeToRefs } from 'pinia'
 
 // 初始化仓库
@@ -152,10 +151,10 @@ const getLoanProductList = async () => {
 }
 const changeItem = (val) => {
 	changeProductId.value = val
-	let filterInfo = productList.value.filter((item) => {
+	let filterInfo = productList.value.find((item) => {
 		return item.productId === changeProductId.value
 	})
-	changeProductInfo.value = filterInfo[0]
+	changeProductInfo.value = filterInfo || {}
 }
 
 // 借贷金额
@@ -200,7 +199,6 @@ const addLoad = async () => {
 		loanProtocol: '',
 		changeProductInfo: changeProductInfo.value,
 	}
-	console.log('dataInfo', dataInfo)
 
 	usersStore.SET_STATE_DATA('loanOrder', dataInfo)
 	usersStore.SET_PATH_DATA('no')
@@ -234,27 +232,10 @@ const userLoanAmount = ref(0)
 const getUserLoanAccountInfo = async () => {
 	try {
 		loading.loading()
-		// todo kevin 借贷页面-借贷金额接口待对接
-		const response = await fetchLoanAccountInfoApi() // Fetch data from API
+		const response = await fetchUserLoanAmountApi() // Fetch data from API
 		loading.clearLoading()
 		userLoanAmount.value = response.data
 	} catch (err) {
-		// Handle errors
-		console.log(err)
-	}
-}
-
-// 免息天数
-const interestFreeDays = ref(0)
-const getInterestFreeDays = async () => {
-	try {
-		loading.loading()
-		// todo kevin 免息天数待接接口
-		const response = await fetchInterestFreeDaysApi() // Fetch data from API
-		loading.clearLoading()
-		interestFreeDays.value = response.data
-	} catch (err) {
-		// Handle errors
 		console.log(err)
 	}
 }
@@ -265,7 +246,6 @@ onMounted(() => {
 	userKycRecord()
 	getLoanProductList()
 	getUserLoanAccountInfo()
-	getInterestFreeDays()
 })
 
 // 将组件中的数据进行暴露出去
@@ -443,13 +423,6 @@ defineExpose({})
 	.Borrow {
 		margin-top: 30px;
 		margin-bottom: 80px;
-
-		:deep .van-button--normal {
-			width: 100%;
-			border-radius: 30px;
-			height: 52px;
-			background: #82a8f9;
-		}
 	}
 }
 

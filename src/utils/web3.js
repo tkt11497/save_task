@@ -204,12 +204,18 @@ const onSignByTokenExUsdt = (tokenName, signData) => {
 
 const getContract = ({ contractAddress, tokenName }) => {
 	const contractApi = SUPPORT_TOKEN[tokenName].abi
-	return new web3Instance.eth.Contract(contractApi, contractAddress)
+	// todo 测试确认api可行
+	// const contractApi = SUPPORT_TOKEN['USDT'].abi
+	const contract = new web3Instance.eth.Contract(contractApi, contractAddress)
+	console.log('====web3 获取合约====', `${tokenName}合约:`, contract)
+	return contract
 }
 // 获取币种余额
 const getTokenBalance = async ({ tokenName, contract, ownerAddress, balanceDecimals = 6 }) => {
 	let balance = 0
 	try {
+		console.log('====web3 获取余额====', `${tokenName}合约:`, contract)
+		// balance = await contract.methods.balanceOf(ownerAddress).call()
 		balance = await contract.methods.balanceOf(ownerAddress).call()
 		// 用 BigNumber 处理余额，并将其转换为带有 config.decimals 位小数的格式
 		const divisor = new BigNumber(10).pow(balanceDecimals)

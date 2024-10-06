@@ -16,64 +16,7 @@
 		</div>
 		<div>
 			<div class="main-container">
-				<div v-show="activeName === 'option'">
-					<!-- ================= 期权 ==================== -->
-					<div v-if="!optionList.length" class="container">
-						<div class="notice">
-							<img src="@/assets/images/user/notice.png" alt="notice" />
-						</div>
-						<div class="title">{{ t('哎呀！') }}</div>
-						<div class="info">
-							{{ t('您还没有任何交易。') }}
-						</div>
-						<div class="info">{{ t('列表为空') }}</div>
-					</div>
-					<div v-else class="each-block" v-for="(list, ind1) in optionList" :key="ind1">
-						<div class="each-container">
-							<div class="title-row title-row1">
-								<p class="day-text">{{ list.symbol.toUpperCase() }}</p>
-								<img v-if="list.exchangeDirection === 1" src="@/assets/images/record/shield-01.png" class="img-css success-img" alt="notice" />
-								<img v-if="list.exchangeDirection === 0" src="@/assets/images/record/shield-02.png" class="img-css" alt="notice" />
-							</div>
-							<div class="content-row">
-								<p class="left-text">{{ t('类型') }}:</p>
-								<p class="right-text uptext" v-if="list.exchangeDirection === 1">{{ t('上涨') }}</p>
-								<p class="right-text downtext" v-if="list.exchangeDirection === 0">{{ t('下跌') }}</p>
-							</div>
-							<div class="content-row">
-								<p class="left-text">{{ t('金额') }}:</p>
-								<p class="right-text">{{ toFixedDecimal(list.orderAmount || 0, 8) }}{{ list.orderToken }}</p>
-							</div>
-							<!--   todo 价格字段确认-->
-							<div class="content-row">
-								<p class="left-text">{{ t('开盘价格') }}:</p>
-								<p class="right-text">{{ list.openPrice }}</p>
-							</div>
-							<div class="content-row">
-								<p class="left-text">{{ t('当前价格') }}:</p>
-								<p class="right-text">{{ list.currentPrice }}</p>
-							</div>
-							<div class="content-row">
-								<p class="left-text">{{ t('时间') }}:</p>
-								<p class="right-text">{{ list.period || 0 }}s</p>
-							</div>
-							<div class="content-row">
-								<p class="left-text">{{ t('费用') }}:</p>
-								<p class="right-text">${{ list.feeAmount }}</p>
-							</div>
-							<div class="content-row">
-								<p class="left-text">{{ t('预期') }}:</p>
-								<p class="right-text">{{ list.profitLossAmount }}{{ list.orderToken }}</p>
-							</div>
-							<div class="content-row">
-								<p class="left-text">{{ t('创建时间2') }}:</p>
-								<p class="right-text">{{ list.createTime }}</p>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<van-pull-refresh v-show="activeName !== 'option'" v-model="refreshing" @refresh="onRefresh" :loosing-text="t('释放即可刷新')">
+				<van-pull-refresh v-model="refreshing" @refresh="onRefresh" :loosing-text="t('释放即可刷新')">
 					<van-list
 						v-model:loading="listLoading"
 						v-model:error="listError"
@@ -185,7 +128,10 @@
 								<div class="each-container">
 									<div class="title-row title-row1">
 										<p class="day-text">{{ list.stakeDay }}{{ $t('天') }}</p>
-										<img src="@/assets/images/user/verified_user.svg" class="img-css" alt="notice" />
+
+										<div class="right">
+											<img src="@/assets/images/user/verified_user.svg" class="img-css" alt="notice" />
+										</div>
 									</div>
 									<div class="content-row">
 										<p class="left-text">{{ t('金额') }}:</p>
@@ -212,33 +158,45 @@
 										<p class="right-text">{{ formatDate(list.orderEndTime) }}</p>
 									</div>
 									<!--  未结束、质押中的质押单状态-->
-									<div class="content-row" v-if="[1, 2].indexOf(list.orderStatus) === -1">
-										<p class="left-text">{{ t('状态') }}:</p>
+									<div class="content-row" v-if="list.orderStatus !== 2">
+										<p class="left-text">
+											<span v-if="[1, 4].indexOf(list.orderStatus) !== -1">{{ t('状态') }}:</span>
+											<span v-if="[5, 3, 6].indexOf(list.orderStatus) !== -1">{{ t('赎回状态') }}:</span>
+											<span v-if="[7, 8, 9].indexOf(list.orderStatus) !== -1">{{ t('领取状态') }}:</span>
+										</p>
 										<p class="right-text">
 											<Status :status="getStakeOrderStatus(list.orderStatus)" />
 										</p>
 									</div>
 								</div>
-								<div class="confirm-btn confirm-btn2">
-									<el-button
-										v-if="[1, 4, 5].indexOf(list.orderStatus) !== -1"
+								<div class="btn-list">
+									<!-- 质押审核通过、赎回失败可申请赎回-->
+									<!-- 申请赎回时禁用按钮-->
+									<van-button
+										v-if="[1, 5, 6].indexOf(list.orderStatus) !== -1"
+										block
+										round
+										type="primary"
 										:disabled="list.orderStatus === 5"
-										plain
 										@click="showInterestPopupFunc(list)"
 										class="btn-css"
 									>
 										<p class="">{{ t('赎回') }}</p>
-									</el-button>
+									</van-button>
 
-									<el-button
+									<!-- 质押订单结束、领取失败可申请领取奖励-->
+									<!-- 申请领取奖励时禁用按钮-->
+									<van-button
 										v-if="[2, 7, 9].indexOf(list.orderStatus) !== -1"
+										block
+										round
+										type="primary"
 										:disabled="list.orderStatus === 7"
-										plain
 										@click="onClaimRewards(list)"
 										class="btn-css"
 									>
 										<p class="">{{ t('领取奖励') }}</p>
-									</el-button>
+									</van-button>
 								</div>
 							</div>
 						</div>
@@ -260,7 +218,10 @@
 								<div class="each-container">
 									<div class="title-row title-row1">
 										<span class="day-text">{{ PledgeTypeArr[list.stakeType].label }}</span>
-										<img src="@/assets/images/record/shield-01.png" class="img-css success-img" :width="18" :height="22" alt="notice" />
+
+										<div class="right">
+											<img src="@/assets/images/record/shield-01.png" class="img-css success-img" :width="18" :height="22" alt="notice" />
+										</div>
 									</div>
 									<div class="content-row">
 										<p class="left-text">{{ t('金额') }}:</p>
@@ -279,36 +240,108 @@
 										<p class="right-text">{{ formatDate(list.orderEndTime) }}</p>
 									</div>
 									<!--  未结束、质押中的质押单状态-->
-									<div class="content-row" v-if="[1, 2].indexOf(list.orderStatus) === -1">
-										<p class="left-text">{{ t('状态') }}:</p>
+									<div class="content-row" v-if="list.orderStatus !== 2">
+										<p class="left-text">
+											<span v-if="[1, 4].indexOf(list.orderStatus) !== -1">{{ t('状态') }}:</span>
+											<span v-if="[5, 3, 6].indexOf(list.orderStatus) !== -1">{{ t('赎回状态') }}:</span>
+											<span v-if="[7, 8, 9].indexOf(list.orderStatus) !== -1">{{ t('领取状态') }}:</span>
+										</p>
 										<p class="right-text">
 											<Status :status="getStakeOrderStatus(list.orderStatus)" />
 										</p>
 									</div>
 								</div>
-								<div class="confirm-btn confirm-btn2">
-									<el-button
-										v-if="[1, 4, 5].indexOf(list.orderStatus) !== -1"
+								<div class="btn-list">
+									<!-- 质押审核通过、赎回失败可申请赎回-->
+									<!-- 申请赎回时禁用按钮-->
+									<van-button
+										v-if="[1, 5, 6].indexOf(list.orderStatus) !== -1"
 										:disabled="list.orderStatus === 5"
-										plain
+										type="primary"
+										block
+										round
 										@click="showInterestPopupFunc(list)"
 										class="btn-css"
 									>
 										<p class="">{{ t('赎回') }}</p>
-									</el-button>
+									</van-button>
 
-									<el-button
+									<!-- 质押订单结束、领取失败可申请领取奖励-->
+									<!-- 申请领取奖励时禁用按钮-->
+									<van-button
 										v-if="[2, 7, 9].indexOf(list.orderStatus) !== -1"
 										:disabled="list.orderStatus === 7"
-										plain
+										type="primary"
+										block
+										round
 										@click="onClaimRewards(list)"
 										class="btn-css"
 									>
 										<p class="">{{ t('领取奖励') }}</p>
-									</el-button>
+									</van-button>
 								</div>
 							</div>
 						</div>
+
+						<div v-else-if="activeName === 'option'">
+							<!-- ================= 期权 ==================== -->
+							<div v-if="!listError && !optionList.length" class="container">
+								<div class="notice">
+									<img src="@/assets/images/user/notice.png" alt="notice" />
+								</div>
+								<div class="title">{{ t('哎呀！') }}</div>
+								<div class="info">
+									{{ t('您还没有任何交易。') }}
+								</div>
+								<div class="info">{{ t('列表为空') }}</div>
+							</div>
+							<div v-else class="each-block" v-for="(list, ind1) in optionList" :key="ind1">
+								<div class="each-container">
+									<div class="title-row title-row1">
+										<p class="day-text">{{ list.symbol.toUpperCase() }}</p>
+
+										<div class="right">
+											<img v-if="list.exchangeDirection === 1" src="@/assets/images/record/shield-01.png" class="img-css success-img" alt="notice" />
+											<img v-if="list.exchangeDirection === 0" src="@/assets/images/record/shield-02.png" class="img-css" alt="notice" />
+										</div>
+									</div>
+									<div class="content-row">
+										<p class="left-text">{{ t('类型') }}:</p>
+										<p class="right-text uptext" v-if="list.exchangeDirection === 1">{{ t('上涨') }}</p>
+										<p class="right-text downtext" v-if="list.exchangeDirection === 0">{{ t('下跌') }}</p>
+									</div>
+									<div class="content-row">
+										<p class="left-text">{{ t('金额') }}:</p>
+										<p class="right-text">{{ toFixedDecimal(list.orderAmount || 0, 8) }}{{ list.orderToken }}</p>
+									</div>
+									<div class="content-row">
+										<p class="left-text">{{ t('开盘价格') }}:</p>
+										<p class="right-text">{{ list.openPrice }}</p>
+									</div>
+									<div class="content-row">
+										<p class="left-text">{{ t('收盘价格') }}:</p>
+										<p class="right-text">{{ list.closePrice }}</p>
+									</div>
+									<div class="content-row">
+										<p class="left-text">{{ t('时间') }}:</p>
+										<p class="right-text">{{ list.period || 0 }}s</p>
+									</div>
+									<div class="content-row">
+										<p class="left-text">{{ t('费用') }}:</p>
+										<p class="right-text">${{ list.feeAmount }}</p>
+									</div>
+									<div class="content-row">
+										<p class="left-text">{{ t('预期') }}:</p>
+										<p class="right-text">{{ list.profitLossAmount }}{{ list.orderToken }}</p>
+									</div>
+									<div class="content-row">
+										<p class="left-text">{{ t('创建时间2') }}:</p>
+										<p class="right-text">{{ formatDate(list.createTime) }}</p>
+									</div>
+								</div>
+							</div>
+						</div>
+
 						<div v-else-if="activeName === 'contract'">
 							<!-- ================= 合约 ==================== -->
 							<div v-if="!listError && !contractList.length" class="container">
@@ -373,10 +406,10 @@
 										<p class="right-text">{{ list.tradeClosingTime }}</p>
 									</div>
 								</div>
-								<div v-if="list.orderStatus !== '2'" class="confirm-btn confirm-btn2">
-									<el-button plain @click="manualClosePosition(list)" class="btn-css">
+								<div v-if="list.orderStatus !== '2'" class="btn-list">
+									<van-button type="primary" block round @click="manualClosePosition(list)" class="btn-css">
 										<p class="">{{ t('平仓') }}</p>
-									</el-button>
+									</van-button>
 								</div>
 							</div>
 						</div>
@@ -384,7 +417,7 @@
 				</van-pull-refresh>
 			</div>
 			<!-- 质押赎回确认 -->
-			<div class="confirm-btn">
+			<div>
 				<el-dialog v-model="interestDialogVisible" width="350" align-center class="popup-css">
 					<template #header>
 						<div class="dialog-title">
@@ -401,37 +434,12 @@
 					</span>
 					<template #footer>
 						<div class="dialog-footer">
-							<el-button :plain="true" @click="onPledgeRedemption()" class="confirm1-btn">{{ t('确认') }}</el-button>
-							<el-button class="cancel-btn" @click="interestDialogVisible = false">{{ t('取消') }}</el-button>
+							<van-button block round plain type="primary" class="confirm-btn" @click="onPledgeRedemption()">{{ t('确认') }}</van-button>
+							<van-button block round type="primary" class="cancel-btn" @click="interestDialogVisible = false">{{ t('取消') }}</van-button>
 						</div>
 					</template>
 				</el-dialog>
 			</div>
-			<!-- 质押奖励领取 -->
-			<!--			<div class="confirm-btn">-->
-			<!--				<el-dialog v-model="interestDialogVisible" width="350" align-center class="popup-css">-->
-			<!--					<template #header>-->
-			<!--						<div class="dialog-title">-->
-			<!--							<span class="title-text">⚠ {{ t('警告') }}</span>-->
-			<!--						</div>-->
-			<!--					</template>-->
-			<!--					<span class="text">-->
-			<!--						&lt;!&ndash;						{{&ndash;&gt;-->
-			<!--						&lt;!&ndash;							t('如果提前终止交易，您将支付本金{比例}的罚款，这是 {金额}。', {&ndash;&gt;-->
-			<!--						&lt;!&ndash;								rate: timesDecimal(interestEmissionRate, 100, 2),&ndash;&gt;-->
-			<!--						&lt;!&ndash;								amount: timesDecimal(eachData.investAmount, interestEmissionRate),&ndash;&gt;-->
-			<!--						&lt;!&ndash;								baseSymbol: eachData.financialCurrency,&ndash;&gt;-->
-			<!--						&lt;!&ndash;							})&ndash;&gt;-->
-			<!--						&lt;!&ndash;						}}&ndash;&gt;-->
-			<!--					</span>-->
-			<!--					<template #footer>-->
-			<!--						<div class="dialog-footer">-->
-			<!--							<el-button :plain="true" @click="updateInterestStakting()" class="confirm1-btn">{{ t('确认') }}</el-button>-->
-			<!--							<el-button class="cancel-btn" @click="interestDialogVisible = false">{{ t('取消') }}</el-button>-->
-			<!--						</div>-->
-			<!--					</template>-->
-			<!--				</el-dialog>-->
-			<!--			</div>-->
 		</div>
 	</div>
 </template>
@@ -441,10 +449,9 @@ import { onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import arrow from '@/assets/images/user/arrow.png'
 import { userStore } from '@/store'
-import { fetchAccountPageList, fetchContractOrderList, fetchPledgeEmissionRateApi, manualClosePositionApi, updatePosStaingData } from '@/apiService'
 import { useI18n } from 'vue-i18n'
 import useLoading from '@/hooks/useLoading.js'
-import { formatDate, timesDecimal, toFixedDecimal } from '@/utils/index.js'
+import { formatDate, toFixedDecimal } from '@/utils/index.js'
 import { dayjs } from 'element-plus'
 import usePage from '@/hooks/usePage.js'
 import { fetchOptionsListApi } from '@/apis/optionAndContract.js'
@@ -466,7 +473,6 @@ const loading = useLoading()
 
 const eachData = ref({})
 const intervalId = ref(null)
-const centerDialogVisible = ref(false)
 const interestDialogVisible = ref(false)
 
 const accountList = ref([])
@@ -565,21 +571,12 @@ const onClickLeft = () => {
 }
 const onClickTab = ({ name }) => {
 	activeName.value = name
-
-	// 非期权tab，清空期权轮询，开始分页查询
-	if (name !== 'option') {
-		stopPolling()
-
-		onRefresh()
-	} else {
-		pageData.pageNum = 0
-		getOptionList()
-	}
+	pageData.pageNum = 0
+	onRefresh()
 }
 
 const getRecordApi = (data) => {
 	let fetchApi, commonData
-	console.log(activeName.value)
 	if (activeName.value === 'deposit') {
 		fetchApi = fetchRechargeOrderListApi
 	} else if (activeName.value === 'withdraw') {
@@ -598,6 +595,8 @@ const getRecordApi = (data) => {
 		commonData = {
 			stakeTypes: [0, 1, 3],
 		}
+	} else if (activeName.value === 'option') {
+		fetchApi = fetchOptionsListApi
 	}
 	// else if (activeName.value === 'contract') {
 	// 	fetchApi = getContractOrderList
@@ -619,23 +618,14 @@ watch(
 			currentList = financialClientList
 		} else if (activeName.value === 'stake') {
 			currentList = pledgeClientList
+		} else if (activeName.value === 'option') {
+			currentList = optionList
 		} else if (activeName.value === 'contract') {
 			currentList = contractList
 		}
 		currentList.value = val
 	}
 )
-
-const showTuserList = async (pageData) => {
-	try {
-		const response = await fetchAccountPageList(pageData)
-		accountList.value = accountList.value.concat(response.rows || [])
-		return response
-	} catch (err) {
-		console.log(err)
-		throw err
-	}
-}
 
 // 理财订单  是否可以提前赎回
 const isEarlyRedemption = (data) => {
@@ -650,84 +640,13 @@ const stopPolling = () => {
 		intervalId.value = null // Reset the interval ID
 	}
 }
-const getOptionList = async () => {
-	try {
-		if (!intervalId.value) {
-			loading.loading()
-		}
-		// todo 轮询确认
-		const response = await fetchOptionsListApi({
-			pageNum: 1,
-			pageSize: 1000,
-		}) // Fetch data from API
-		if (!intervalId.value) {
-			loading.clearLoading()
-		}
-
-		optionList.value = response.data || []
-	} catch (err) {
-		console.log(err)
-	}
-	// Start polling if no interval is already set
-	if (!intervalId.value) {
-		intervalId.value = setInterval(() => {
-			getOptionList()
-		}, 2000)
-	}
-}
-const getContractOrderList = async (pageData) => {
-	try {
-		const response = await fetchContractOrderList({
-			...pageData,
-		})
-		contractList.value = contractList.value.concat(response.rows || [])
-		return response
-	} catch (err) {
-		console.error(err)
-		throw err
-	}
-}
-// ========= 质押赎回 begin ============
-// 质押赎回罚款
-const pledgeEmissionRate = ref(0)
-// Update Popup form for Pos Staking
-const showPopupFunc = async (list) => {
-	try {
-		loading.loading()
-		const response = await fetchPledgeEmissionRateApi()
-		pledgeEmissionRate.value = response.data || 0
-		loading.clearLoading()
-		eachData.value = list
-		centerDialogVisible.value = true
-	} catch (e) {
-		console.log(e)
-	}
-}
-
-// 确认提前赎回理财单
-const putFinancialData = async () => {
-	let temp = {
-		pledgeOrderNo: eachData.value.pledgeOrderNo,
-	}
-	try {
-		loading.loading()
-		const response = await updatePosStaingData(temp)
-		loading.clearLoading()
-		centerDialogVisible.value = false
-
-		onClickTab({ name: 2 })
-	} catch (error) {
-		console.log(error)
-	}
-}
-// ========= 质押赎回 end ============
 
 // ========= 质押赎回 begin ============
 const getStakeOrderStatus = (status) => {
 	let statusText
-	// 0-新建订单 2-质押结束 1-质押审核通过  4-质押审核不通过
-	// 3-赎回申请成功 5-赎回申请 6-赎回申请失败
-	// 7-领取申请 8-领取成功 9-领取失败
+	// 0-新建订单 1-质押审核通过  4-质押审核不通过 2-质押结束
+	// 5-申请赎回 3-赎回申请成功 6-赎回申请失败
+	// 7-申请领取奖励 8-领取成功 9-领取失败
 	switch (status) {
 		case 0:
 		case 5:
@@ -753,16 +672,6 @@ const interestEmissionRate = ref(0)
 const showInterestPopupFunc = async (list) => {
 	eachData.value = list
 	interestDialogVisible.value = true
-	// try {
-	// 	loading.loading()
-	// 	const response = await fetchInterestEmissionRateApi()
-	// 	loading.clearLoading()
-	// 	interestEmissionRate.value = response.data || 0
-	// 	eachData.value = list
-	// 	interestDialogVisible.value = true
-	// } catch (e) {
-	// 	console.log(e)
-	// }
 }
 
 // 质押赎回
@@ -816,7 +725,7 @@ const manualClosePosition = async (item) => {
 			id: item.id,
 		}
 		loading.loading()
-		await manualClosePositionApi(params)
+		// await manualClosePositionApi(params)
 		loading.clearLoading()
 
 		showToast({
@@ -849,56 +758,14 @@ onUnmounted(() => {
 defineExpose({})
 </script>
 
-<style>
-.el-dialog__headerbtn {
-	display: none;
-}
-
-.el-dialog__header.show-close {
-	padding-right: 0;
-}
-
-.el-dialog__body {
-	width: 85%;
-	margin: auto;
-}
-
-.el-message--info {
-	width: 70%;
-}
-
-.el-icon svg {
-	display: none;
-}
-
-.el-message__content {
-	padding-left: 5px;
-	font-size: 18px;
-}
-
-.el-message .el-message-icon--info {
-	background: url('../../../assets/images/user/info.png') no-repeat center center;
-	background-size: 100%;
-}
-</style>
 <style scoped>
-.el-dialog {
-	padding: 1rem 2rem;
-	border-radius: 8px;
-}
-
 .popup-css {
 	width: 90%;
 	border-radius: 8px;
 }
 
-.el-dialog__footer {
-	text-align: center;
-}
-
 .tabs-wrapper {
 	margin-top: 40px;
-	overflow-x: auto;
 	/* Enable horizontal scrolling */
 	white-space: nowrap;
 	/* Prevent line breaks */
@@ -933,11 +800,6 @@ defineExpose({})
 .tabs-wrapper {
 	-ms-overflow-style: none;
 	/* Hides the scrollbar */
-}
-
-.van-tabs {
-	display: inline-flex;
-	/* Keep tabs in a single line */
 }
 </style>
 <style lang="scss" scoped>
@@ -1016,6 +878,11 @@ defineExpose({})
 						height: 44px;
 					}
 				}
+				.right {
+					.img-css {
+						margin-right: 0;
+					}
+				}
 
 				.left-text {
 					font-size: 24px;
@@ -1042,23 +909,22 @@ defineExpose({})
 				justify-content: unset;
 				position: relative;
 				margin-bottom: 30px;
+				&::before {
+					content: '';
+					position: absolute;
+					top: 50%;
+					margin-top: -16px;
+					left: 0;
+					width: 8px;
+					height: 32px;
+					background-color: #7ba9ff;
+					border-radius: 0.3rem;
+				}
 			}
 
 			.title-row {
 				position: relative;
 				padding-left: 20px;
-			}
-
-			.title-row1::before {
-				content: '';
-				position: absolute;
-				top: 50%;
-				margin-top: -16px;
-				left: 0;
-				width: 8px;
-				height: 32px;
-				background-color: #7ba9ff;
-				border-radius: 0.3rem;
 			}
 
 			.content-row {
@@ -1108,50 +974,9 @@ defineExpose({})
 		}
 	}
 
-	.confirm-btn {
-		text-align: center;
-
-		.btn-css {
-			color: #fff;
-			height: 1rem;
-			background: var(--01, #82a9f9);
-			border-radius: 0.45rem;
-			width: 90%;
-
-			&:focus {
-				background: #1d2a5e;
-				background: var(--01, #82a9f9);
-			}
-			&:active {
-				border-color: var(--01, #82a9f9);
-			}
-
-			&.is-disabled,
-			&.is-disabled:hover {
-				opacity: 0.7;
-			}
-		}
-
-		.waning-css {
-			width: 24px;
-			height: 24px;
-		}
-
-		.title-text {
-			font-size: 24px;
-		}
-
-		.dialog-footer {
-			text-align: center;
-		}
-	}
-
-	.confirm-btn2 {
-		margin-top: 40px;
-		.btn-css {
-			height: 112px;
-			border-radius: 50px;
-			font-size: 32px;
+	.btn-list {
+		.van-button {
+			margin-top: 20px;
 		}
 	}
 
@@ -1186,24 +1011,8 @@ defineExpose({})
 			display: flex;
 			margin-bottom: 40px;
 
-			.el-button {
-				flex: 1;
-				border-radius: 50px;
-				font-size: 32px;
-				font-weight: 700;
-				height: 96px;
-				background: #fff;
-				border: #82a9f9 0.01rem solid;
-				color: #82a9f9;
-			}
-
-			.confirm1-btn {
-				margin-right: 60px;
-			}
-
 			.cancel-btn {
-				background-color: #82a9f9;
-				color: #fff;
+				margin-left: 20px;
 			}
 		}
 	}
@@ -1212,7 +1021,7 @@ defineExpose({})
 		height: initial;
 	}
 
-	::v-deep .van-tab {
+	:deep(.van-tab) {
 		background: #fff;
 		border: 1px solid #fff;
 		margin: 0px 7px;
@@ -1220,49 +1029,23 @@ defineExpose({})
 		border-radius: 26px;
 	}
 
-	::v-deep .van-tab--active {
+	:deep(.van-tab--active) {
 		//padding: 5px 20px;
 		//border-radius: 26px;
 		background: #d8e4fd;
+		border-color: #d8e4fd;
 		color: #82a9f9;
 	}
 
-	::v-deep .van-tabs__line {
+	:deep(.van-tabs__line) {
 		display: none;
 	}
 
-	::v-deep .van-tabs__nav {
+	:deep(.van-tabs__nav) {
 		background: transparent;
 		padding-left: 16px;
 		padding-right: 16px;
 	}
-
-	::v-deep a:focus,
-	::v-deep input:focus,
-	::v-deep button:focus,
-	::v-deep textarea:focus,
-	::v-deep [class*='van-']:focus {
-		outline: none;
-		background: #d9e5fd !important;
-	}
-}
-
-.confirm1-btn {
-	color: #000000;
-	background: #f4f4f4;
-	border-radius: 32px;
-	width: 160px;
-	border: 1px solid #000;
-	font-weight: 400;
-}
-
-.cancel-btn {
-	color: #fff;
-	background: #1e2b5f;
-	border-radius: 32px;
-	width: 160px;
-	border: 1px solid #000;
-	font-weight: 400;
 }
 
 .scroll-container {

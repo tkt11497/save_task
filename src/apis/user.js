@@ -25,7 +25,7 @@ export const createUserKycApi = (data) => {
 	return request.post('/userProfile/create', data)
 }
 
-// 用户-获取静态收益
+// 首页-获取静态收益
 export const fetchUserStaticIncomeApi = () => {
 	return request.get('/staticIncome/getUserStaticIncome')
 }

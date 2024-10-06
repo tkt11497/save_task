@@ -7,7 +7,6 @@
 				<div class="title">{{ t('赚取利息') }}</div>
 			</div>
 			<div class="right">
-				<!--        todo earn 右上角上涨幅度 接口待接入-->
 				<span>{{ '+0.00%' }}</span>
 				<div class="img">
 					<img src="../../assets/images/home/moving.png" alt="trends" />
@@ -150,7 +149,7 @@
 			</div>
 			<!-- Subscribe Button -->
 			<div class="subscribe" @click="showPopupFunc()">
-				<van-button type="primary" class="custom-button outline">{{ t('订阅') }}</van-button>
+				<van-button type="primary" block round>{{ t('订阅') }}</van-button>
 			</div>
 		</div>
 
@@ -183,7 +182,7 @@
 				</div>
 				<template #footer>
 					<div class="dialog-footer">
-						<el-button :plain="true" @click="addNew()" class="confirm1-btn">{{ t('确认') }}</el-button>
+						<van-button block round type="primary" @click="addNew()" class="confirm1-btn">{{ t('确认') }}</van-button>
 					</div>
 				</template>
 			</el-dialog>
@@ -776,15 +775,6 @@ defineExpose({})
 
 	.subscribe {
 		margin-top: 30px;
-		// text-align: center;
-
-		:deep(.van-button--normal) {
-			border-radius: 40px;
-			height: 56px;
-			font-size: 16px;
-			font-weight: bold;
-			background: #82a8f9;
-		}
 	}
 }
 
@@ -808,17 +798,6 @@ defineExpose({})
 	color: gray;
 	margin-top: 10px;
 	margin-bottom: 25px;
-}
-
-.confirm1-btn {
-	/* Add any additional styles you need for the button */
-	width: 100%;
-	height: 110px;
-	border-radius: 52px;
-	background: #82a8f9;
-	color: #fff;
-	font-weight: 600;
-	font-size: 36px;
 }
 
 :deep(.earn-order.el-dialog) {
@@ -849,13 +828,6 @@ defineExpose({})
 				color: #000;
 			}
 		}
-	}
-
-	.dialog-footer {
-		display: flex;
-		justify-content: center;
-		padding: 10px;
-		width: 100%;
 	}
 }
 </style>

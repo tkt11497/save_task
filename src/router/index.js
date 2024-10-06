@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useWeb3Store, userStore } from '@/store/index.js'
 
 const router = createRouter({
 	history: createWebHistory(),
@@ -137,10 +138,6 @@ const router = createRouter({
 			redirect: '/',
 		},
 	],
-})
-
-router.beforeEach((to, from, next) => {
-	next()
 })
 
 export default router

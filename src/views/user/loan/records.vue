@@ -19,7 +19,7 @@
 						<van-loading class="custom-page-loading" type="spinner" />
 					</template>
 
-					<div v-if="!accountList.length" class="container">
+					<div v-if="!dataList.length" class="container">
 						<div class="notice">
 							<img src="../../../assets/images/user/notice.png" alt="notice" />
 						</div>
@@ -29,7 +29,7 @@
 						</div>
 						<div class="info">{{ t('列表为空') }}</div>
 					</div>
-					<div v-else class="each-block" v-for="(list, ind1) in accountList" :key="ind1">
+					<div v-else class="each-block" v-for="(list, ind1) in dataList" :key="ind1">
 						<div class="each-container">
 							<div class="title1-row">
 								<img src="@/assets/images/record/loan.png" class="img-css" alt="notice" />
@@ -67,9 +67,10 @@
 								</p>
 							</div>
 
-							<!-- 借贷状态-->
-							<div class="content-row" v-if="list.status !== 3">
-								<p class="left-text">{{ t('借款状态') }}:</p>
+							<!-- todo 借贷状态-->
+							<!-- 订单未结束 并且 未开始还款时，显示贷款状态-->
+							<div class="content-row" v-if="list.status !== 3 && list.repaymentStatus === 0">
+								<p class="left-text">{{ t('状态') }}:</p>
 								<p class="right-text">
 									<!-- "状态(0:未审核,1:审核通过,2:审核失败,3:订单结束)" -->
 									<Status v-if="list.status === 0" status="process" />
@@ -78,44 +79,54 @@
 								</p>
 							</div>
 
-							<!-- 借贷审核成功-->
-							<template v-if="list.status === 1">
-								<div class="content-row">
-									<p class="left-text">{{ t('认可') }}:</p>
-									<p class="right-text">{{ formatDate(list.startDate) }}</p>
-								</div>
+							<!-- 贷款申请成功 或 贷款结束-->
+							<div class="content-row" v-if="list.status === 1 || list.status === 3">
+								<p class="left-text">{{ t('认可') }}:</p>
+								<p class="right-text">{{ formatDate(list.startDate) }}</p>
+							</div>
 
-								<div class="content-row" v-if="list.repaymentStatus !== 0">
-									<p class="left-text">{{ t('还款状态') }}:</p>
-									<p class="right-text">
-										<!-- 还款状态(0.未还款；1.提交还款;2.审核通过;3.审核失败) -->
-										<Status v-if="list.repaymentStatus === 1" status="process" />
-										<Status v-else-if="list.repaymentStatus === 2" status="success" />
-										<Status v-else-if="list.repaymentStatus === 3" status="fail" />
-									</p>
-								</div>
+							<!-- 贷款申请成功 并 开始还款-->
+							<div class="content-row" v-if="list.status === 1 && list.repaymentStatus !== 0">
+								<p class="left-text">{{ t('还款状态') }}:</p>
+								<p class="right-text">
+									<!-- 还款状态(0.未还款；1.提交还款;2.审核通过;3.审核失败) -->
+									<Status v-if="list.repaymentStatus === 1" status="process" />
+									<Status v-else-if="list.repaymentStatus === 2" status="success" />
+									<Status v-else-if="list.repaymentStatus === 3" status="fail" />
+								</p>
+							</div>
 
-								<div class="content-row" v-if="list.repaymentStatus === 2">
-									<p class="left-text">{{ t('还款日期') }}:</p>
-									<p class="right-text">{{ formatDate(list.endDate) }}</p>
-								</div>
-							</template>
+							<!--  还款申请成功 才显示还款日期-->
+							<div class="content-row" v-if="list.repaymentStatus === 2">
+								<p class="left-text">{{ t('还款日期') }}:</p>
+								<p class="right-text">{{ formatDate(list.endDate) }}</p>
+							</div>
+
+							<!-- 借贷审核成功或贷款订单结束-->
+							<!--							<template v-if="list.status === 1 || list.status === 3">-->
+							<!--								<template v-if="list.repaymentStatus !== 0">-->
+							<!--									<div class="content-row">-->
+							<!--										<p class="left-text">{{ t('还款日期') }}:</p>-->
+							<!--										<p class="right-text">{{ formatDate(list.endDate) }}</p>-->
+							<!--									</div>-->
+							<!--								</template>-->
+							<!--							</template>-->
 						</div>
-						<div class="confirm-btn confirm-btn2">
-							<el-button plain @click="checkItem(list, 'contract')" class="btn-css">
+						<van-space :size="10" fill class="item-block">
+							<van-button type="primary" block round plain @click="checkItem(list, 'contract')">
 								{{ t('合同') }}
-							</el-button>
+							</van-button>
 
 							<template v-if="list.status === 1">
-								<el-button v-if="list.repaymentStatus === 0" plain @click="checkItem(list)" class="btn-css">
+								<van-button type="primary" block round v-if="list.repaymentStatus === 0 || list.repaymentStatus === 3" @click="checkItem(list)">
 									{{ t('立即还款') }}
-								</el-button>
+								</van-button>
 
-								<el-button v-esel plain disabled class="btn-css">
+								<van-button type="primary" block round v-else disabled>
 									{{ t('已还款') }}
-								</el-button>
+								</van-button>
 							</template>
-						</div>
+						</van-space>
 					</div>
 				</van-list>
 			</van-pull-refresh>
@@ -151,7 +162,7 @@
 					</div>
 				</div>
 				<!-- <van-divider /> -->
-				<van-button class="btn" size="small" type="primary" @click="showUserBalance">{{ t('确认') }}</van-button>
+				<van-button block round type="primary" @click="confirmRepayment">{{ t('确认') }}</van-button>
 			</div>
 		</van-popup>
 
@@ -167,23 +178,23 @@
 			</div>
 		</van-popup>
 
-		<van-popup class="user-balance-pop" overlay-class="user-balance-pop-layer" v-model:show="showUserBalancePop" @closed="closed">
-			<div class="node-add">
-				<div class="title">
-					<img src="@/assets/images/record/loan.png" class="icon" alt="" />
-					<span class="h1">{{ t('还款') }}</span>
-					<span>{{ t('您的钱包余额') }}</span>
-				</div>
-				<!-- <van-divider /> -->
-				<div class="rich-conetent">
-					<div class="each-row">
-						<p class="left-text">{{ rowData.walletToken?.toUpperCase() }}:</p>
-						<p class="right-text balance">{{ userWalletBalance }}</p>
-					</div>
-				</div>
-				<van-button class="btn" size="small" type="primary" @click="confirmRepayment">{{ t('确认') }}</van-button>
-			</div>
-		</van-popup>
+		<!--		<van-popup class="user-balance-pop" overlay-class="user-balance-pop-layer" v-model:show="showUserBalancePop" @closed="closed">-->
+		<!--			<div class="node-add">-->
+		<!--				<div class="title">-->
+		<!--					<img src="@/assets/images/record/loan.png" class="icon" alt="" />-->
+		<!--					<span class="h1">{{ t('还款') }}</span>-->
+		<!--					<span>{{ t('您的钱包余额') }}</span>-->
+		<!--				</div>-->
+		<!--				&lt;!&ndash; <van-divider /> &ndash;&gt;-->
+		<!--				<div class="rich-conetent">-->
+		<!--					<div class="each-row">-->
+		<!--						<p class="left-text">{{ rowData.walletToken?.toUpperCase() }}:</p>-->
+		<!--						<p class="right-text balance">{{ userWalletBalance }}</p>-->
+		<!--					</div>-->
+		<!--				</div>-->
+		<!--				<van-button block round type="primary" @click="confirmRepayment">{{ t('确认') }}</van-button>-->
+		<!--			</div>-->
+		<!--		</van-popup>-->
 	</div>
 </template>
 <script setup>
@@ -195,18 +206,18 @@ import { useI18n } from 'vue-i18n'
 import { formatDate, plusForValueDecimal } from '@/utils'
 import useLoading from '@/hooks/useLoading.js'
 import LoanTreaty from '@/views/user/loan/loan-treaty.vue'
-import { useToken } from '@/hooks/useToken.js'
 import usePage from '@/hooks/usePage.js'
 import { fetchLoanOrderListApi, repaymentLoanApi } from '@/apis/loan.js'
 import { fetchUserKycApi } from '@/apis/user.js'
 import Status from '@/components/Status/index.vue'
+import { showToast } from 'vant'
 
 const usersStore = userStore()
 const router = useRouter()
 const { t } = useI18n()
 const loading = useLoading()
 
-const { onRefresh, onLoad, listLoading, listError, finished, isEmptyList, refreshing, dataList: accountList } = usePage(fetchLoanOrderListApi)
+const { onRefresh, onLoad, listLoading, listError, finished, isEmptyList, refreshing, dataList } = usePage(fetchLoanOrderListApi)
 
 const showPop = ref(false)
 
@@ -219,9 +230,13 @@ const confirmRepayment = async () => {
 		})
 		loading.clearLoading()
 		showPop.value = false
-		showUserBalancePop.value = false
+		// showUserBalancePop.value = false
 
-		await onRefresh()
+		showToast({
+			icon: 'info',
+			message: t('操作成功'),
+			onClose: onRefresh,
+		})
 	} catch (err) {
 		console.log(err)
 	}
@@ -277,16 +292,16 @@ const userKycRecord = async () => {
 	}
 }
 
-const { getBalance } = useToken()
-const userWalletBalance = ref(0)
-const showUserBalancePop = ref(false)
-const showUserBalance = () => {
-	showPop.value = false
-	getBalance(rowData.value.walletToken, (val) => {
-		userWalletBalance.value = val || 0
-		showUserBalancePop.value = true
-	})
-}
+// const { getChainBalanceByTokenName } = useToken()
+// const userWalletBalance = ref(0)
+// const showUserBalancePop = ref(false)
+// const showUserBalance = () => {
+// 	showPop.value = false
+// 	getChainBalanceByTokenName(rowData.value.walletToken).then((val) => {
+// 		userWalletBalance.value = val || 0
+// 		showUserBalancePop.value = true
+// 	})
+// }
 
 const onClickLeft = () => {
 	router.back()
@@ -415,59 +430,6 @@ onMounted(() => {
 				justify-content: center;
 				width: 1.5rem;
 				height: 1.5rem;
-			}
-		}
-
-		.confirm-btn {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			margin: 0 -20px;
-
-			.btn-css {
-				color: #fff;
-				height: 1rem;
-				background: var(--01, #82a9f9);
-				border-radius: 0.45rem;
-				width: 90%;
-				margin: 0;
-				flex: 1;
-				margin: 0 20px;
-
-				&:first-child {
-					background: #fff;
-					color: #82a9f9;
-					border: 1px solid #82a9f9;
-				}
-
-				&:focus {
-					background: #1d2a5e;
-					background: var(--01, #82a9f9);
-				}
-				&.is-disabled {
-					opacity: 0.7;
-				}
-			}
-
-			.waning-css {
-				width: 24px;
-				height: 24px;
-			}
-
-			.title-text {
-				font-size: 24px;
-			}
-
-			.dialog-footer {
-				text-align: center;
-			}
-		}
-
-		.confirm-btn2 {
-			.btn-css {
-				height: 90px;
-				border-radius: 50px;
-				font-size: 32px;
 			}
 		}
 

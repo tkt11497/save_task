@@ -112,7 +112,7 @@
 			</div>
 			<!-- Stake Button -->
 			<div class="stake">
-				<van-button type="primary" @click="showPopupFunc">{{ t('质押') }}</van-button>
+				<van-button block round type="primary" @click="showPopupFunc">{{ t('质押') }}</van-button>
 			</div>
 			<div>
 				<el-dialog v-model="centerDialogVisible" width="calc(100vw - 30px)" align-center class="popup-css poofstake-order" z-index="2000">
@@ -141,7 +141,7 @@
 					</div>
 					<template #footer>
 						<div class="dialog-footer">
-							<el-button :plain="true" @click="updateData()" class="confirm1-btn">{{ t('确认') }}</el-button>
+							<van-button block type="primary" round @click="updateData()" class="confirm1-btn">{{ t('确认') }}</van-button>
 						</div>
 					</template>
 				</el-dialog>
@@ -388,20 +388,7 @@ defineExpose({})
 				font-weight: bold;
 				margin-top: 30px;
 				position: relative;
-				//height: 28px;
 				line-height: 68px;
-				//padding-left: 10px;
-				// margin-bottom: 18px;
-
-				// &::after {
-				// 	position: absolute;
-				// 	content: '';
-				// 	width: 4px;
-				// 	height: 28px;
-				// 	left: 0;
-				// 	top: 0;
-				// 	background: #7BA9FF;
-				// }
 			}
 		}
 
@@ -473,7 +460,6 @@ defineExpose({})
 			.trends {
 				margin-left: 3px;
 				margin-right: 3px;
-				//font-weight: 700;
 			}
 		}
 
@@ -502,17 +488,6 @@ defineExpose({})
 				flex: 1;
 				position: relative;
 				margin-right: 30px;
-				//padding-right: 30px;
-
-				//   &:before{
-				//     content: '';
-				//     position: absolute;
-				//     top: -30px;
-				//     bottom: -30px;
-				//     width: 1px;
-				//     background-color: #E2E2E2;
-				//     left: 0;
-				//   }
 
 				.question {
 					font-weight: 590;
@@ -545,7 +520,6 @@ defineExpose({})
 	}
 
 	.scroll_title {
-		height: 80px;
 		font-size: 30px;
 		font-weight: 700;
 		margin-top: 60px;
@@ -554,16 +528,6 @@ defineExpose({})
 		height: 28px;
 		line-height: 28px;
 		padding-left: 10px;
-
-		// &::after {
-		// 	position: absolute;
-		// 	content: '';
-		// 	width: 4px;
-		// 	height: 28px;
-		// 	left: 0;
-		// 	top: 0;
-		// 	background: #7BA9FF;
-		// }
 	}
 
 	.footer {
@@ -727,17 +691,17 @@ defineExpose({})
 			}
 		}
 
-		.stake {
-			:deep .van-button--normal {
-				width: 100%;
-				border-radius: 30px;
-				height: 55px;
-				font-size: 17px;
-				background: #82a8f9;
-				border: 1px solid #82a8f9;
-				font-weight: 600;
-			}
-		}
+		//.stake {
+		//	:deep .van-button--normal {
+		//		width: 100%;
+		//		border-radius: 30px;
+		//		height: 55px;
+		//		font-size: 17px;
+		//		background: #82a8f9;
+		//		border: 1px solid #82a8f9;
+		//		font-weight: 600;
+		//	}
+		//}
 	}
 
 	.divider {
@@ -771,51 +735,6 @@ defineExpose({})
 	width: 100%;
 	/* Ensure the div takes up the full width of the dropdown item */
 }
-
-.left-align {
-	/* Additional styles for left-aligned text if needed */
-}
-
-.right-align {
-	/* Additional styles for right-aligned text if needed */
-}
-
-.mass-days {
-	margin-right: 10px;
-	/* Adjust the margin to your liking */
-}
-
-.interest-ratios {
-	/* Additional styles if needed */
-}
-
-/* Hide the close icon in el-dialog */
-.el-dialog__headerbtn {
-	display: none;
-}
-
-.el-dialog__header.show-close {
-	padding-right: 0;
-}
-
-/* Hide the close icon */
-.el-dialog__headerbtn {
-	display: none;
-}
-
-.el-dialog.is-align-center {
-	border-radius: 9px;
-}
-
-/* Remove padding or space if the close button is hidden */
-.el-dialog__header {
-	padding-right: 0 !important;
-	/* Force remove right padding */
-	display: flex;
-	/* Ensure header uses flexbox */
-	justify-content: center;
-	/* Center title horizontally */
-}
 </style>
 <style scoped lang="scss">
 /* Center the title icon in the dialog title */
@@ -843,26 +762,6 @@ defineExpose({})
 .el-dialog__footer {
 	display: flex;
 	justify-content: center;
-}
-
-.el-button--primary {
-	background-color: #409eff;
-	/* Example custom color */
-	border-color: #409eff;
-	/* Match the border color */
-	color: white;
-	/* Text color */
-	padding: 10px 20px;
-	/* Adjust padding as needed */
-	font-size: 18px;
-	/* Adjust font size */
-}
-
-.el-button--primary:hover {
-	background-color: #66b1ff;
-	/* Hover color */
-	border-color: #66b1ff;
-	/* Hover border color */
 }
 
 .each-row {
@@ -894,18 +793,6 @@ defineExpose({})
 	justify-content: center;
 	padding: 10px;
 	width: 100%;
-}
-
-/* Optional: style the confirm button */
-.confirm1-btn {
-	/* Add any additional styles you need for the button */
-	width: 100%;
-	height: 110px;
-	border-radius: 52px;
-	background: #82a8f9;
-	color: #fff;
-	font-weight: 600;
-	font-size: 36px;
 }
 
 :deep(.poofstake-order) {

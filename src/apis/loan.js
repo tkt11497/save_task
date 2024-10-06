@@ -17,5 +17,10 @@ export const fetchLoanOrderListApi = (data) => {
 
 // 还款
 export const repaymentLoanApi = (data) => {
-	return request.post('/repayment/create', data)
+	return request.get('/repayment/create', { params: data })
+}
+
+// 借贷-获取用户借款金额
+export const fetchUserLoanAmountApi = () => {
+	return request.get('/loan/getUserLoanBalance')
 }

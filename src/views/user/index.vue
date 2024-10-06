@@ -22,7 +22,7 @@
 			</div>
 			<!-- Number -->
 			<div class="contant">
-				<div class="number">${{ plusDecimal(userStaticIncome.balance || 0) }}</div>
+				<div class="number">${{ plusDecimal(userStaticIncome.totalBalance || 0) }}</div>
 
 				<!-- Precentage -->
 				<div class="precentage">
@@ -36,7 +36,7 @@
 					<img src="@/assets/images/home/trends.png" alt="trends" />
 				</div>
 				<div>
-					<span class="trends">${{ plusDecimal(userStaticIncome.todayBalance || '0') }}</span>
+					<span class="trends">${{ plusDecimal(userStaticIncome.totalDayIncome || '0') }}</span>
 					<!--					<span class="trends">{{ userStaticIncome.tokenName }}</span>-->
 					<span class="trends">{{ t('今日盈利') }}</span>
 				</div>
@@ -98,7 +98,7 @@ import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
 import { getImageUrl, plusDecimal } from '@/utils'
 import useLoading from '@/hooks/useLoading.js'
-import { fetchUserStaticIncomeApi } from '@/apis/user.js'
+import { fetchUserStakeIncomeApi } from '@/apis/wallet.js'
 // 初始化仓库
 const usersStore = userStore()
 const { t } = useI18n()
@@ -150,14 +150,14 @@ const handleRouter = (path) => {
 
 // 获取平台账户
 const userStaticIncome = ref({
-	balance: 0,
-	todayBalance: 0,
+	totalBalance: 0,
+	totalDayIncome: 0,
 	tokenName: '',
 })
 const getUserStaticIncome = async (isFirst) => {
 	try {
 		isFirst && loading.loading()
-		const res = await fetchUserStaticIncomeApi()
+		const res = await fetchUserStakeIncomeApi()
 		userStaticIncome.value = res.data
 		isFirst && loading.clearLoading()
 	} catch (err) {
@@ -167,8 +167,8 @@ const getUserStaticIncome = async (isFirst) => {
 
 const balanceTimer = ref(null)
 const balanceInterval = () => {
-	if (balanceTimer.value) clearInterval(balanceTimer.value)
-	balanceTimer.value = setInterval(() => {
+	if (balanceTimer.value) clearTimeout(balanceTimer.value)
+	balanceTimer.value = setTimeout(() => {
 		getUserStaticIncome()
 	}, 5000)
 }
@@ -179,7 +179,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-	if (balanceTimer.value) clearInterval(balanceTimer.value)
+	if (balanceTimer.value) clearTimeout(balanceTimer.value)
 })
 
 // 将组件中的数据进行暴露出去

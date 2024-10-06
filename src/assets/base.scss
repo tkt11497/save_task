@@ -256,3 +256,30 @@ input {
 	color: var(--van-field-input-text-color);
 	-webkit-text-fill-color: var(--van-field-input-text-color);
 }
+
+.van-overlay{
+	background: rgba($color: #000000, $alpha: 0.45);
+}
+
+.van-space{
+	&.item-block {
+		width: 100%;
+		.van-space-item{
+			flex: 1;
+		}
+	}
+}
+.van-button{
+	height: 54px;
+	line-height: 1.3;
+	font-weight: bold;
+}
+.van-button--primary{
+	background: #82a8f9;
+	border: 1px solid #82a8f9;
+
+	&.van-button--plain{
+		background: #fff;
+		color: #82a8f9;
+	}
+}

@@ -20,7 +20,6 @@ request.interceptors.request.use(
 		const usStore = userStore()
 		const { userId } = storeToRefs(usStore)
 
-		// todo 添加语言
 		config.headers['Accept-Language'] = usStore.languageCode
 
 		if (config.url !== '/user/login' && userId.value) {

@@ -13,14 +13,18 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import useLoading from '@/hooks/useLoading.js'
 import { useWeb3Store } from '@/store/index.js'
 import { useI18n } from 'vue-i18n'
+import { getAllCoinTypeApi } from '@/apis/wallet.js'
+import { useRoute, useRouter } from 'vue-router'
 
 const { t } = useI18n()
 const loading = useLoading()
+const route = useRoute()
+const router = useRouter()
 
 const props = defineProps({
 	hideSelected: Boolean,
@@ -28,9 +32,22 @@ const props = defineProps({
 
 const emits = defineEmits(['signed'])
 
+// 平台币种列表
+const currencyList = ref([])
+const getCurrencyList = async () => {
+	try {
+		const allChainResponse = await getAllCoinTypeApi()
+
+		currencyList.value = allChainResponse.data || []
+		console.log('useWeb3Store', '获取币种列表', currencyList.value)
+	} catch (e) {
+		console.log('useWeb3Store', '获取币种列表失败', e)
+	}
+}
+
 const web3Store = useWeb3Store(),
 	{ onChangeCurrency } = web3Store,
-	{ currencyList, currentCurrency } = storeToRefs(web3Store)
+	{ currentCurrency } = storeToRefs(web3Store)
 
 const showCurrency = computed(() => {
 	if (props.hideSelected) {
@@ -43,17 +60,26 @@ const showCurrency = computed(() => {
 
 const onChange = async (currency) => {
 	console.log('token-onChange', currency)
-	loading.loading()
 	try {
-		await onChangeCurrency(currency)
+		loading.loading()
+		const isAuthToken = await onChangeCurrency(currency)
 		loading.clearLoading()
-		emits('signed')
+		if (isAuthToken) {
+			if (route.name !== 'home') {
+				router.push('/home')
+			}
+		}
 	} catch (error) {
 		loading.clearLoading()
 		console.log(error)
+	} finally {
+		emits('signed')
 	}
 }
 
+onMounted(() => {
+	getCurrencyList()
+})
 defineOptions({ name: 'CurrencyList' })
 </script>
 

@@ -26,3 +26,14 @@ export const fetchCountryListApi = () => {
 export const fetchExchangeRateApi = (data) => {
 	return request.get('/tokenExchange/getTokenExchange', { params: data })
 }
+
+// 首页-静态收益列表
+export const fetchStaticIncomeApi = () => {
+	return request.get('/staticIncome/list')
+}
+
+// fqa页面
+export const fetchFqaListApi = () => {
+	// todo 要去除api前缀
+	return request.get('/api/tplatformqaarea/page')
+}

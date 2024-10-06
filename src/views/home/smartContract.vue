@@ -21,14 +21,12 @@
 				<span class="value">{{ contractData.stakeDay }} {{ t('天') }}</span>
 			</div>
 		</div>
-		<div class="block3">
-			<van-button plain type="primary" @click="btnHandle">
-				<template #icon>
-					<img class="icon" src="@/assets/images/home/icon_eth.png" alt="circle" />
-				</template>
-				{{ contractData.stakeStatus === 0 ? t('申请激活') : t('领取ETH奖金') }}
-			</van-button>
-		</div>
+		<van-button plain block round type="primary" @click="btnHandle">
+			<template #icon>
+				<img class="icon" :width="12" src="@/assets/images/home/icon_eth.png" alt="circle" />
+			</template>
+			{{ contractData.stakeStatus === 0 ? t('申请激活') : t('领取ETH奖金') }}
+		</van-button>
 	</div>
 </template>
 <script setup>
@@ -182,30 +180,6 @@ onUnmounted(() => {
 				text-align: left;
 				color: #121212;
 			}
-		}
-	}
-
-	.block3 {
-		width: 100%;
-		line-height: normal;
-
-		.van-button {
-			width: 100%;
-			background: #ffffff;
-			border: 1px solid #82a8f9;
-			border-radius: 30px;
-			height: 55px;
-			font-size: 16px;
-			font-weight: 600;
-			line-height: 21px;
-			text-align: left;
-			color: #82a9f9;
-		}
-
-		.icon {
-			width: 24px;
-			height: 40px;
-			margin-right: 12px;
 		}
 	}
 }

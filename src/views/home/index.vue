@@ -17,7 +17,7 @@
 
 			<div class="top">
 				<div class="img">
-					<img :src="$imgpath + currentCurrency.picUrl" alt="" />
+					<img :src="$imgpath + currentCurrency.iconUrl" :alt="currentCurrency.tokenName" />
 				</div>
 				<div class="title">{{ currentCurrency.tokenName || '' }}</div>
 			</div>
@@ -36,14 +36,14 @@
 					<img src="@/assets/images/home/trends2.png" alt="trends" />
 				</div>
 				<div>
-					<span class="trends">{{ plusDecimal(accountFundTransaction.todayIncome || 0) }}</span>
-					<span class="trends">{{ accountFundTransaction.baseSymbol }}</span>
+					<span class="trends">{{ plusDecimal(accountFundTransaction.todayBalance || 0) }}</span>
+					<span class="trends">{{ accountFundTransaction.tokenName }}</span>
 					<span class="trends day">{{ t('今日盈利') }}</span>
 				</div>
 			</div>
 			<div class="total">
 				<div>{{ t('总收入') }}</div>
-				<div class="number">{{ plusDecimal(accountFundTransaction.totalIncome || 0) }} {{ accountFundTransaction.baseSymbol || 'ETH' }}</div>
+				<div class="number">{{ plusDecimal(accountFundTransaction.balance || 0) }} {{ accountFundTransaction.tokenName }}</div>
 			</div>
 		</div>
 		<!-- 智能合约 -->
@@ -125,7 +125,7 @@
 				<div class="currency-currency-label">{{ t('当前选择') }}</div>
 
 				<div class="currency-currency-selected" v-if="currentCurrency.tokenName">
-					<img class="icon" :src="$imgpath + currentCurrency.picUrl" alt="" />
+					<img class="icon" :src="$imgpath + currentCurrency.iconUrl" :alt="currentCurrency.tokenName" />
 
 					<span class="text">{{ currentCurrency.tokenName }}</span>
 
@@ -143,7 +143,6 @@
 <script setup name="Home">
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getIncomeConfigClientList } from '@/apiService' // Import your API service
 import { navStore, userStore, useWeb3Store } from '@/store'
 import { storeToRefs } from 'pinia'
 import SmartContract from './smartContract.vue'
@@ -160,11 +159,13 @@ import info1 from '@/assets/images/home/info1.png'
 import info2 from '@/assets/images/home/info2.png'
 import info3 from '@/assets/images/home/info3.png'
 import { fetchTradingPairListApi } from '@/apis/optionAndContract.js'
+import { fetchUserStaticIncomeApi } from '@/apis/user.js'
+import { fetchStaticIncomeApi } from '@/apis/common.js'
 
 const web3Store = useWeb3Store()
 const { currentCurrency, address } = storeToRefs(web3Store)
 
-const { balance, getBalance } = useToken(currentCurrency.value.tokenName)
+const { getChainBalanceByTokenName } = useToken()
 const currencyPopup = ref(false)
 
 // 初始化仓库
@@ -177,13 +178,12 @@ const loading = useLoading()
 const router = useRouter()
 const route = useRoute()
 
-// todo kevin 首页回报列表接口待接入
 // 回报列表
 const clientList = ref([])
 const getIncomeConfigList = async () => {
 	try {
 		loading.loading()
-		const response = await getIncomeConfigClientList()
+		const response = await fetchStaticIncomeApi()
 		loading.clearLoading()
 		clientList.value = response.data || []
 	} catch (e) {
@@ -206,6 +206,7 @@ const backgroundImage = computed(() => {
 
 // 投资组合
 const coinList = ref([])
+// 获取投资组合
 const getCoinList = async () => {
 	try {
 		loading.loading()
@@ -223,9 +224,10 @@ const listComputed = computed(() => {
 const tokenBalance = ref('0')
 const changeWallet = () => {
 	currencyPopup.value = false
-	getBalance(currentCurrency.value.tokenName, () => {
+	// 获取链上余额
+	getChainBalanceByTokenName(currentCurrency.value.tokenName, (val) => {
 		console.log('changeWallet', currentCurrency.value.tokenName)
-		tokenBalance.value = balance.value
+		tokenBalance.value = val
 	})
 }
 // scroll
@@ -244,12 +246,21 @@ const infoList = ref([
 	},
 ])
 
-// todo kevin 用户收益接口待接入
 const accountFundTransaction = ref({
-	changeAmount: '',
-	baseSymbol: '',
-	totalRevenue: '',
+	balance: 0,
+	todayBalance: 0,
+	tokenName: 'ETH',
 })
+const getUserIncome = async (isLoading = true) => {
+	try {
+		isLoading && loading.loading()
+		const res = await fetchUserStaticIncomeApi()
+		isLoading && loading.clearLoading()
+		accountFundTransaction.value = res.data
+	} catch (e) {
+		console.log(e)
+	}
+}
 
 const goMarket = () => {
 	router.replace('/market')
@@ -261,23 +272,35 @@ const announcementPopRef = ref(null)
 const balanceTimer = ref(null)
 const balanceInterval = () => {
 	balanceTimer.value = setTimeout(() => {
-		getBalance(currentCurrency.value.tokenName, (bal) => {
-			console.log('balanceInterval定时器获取余额', currentCurrency.value.tokenName, bal, balance.value)
-			tokenBalance.value = bal
+		getUserIncome(false)
 
+		getChainBalance().then((balance) => {
+			console.log('balanceInterval定时器获取余额', currentCurrency.value.tokenName, balance)
 			clearTimeout(balanceTimer.value)
 			balanceInterval()
 		})
 	}, 5000)
 }
 
+// 获取当前币种链上余额
+const getChainBalance = async () => {
+	try {
+		const balance = await getChainBalanceByTokenName(currentCurrency.value.tokenName)
+		console.log('balanceInterval定时器获取余额', currentCurrency.value.tokenName, balance)
+		tokenBalance.value = balance
+		return balance
+	} catch (e) {
+		console.log(e)
+	}
+}
+
 onMounted(() => {
+	getUserIncome()
 	getIncomeConfigList()
 	getCoinList()
-	getBalance(currentCurrency.value.tokenName, (bal) => {
-		console.log('onMounted', currentCurrency.value.tokenName, bal)
-		tokenBalance.value = bal
-	})
+
+	// 获取链上余额
+	getChainBalance()
 	balanceInterval()
 })
 

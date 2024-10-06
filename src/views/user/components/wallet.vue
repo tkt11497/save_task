@@ -85,7 +85,7 @@ const getPlatformCoinBalanceList = async () => {
 }
 const openDepositandwithdrawal = (item) => {
 	router.replace({
-		query: { id: item.id },
+		query: { id: item.tokenId },
 		path: '/depositandwithdrawal',
 	})
 }

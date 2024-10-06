@@ -398,7 +398,7 @@ export default {
 	'您还没有任何交易。': "You don't have any transactions yet.",
 	'今天的收入': "Today's Income",
 	'创建时间2': 'Create Time',
-	'收盘价格': 'Close price',
+	'收盘价格': 'Closeing price',
 	'点': 'Pip',
 	'交易费用': 'Transaction Fees',
 	'利润': 'Profit',
@@ -496,6 +496,8 @@ export default {
 		'审核中': 'Under review',
 	},
 	'状态': 'Status',
+	'赎回状态': 'Redemption Status',
+	'领取状态': 'Collection Status',
 	'借款状态': 'Borrowing status',
 	'还款状态': 'Repayment status',
 	'理财质押': 'Financial',
@@ -503,4 +505,6 @@ export default {
 	'领取': 'Receive',
 	'如果提前终止交易，您将无法获得完整的收益 {金额}。':
 		'If the transaction is terminated early, you will not receive the full benefit {amount}{symbol}.',
+	'币种未授权': '{tokenName} is not authorized',
+	'钱包授权失败，请重新连接。': 'Wallet authorization failed, please reconnect.',
 }

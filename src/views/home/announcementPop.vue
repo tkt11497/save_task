@@ -1,12 +1,12 @@
 <template>
 	<div>
-		<van-popup class="announcement-pop" overlay-class="announcement-pop-layer" v-model:show="showPop" @opened="opened" @closed="closed">
+		<van-popup class="announcement-pop" v-model:show="showPop" @opened="opened" @closed="closed">
 			<div class="node-add">
 				<h2 class="title">{{ t('公告') }}</h2>
 				<van-divider />
 				<div class="rich-conetent" v-html="noticeData.content"></div>
 				<van-divider />
-				<van-button class="btn" size="small" type="primary" @click="confirm">{{ t('确认') }}</van-button>
+				<van-button block round type="primary" @click="confirm">{{ t('确认') }}</van-button>
 			</div>
 		</van-popup>
 	</div>
@@ -54,10 +54,6 @@ watch(
 )
 </script>
 <style lang="scss" scoped>
-:deep(.announcement-pop-layer) {
-	background: rgba($color: #000000, $alpha: 0.45);
-}
-
 :deep(.announcement-pop) {
 	width: calc(100% - 40px);
 	min-height: 400px;
@@ -103,17 +99,6 @@ watch(
 			margin-left: 22px;
 			align-self: flex-start;
 			margin-bottom: 24px;
-		}
-
-		.btn {
-			background: #82a8f9;
-			border-radius: 52px;
-			color: #fff;
-			font-size: 32px;
-			font-weight: 600;
-			width: 100%;
-			height: 90px;
-			border-color: transparent;
 		}
 	}
 }

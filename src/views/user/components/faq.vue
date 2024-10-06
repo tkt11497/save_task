@@ -32,29 +32,44 @@
 		<!-- Frequently Asked Questions -->
 		<div class="qa-wrap">
 			<div class="title">{{ t('常见问题') }}</div>
-			<div class="list">
-				<div v-for="(item, index) in faqList" :key="index">
-					<div class="contant">
-						<div class="title-row">
-							<span class="title">{{ item.title }}</span>
-							<div class="img" @click="accordionFunc(item)">
-								<img v-if="selectFAQ.id === item.id" src="../../../assets/images/user/minus.png" alt="minus" />
-								<img v-else src="../../../assets/images/user/plus.png" alt="plus" />
+
+			<van-pull-refresh v-model="refreshing" @refresh="onRefresh" :loosing-text="t('释放即可刷新')">
+				<van-list
+					v-model:loading="listLoading"
+					v-model:error="listError"
+					:error-text="t('请求失败，点击重新加载')"
+					:finished="finished"
+					:finished-text="isEmptyList ? '' : t('没有更多了')"
+					@load="onLoad"
+				>
+					<template #loading>
+						<van-loading class="custom-page-loading" type="spinner" />
+					</template>
+
+					<div class="list">
+						<div v-for="(item, index) in faqList" :key="index">
+							<div class="contant">
+								<div class="title-row">
+									<span class="title">{{ item.question }}</span>
+									<div class="img" @click="accordionFunc(item)">
+										<img v-if="selectFAQ.answer === item.answer" src="../../../assets/images/user/minus.png" alt="minus" />
+										<img v-else src="../../../assets/images/user/plus.png" alt="plus" />
+									</div>
+								</div>
+								<P v-if="selectFAQ.answer === item.answer" class="content-row">
+									{{ item.answer }}
+								</P>
 							</div>
 						</div>
-						<P v-if="selectFAQ.id === item.id" class="content-row">
-							{{ item.content }}
-						</P>
 					</div>
-				</div>
-			</div>
+				</van-list>
+			</van-pull-refresh>
 		</div>
 	</div>
 </template>
 
 <script setup name="Faq">
 import { onMounted, ref } from 'vue'
-import { fetchFAQdetail } from '@/apiService'
 import { useRoute, useRouter } from 'vue-router'
 import { userStore } from '@/store'
 import { useI18n } from 'vue-i18n'
@@ -63,6 +78,8 @@ import info1 from '@/assets/images/home/info1.png'
 import info2 from '@/assets/images/home/info2.png'
 import info3 from '@/assets/images/home/info3.png'
 import useLoading from '@/hooks/useLoading.js'
+import usePage from '@/hooks/usePage.js'
+import { fetchFqaListApi } from '@/apis/common.js'
 // 初始化仓库
 const store = userStore()
 const { t } = useI18n()
@@ -72,9 +89,7 @@ const route = useRoute()
 const loading = useLoading()
 
 const state = ref('')
-const activeName = ref('0')
 const selectFAQ = ref({})
-const faqList = ref([])
 // scroll
 const infoList = ref([
 	{
@@ -113,23 +128,9 @@ const onClickLeft = () => {
 	store.SET_PATH_DATA('yes')
 }
 
-const getFAQdetail = async () => {
-	try {
-		const languageId = 1
-		loading.loading()
-		const res = await fetchFAQdetail(languageId)
-		loading.clearLoading()
-		if (res.rows) {
-			faqList.value = res.rows
-		}
-	} catch (err) {
-		console.log(err)
-	}
-}
+const { onRefresh, onLoad, listLoading, listError, refreshing, finished, isEmptyList, dataList: faqList } = usePage(fetchFqaListApi)
 
-onMounted(() => {
-	getFAQdetail()
-})
+onMounted(() => {})
 
 // 将组件中的数据进行暴露出去
 defineExpose({})

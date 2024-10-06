@@ -61,10 +61,11 @@
 				<div class="tips">
 					{{ t('Erc20智能合约矿池即将开启下一次ETH分享活动，现在申请加入，活动开始后流动性提供者最多可分享20ETH奖励') }}
 				</div>
-				<div class="btns">
-					<van-button plain type="primary" @click="btnHandle('add')">{{ t('添加') }}</van-button>
-					<van-button plain type="primary" @click="onClickLeft">{{ t('取消') }}</van-button>
-				</div>
+
+				<van-space :size="10" class="item-block">
+					<van-button plain block round type="primary" @click="onClickLeft">{{ t('取消') }}</van-button>
+					<van-button round block type="primary" @click="btnHandle('add')">{{ t('添加') }}</van-button>
+				</van-space>
 			</div>
 		</div>
 
@@ -80,7 +81,7 @@
 					</template>
 				</van-field>
 				<van-divider />
-				<van-button class="btn" size="small" type="primary" @click="fixactivityClientAdd">{{ t('确认') }}</van-button>
+				<van-button block round type="primary" @click="fixactivityClientAdd">{{ t('确认') }}</van-button>
 			</div>
 		</van-popup>
 	</div>
@@ -102,7 +103,7 @@ const { t } = useI18n()
 const userStoreData = userStore()
 const { currentCurrency, address } = storeToRefs(useWeb3Store())
 
-const { getPlatformTokenByCoinType } = useToken()
+const { getChainBalanceByTokenName } = useToken()
 
 onMounted(() => {
 	fixactivityClient()
@@ -138,18 +139,9 @@ const fixactivityClient = async () => {
 	}
 }
 
-const getPlatformAccount = async () => {
-	try {
-		const res = await getPlatformTokenByCoinType(contractData.value.stakeToken)
-		return res.data.balance || 0
-	} catch (e) {
-		return 0
-	}
-}
-
 const toastTimer = ref(null)
 const fixactivityClientAdd = async () => {
-	const tokenBalance = await getPlatformAccount()
+	const tokenBalance = await getChainBalanceByTokenName(contractData.value.stakeToken)
 	console.log('fixactivityClientAdd---', amount.value, tokenBalance)
 
 	if (!contractData.value.stateOrderId) {
@@ -186,7 +178,8 @@ const fixactivityClientAdd = async () => {
 
 const maxBalHandle = async () => {
 	try {
-		amount.value = await getPlatformAccount()
+		// 获取链上余额
+		amount.value = await getChainBalanceByTokenName(contractData.value.stakeToken)
 	} catch (e) {
 		console.log(e)
 	}
@@ -284,15 +277,6 @@ onUnmounted(() => {
 	}
 }
 
-:deep(.contract-pop-layer) {
-	background: rgba($color: #000000, $alpha: 0.45);
-}
-:deep(.van-nav-bar__title) {
-	font-size: 20px;
-	font-weight: 700;
-	color: #000;
-}
-
 .node-block {
 	padding: 44px 34px;
 	border-radius: 26px;
@@ -357,36 +341,6 @@ onUnmounted(() => {
 		color: #838282;
 		margin-bottom: 40px;
 	}
-
-	.btns {
-		padding-left: 12px;
-		padding-right: 12px;
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		margin-bottom: 20px;
-
-		.van-button {
-			flex: 1;
-			border-radius: 30px;
-			border: 1px solid #82a8f9;
-			height: 45px;
-			width: 102px;
-			padding: 16px 6px;
-			font-size: 12px;
-			font-weight: 600;
-			line-height: 12.1px;
-			text-align: left;
-			color: #82a9f9;
-
-			&:last-child {
-				border: 1px solid #82a8f9;
-				background: #82a8f9;
-				color: #fff;
-				margin-left: 20px;
-			}
-		}
-	}
 }
 
 :deep(.contract-pop) {
@@ -448,25 +402,8 @@ onUnmounted(() => {
 				.van-button {
 					min-width: 40px;
 					height: 34px;
-					border-radius: 6px;
-					background: #82a8f9;
-					color: #fff;
-					font-size: 12px;
-					font-weight: 500;
-					border-color: #82a8f9;
 				}
 			}
-		}
-
-		.btn {
-			background: #82a8f9;
-			border-radius: 52px;
-			color: #fff;
-			font-size: 32px;
-			font-weight: 600;
-			width: calc(100% - 28px);
-			height: 90px;
-			border-color: transparent;
 		}
 	}
 }

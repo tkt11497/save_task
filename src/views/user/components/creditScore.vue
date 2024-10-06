@@ -28,9 +28,9 @@ import { userStore } from '@/store'
 import arrow from '@/assets/images/user/arrow.png'
 import { useI18n } from 'vue-i18n'
 import LoanTreaty from '@/views/user/loan/loan-treaty.vue'
-import { fetchUserInfo } from '@/apiService.js'
 import useLoading from '@/hooks/useLoading.js'
 import { formatDate } from '@/utils/index.js'
+import { fetchUserKycApi } from '@/apis/user.js'
 
 const usersStore = userStore()
 const { t } = useI18n()
@@ -73,7 +73,7 @@ const loanData = ref({
 async function getLoadInfo() {
 	try {
 		loading.loading()
-		const res = await fetchUserInfo()
+		const res = await fetchUserKycApi()
 		loading.clearLoading()
 		if (res.data) {
 			const responseData = res.data
