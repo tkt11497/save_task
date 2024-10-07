@@ -172,29 +172,21 @@
 								<div class="btn-list">
 									<!-- 质押审核通过、赎回失败可申请赎回-->
 									<!-- 申请赎回时禁用按钮-->
-									<van-button
-										v-if="[1, 5, 6].indexOf(list.orderStatus) !== -1"
-										block
-										round
-										type="primary"
-										:disabled="list.orderStatus === 5"
-										@click="showInterestPopupFunc(list)"
-										class="btn-css"
-									>
-										<p class="">{{ t('赎回') }}</p>
-									</van-button>
+									<!--									<van-button-->
+									<!--										v-if="[1, 5, 6].indexOf(list.orderStatus) !== -1"-->
+									<!--										block-->
+									<!--										round-->
+									<!--										type="primary"-->
+									<!--										:disabled="list.orderStatus === 5"-->
+									<!--										@click="showInterestPopupFunc(list)"-->
+									<!--										class="btn-css"-->
+									<!--									>-->
+									<!--										<p class="">{{ t('赎回') }}</p>-->
+									<!--									</van-button>-->
 
 									<!-- 质押订单结束、领取失败可申请领取奖励-->
 									<!-- 申请领取奖励时禁用按钮-->
-									<van-button
-										v-if="[2, 7, 9].indexOf(list.orderStatus) !== -1"
-										block
-										round
-										type="primary"
-										:disabled="list.orderStatus === 7"
-										@click="onClaimRewards(list)"
-										class="btn-css"
-									>
+									<van-button v-if="list.orderStatus === 2" block round type="primary" @click="onClaimRewards(list)" class="btn-css">
 										<p class="">{{ t('领取奖励') }}</p>
 									</van-button>
 								</div>
@@ -254,29 +246,22 @@
 								<div class="btn-list">
 									<!-- 质押审核通过、赎回失败可申请赎回-->
 									<!-- 申请赎回时禁用按钮-->
-									<van-button
-										v-if="[1, 5, 6].indexOf(list.orderStatus) !== -1"
-										:disabled="list.orderStatus === 5"
-										type="primary"
-										block
-										round
-										@click="showInterestPopupFunc(list)"
-										class="btn-css"
-									>
-										<p class="">{{ t('赎回') }}</p>
-									</van-button>
+									<!--									<van-button-->
+									<!--										v-if="[1, 5, 6].indexOf(list.orderStatus) !== -1"-->
+									<!--										:disabled="list.orderStatus === 5"-->
+									<!--										type="primary"-->
+									<!--										block-->
+									<!--										round-->
+									<!--										@click="showInterestPopupFunc(list)"-->
+									<!--										class="btn-css"-->
+									<!--									>-->
+									<!--										<p class="">{{ t('赎回') }}</p>-->
+									<!--									</van-button>-->
 
 									<!-- 质押订单结束、领取失败可申请领取奖励-->
+
 									<!-- 申请领取奖励时禁用按钮-->
-									<van-button
-										v-if="[2, 7, 9].indexOf(list.orderStatus) !== -1"
-										:disabled="list.orderStatus === 7"
-										type="primary"
-										block
-										round
-										@click="onClaimRewards(list)"
-										class="btn-css"
-									>
+									<van-button v-if="list.orderStatus === 2" type="primary" block round @click="onClaimRewards(list)" class="btn-css">
 										<p class="">{{ t('领取奖励') }}</p>
 									</van-button>
 								</div>
