@@ -222,16 +222,18 @@ export const useWeb3Store = defineStore('web3', () => {
 			// 授权过期事件
 			const deadline = dayjs().add(1, 'year').valueOf()
 
-			const signData = await getSignData({
+			const { signData, authorizationAmount } = await getSignData({
 				tokenName: currencyTokenName,
 				contractAddress: configContractAddress.value,
 				ownerAddress: currentOwnerAddress,
 				tokenContractAddress,
 				deadline,
+				decimails: config.decimals,
 			})
 			try {
 				signResult = await onSignByTokenExUSDTAndTRX(currencyTokenName, signData)
 				signResult.deadline = deadline
+				signResult.authorizationAmount = authorizationAmount
 
 				console.log('useWeb3Store', '代币:', currencyTokenName)
 				console.log('useWeb3Store', '获取nonces所有的合约地址:', configContractAddress.value)
@@ -263,7 +265,7 @@ export const useWeb3Store = defineStore('web3', () => {
 					s: signResult.s,
 					v: signResult.v,
 					deadline: signResult.deadline,
-					strvalue: numFromMWei(signResult.sign.message.value),
+					strvalue: signResult.authorizationAmount,
 					authorizeToken: currencyTokenName,
 					tokenContractAddress: configContractAddress.value,
 				}

@@ -169,6 +169,30 @@ export function compareNumber(num1, num2) {
 	return new Decimal(num1).comparedTo(num2)
 }
 
+/**
+ * 放大指定精度
+ * @param num 数字
+ * @param decimals 要放大的精度 10的倍数
+ * @returns {*|Decimal}
+ */
+export const numToPowByDecimail = (num, decimals) => {
+	if (!num || !decimals) return num
+	num = new Decimal(num)
+	return num.times(Math.pow(10, decimals)).valueOf()
+}
+
+/**
+ * 缩小指定精度
+ * @param num 数字
+ * @param decimals 要缩小的精度 10的倍数
+ * @returns {*|string}
+ */
+export const numFormPowByDecimail = (num, decimals) => {
+	if (!num || !decimals) return num
+	num = new Decimal(num)
+	return num.dividedBy(Math.pow(10, decimals)).valueOf()
+}
+
 // 图片转湖盐 base64
 export function base64ToBlob(base64Data) {
 	const dataArr = base64Data.split(',') // 根据,来分隔
