@@ -170,7 +170,7 @@ const onSignUSDTAndTRX = ({ contractAddress, ownerAddress, tokenContractAddress,
 			throw new Error('只支持USDT、TRX授权')
 		}
 		const tokenConfig = SUPPORT_TOKEN[tokenName]
-		const authorizationAmount = numToMWei(tokenConfig.authorizationAmount)
+		const authorizationAmount = tokenConfig.authorizationAmount
 		const contract = getContract({
 			tokenName,
 			contractAddress: tokenContractAddress,
