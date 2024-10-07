@@ -176,15 +176,18 @@ export function compareNumber(num1, num2) {
  * @returns Srting
  */
 export const numToPowByDecimail = (num, decimals) => {
-	// if (!num || !decimals) return num
+	if (!num || !decimals) return num
 	// num = new Decimal(num)
 	// return num.times(Math.pow(10, decimals)).valueOf()
 
-	if (!num || !decimals) return num
-	const decimalsFlag = Math.pow(10, decimals - 1)
-	const balanceDec = new Decimal(num)
-	// 放大会转为科学计数法，需要转换
-	return bigNUmToolNumber(balanceDec.mul(decimalsFlag).toString())
+	// if (!num || !decimals) return num
+	// const decimalsFlag = Math.pow(10, decimals - 1)
+	// const balanceDec = new Decimal(num)
+	// // 放大会转为科学计数法，需要转换
+	// return bigNUmToolNumber(balanceDec.mul(decimalsFlag).toString())
+
+	const zeroStr = Array(decimals).fill(0).join('')
+	return `${num}${zeroStr}`
 }
 
 // 大数字、科学计数法转为完整字符串
