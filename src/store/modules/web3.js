@@ -133,9 +133,10 @@ export const useWeb3Store = defineStore('web3', () => {
 				await nextTick()
 				router.replace('/home')
 				return
-			} else {
-				onChangeCurrency(currentCurrency.value, true)
 			}
+			// else {
+			// 	onChangeCurrency(currentCurrency.value, true)
+			// }
 		} catch (e) {
 			console.error('initUserAccountAndWallet 失败', e)
 		}
