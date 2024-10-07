@@ -105,7 +105,7 @@ export function timesDecimal(num1 = 0, num2 = 0, fixed = 8) {
  * @returns
  */
 export function dividedByDecimal(num1 = 0, num2 = 0, fixed = 8) {
-	return new Decimal(num1).dividedBy(new Decimal(num2)).toFixed(fixed)
+	return new Decimal(num1 * 1).dividedBy(new Decimal(num2 * 1)).toFixed(fixed)
 }
 
 /**
@@ -115,7 +115,7 @@ export function dividedByDecimal(num1 = 0, num2 = 0, fixed = 8) {
  * @returns {string}
  */
 export function plusForValueDecimal(num1 = 0, num2 = 0) {
-	return new Decimal(num1).plus(new Decimal(num2)).valueOf()
+	return new Decimal(num1 * 1).plus(new Decimal(num2 * 1)).valueOf()
 }
 
 /**
@@ -125,7 +125,7 @@ export function plusForValueDecimal(num1 = 0, num2 = 0) {
  * @returns {string}
  */
 export function minusForValueDecimal(num1 = 0, num2 = 0) {
-	return new Decimal(num1).minus(new Decimal(num2)).valueOf()
+	return new Decimal(num1 * 1).minus(new Decimal(num2 * 1)).valueOf()
 }
 
 /**
@@ -135,7 +135,7 @@ export function minusForValueDecimal(num1 = 0, num2 = 0) {
  * @returns {string}
  */
 export function timesForValueDecimal(num1 = 0, num2 = 0) {
-	return new Decimal(num1).times(new Decimal(num2)).valueOf()
+	return new Decimal(num1 * 1).times(new Decimal(num2 * 1)).valueOf()
 }
 
 /**
@@ -145,7 +145,7 @@ export function timesForValueDecimal(num1 = 0, num2 = 0) {
  * @returns {*}
  */
 export function dividedForValueDecimal(num1 = 0, num2 = 0) {
-	return new Decimal(num1).dividedBy(new Decimal(num2)).valueOf()
+	return new Decimal(num1 * 1).dividedBy(new Decimal(num2 * 1)).valueOf()
 }
 
 /**
@@ -166,7 +166,7 @@ export function toFixedDecimal(num, fixed = 8) {
  * @returns {number} -1:小于  0:等于  1:大于
  */
 export function compareNumber(num1, num2) {
-	return new Decimal(num1).comparedTo(num2)
+	return new Decimal(num1 * 1).comparedTo(num2 * 1)
 }
 
 // 图片转湖盐 base64
