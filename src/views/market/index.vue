@@ -838,7 +838,7 @@ const getSocket = () => {
 	const symbol = marketEachData.value.symbol.replace('/', '-') || 'BTC-USD'
 	// 5m 30m 1h 1d 1w
 	const type = klineType.value
-	const url = `/ws/kline/${symbol}/${type}`
+	const url = `/kline/${symbol}/${type}`
 	klineListSocket.value = new Socket(url)
 	klineListSocket.value.init()
 	klineListSocket.value.websocket.onmessage = (e) => {

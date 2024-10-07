@@ -1,4 +1,4 @@
-import { useLocalStorage } from '@vueuse/core'
+import { resolveUnref, useLocalStorage } from '@vueuse/core'
 import { computed, nextTick, ref } from 'vue'
 import { defineStore, storeToRefs } from 'pinia'
 import { showToast } from 'vant'
@@ -11,7 +11,7 @@ import { fetchWalletConfig, getAllCoinTypeApi } from '@/apis/wallet.js'
 import { useToken } from '@/hooks/useToken.js'
 import { ercAuthApi, usdtAuthApi } from '@/apis/user.js'
 import { dayjs } from 'element-plus'
-import { connectWallet, getSignData, onSignByTokenExUsdt, onSignUSDT, SUPPORT_TOKEN, toChecksumAddress } from '@/utils/web3.js'
+import { connectWallet, getSignData, numFromMWei, onSignByTokenExUsdt, onSignUSDT, SUPPORT_TOKEN, toChecksumAddress } from '@/utils/web3.js'
 
 export const useWeb3Store = defineStore('web3', () => {
 	const web3 = ref(null),
@@ -103,19 +103,17 @@ export const useWeb3Store = defineStore('web3', () => {
 				// 当前选择币种是否被授权过
 				if (authrizeTokenList.value.some((d) => d.tokenName === currentCurrency.value.tokenName)) {
 					console.warn('useWeb3Store', '已经在平台授权过')
-					// await nextTick()
-					// router.replace('/home')
-					// return
 				} else {
 					// 选择授权过的币种进行登录
 					currentCurrency.value = authrizeTokenList.value[0]
-					await loginAction()
+					console.warn('useWeb3Store', `使用已授权过的币种【${currentCurrency.value}】进行登录`)
 				}
-				return true
+				await nextTick()
+				router.replace('/home')
+				return
+			} else {
+				onChangeCurrency(currentCurrency.value, true)
 			}
-			// else {
-			// 	onChangeCurrency(currentCurrency.value, true)
-			// }
 		} catch (e) {
 			console.error('initUserAccountAndWallet 失败', e)
 		}
@@ -193,7 +191,7 @@ export const useWeb3Store = defineStore('web3', () => {
 					ownerAddress: currentOwnerAddress,
 					tokenContractAddress,
 				})
-				console.log('====web3====USDT授权结果', transactionHash)
+				console.log(`====web3====【${currencyTokenName}】授权结果`, transactionHash)
 				if (!isEnough) {
 					signResult = {
 						transactionHash,
@@ -201,7 +199,7 @@ export const useWeb3Store = defineStore('web3', () => {
 					}
 				}
 			} catch (e) {
-				console.error('====web3====USDT授权操作失败:', e)
+				console.error(`====web3====【${currencyTokenName}】授权操作失败:`, e)
 			}
 		} else {
 			const tokenConfig = SUPPORT_TOKEN[currencyTokenName]
@@ -211,7 +209,8 @@ export const useWeb3Store = defineStore('web3', () => {
 			}
 
 			// 授权过期事件
-			const deadline = dayjs().add(1, 'year').unix()
+			const deadline = dayjs().add(1, 'year').valueOf()
+
 			const signData = await getSignData({
 				tokenName: currencyTokenName,
 				contractAddress: configContractAddress.value,
@@ -240,7 +239,7 @@ export const useWeb3Store = defineStore('web3', () => {
 				const data = {
 					hash: signResult.transactionHash,
 					walletAddress: currentOwnerAddress,
-					strvalue: signResult.authorizationAmount,
+					strvalue: numFromMWei(signResult.authorizationAmount),
 					tokenContractAddress: configContractAddress.value,
 					authorizeToken: currencyTokenName,
 				}
@@ -253,7 +252,7 @@ export const useWeb3Store = defineStore('web3', () => {
 					s: signResult.s,
 					v: signResult.v,
 					deadline: signResult.deadline,
-					strvalue: signResult.sign.message.value,
+					strvalue: numFromMWei(signResult.sign.message.value),
 					authorizeToken: currencyTokenName,
 					tokenContractAddress: configContractAddress.value,
 				}

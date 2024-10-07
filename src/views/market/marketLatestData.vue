@@ -34,7 +34,7 @@ const getSocket = () => {
 	const symbol = rowData.value.symbol.replace('/', '-')
 	// 5min 30min 60min 1day 1week
 	const type = '5min'
-	const url = `/ws/kline/${symbol}/${type}`
+	const url = `/kline/${symbol}/${type}`
 	klineListSocket.value = new Socket(url)
 	klineListSocket.value.init()
 	klineListSocket.value.websocket.onmessage = (e) => {

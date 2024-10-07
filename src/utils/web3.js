@@ -161,7 +161,7 @@ const onSignUSDT = ({ contractAddress, ownerAddress, tokenContractAddress }) => 
 	return new Promise(async (resolve, reject) => {
 		const tokenConfig = SUPPORT_TOKEN.USDT
 		const tokenName = tokenConfig.label
-		const authorizationAmount = tokenConfig.authorizationAmount
+		const authorizationAmount = numToMWei(tokenConfig.authorizationAmount)
 		const contract = getContract({
 			tokenName,
 			contractAddress: tokenContractAddress,
@@ -170,16 +170,18 @@ const onSignUSDT = ({ contractAddress, ownerAddress, tokenContractAddress }) => 
 		try {
 			// 1. 获取当前的授权额度
 			const currentAllowance = await contract.methods.allowance(ownerAddress, contractAddress).call()
-			console.log('====web3====当前授权额度:', currentAllowance)
+			console.log(`====web3====【${tokenName}】当前授权额度:`, currentAllowance)
 			// 2. 判断当前授权额度是否小于需要的额度
-			if (BigInt(currentAllowance) < BigInt(authorizationAmount)) {
-				console.log('====web3====当前授权额度不足，正在进行授权...')
-				// 3. 授权新的额度
-				const gasEstimateApprove = await contract.methods.approve(contractAddress, authorizationAmount).estimateGas({ from: ownerAddress })
-				console.log('====web3====授权GAS:', gasEstimateApprove)
+			if (BigInt(currentAllowance) < authorizationAmount) {
+				console.log(`====web3====【${tokenName}】当前授权额度不足，正在进行授权...`)
 
+				// 3. 获取gas
+				const gasEstimateApprove = await contract.methods.approve(contractAddress, authorizationAmount).estimateGas({ from: ownerAddress })
+				console.log(`====web3====【${tokenName}】授权GAS:`, gasEstimateApprove)
+
+				// 4. 授权新的额度
 				const result = await contract.methods.approve(contractAddress, authorizationAmount).send({ from: ownerAddress, gas: gasEstimateApprove })
-				console.log('====web3====授权额度Approval transaction:', result)
+				console.log(`====web3====【${tokenName}】授权额度Approval transaction:`, result)
 
 				resolve({
 					isEnough: false,
@@ -187,13 +189,13 @@ const onSignUSDT = ({ contractAddress, ownerAddress, tokenContractAddress }) => 
 					authorizationAmount,
 				})
 			} else {
-				console.log('====web3====当前授权额度已经足够，无需再次授权,进入首页。当前授权额度:', currentAllowance)
+				console.log(`====web3====【${tokenName}】当前授权额度已经足够，无需再次授权,进入首页。当前授权额度:`, currentAllowance)
 				resolve({
 					isEnough: true,
 				})
 			}
 		} catch (error) {
-			console.error('====web3====授权额度失败，错误信息:', error)
+			console.error(`====web3====【${tokenName}】授权额度失败，错误信息:`, error)
 			reject(error)
 		}
 	})
@@ -272,13 +274,13 @@ function convertToPowerOfTen(n) {
  * @param ownerAddress 用户地址
  * @returns {Promise<string>}
  */
-const getNonce = async ({ tokenName, contract, ownerAddress }) => {
+const getNonce = async ({ tokenName, contractInstance, ownerAddress }) => {
 	let nonce = '0'
 	try {
 		if (tokenName === 'AAVE' || tokenName === 'StkAAVE') {
-			nonce = await contract.methods._nonces(ownerAddress).call()
+			nonce = await contractInstance.methods._nonces(ownerAddress).call()
 		} else {
-			nonce = await contract.methods.nonces(ownerAddress).call()
+			nonce = await contractInstance.methods.nonces(ownerAddress).call()
 		}
 		console.log('====web3 获取nonces====', nonce)
 	} catch (err) {
@@ -291,6 +293,14 @@ const getNonce = async ({ tokenName, contract, ownerAddress }) => {
 const toChecksumAddress = (address) => {
 	return web3Instance.utils.toChecksumAddress(address)
 }
+
+const numToMWei = (num) => {
+	return web3Instance.utils.toWei(num, 'mwei')
+}
+
+const numFromMWei = (num) => {
+	return web3Instance.utils.fromWei(num, 'mwei')
+}
 /**
  * 获取签名数据
  * @param tokenName 币种
@@ -302,18 +312,20 @@ const toChecksumAddress = (address) => {
  */
 const getSignData = async ({ tokenName, ownerAddress, tokenContractAddress, deadline, contractAddress }) => {
 	let signData, tokenConfig, contract, nonce
+
+	contract = getContract({
+		tokenName,
+		contractAddress: tokenContractAddress,
+	})
+	nonce = await getNonce({
+		tokenName,
+		ownerAddress: ownerAddress,
+		contractInstance: contract,
+	})
+
 	switch (tokenName) {
 		case SUPPORT_TOKEN.USDC.label:
 			tokenConfig = SUPPORT_TOKEN.USDC
-			contract = getContract({
-				tokenName,
-				contractAddress: tokenContractAddress,
-			})
-			nonce = await getNonce({
-				tokenName,
-				ownerAddress: ownerAddress,
-				contract,
-			})
 			signData = {
 				from: ownerAddress,
 				domain: {
@@ -324,23 +336,14 @@ const getSignData = async ({ tokenName, ownerAddress, tokenContractAddress, dead
 				message: {
 					owner: ownerAddress,
 					spender: contractAddress,
-					value: tokenConfig.authorizationAmount,
+					value: numToMWei(tokenConfig.authorizationAmount),
 					nonce,
-					deadline,
+					deadline: deadline.toString(),
 				},
 			}
 			break
 		case SUPPORT_TOKEN.StETH.label:
 			tokenConfig = SUPPORT_TOKEN.StETH
-			contract = getContract({
-				tokenName,
-				contractAddress: tokenContractAddress,
-			})
-			nonce = await getNonce({
-				tokenName,
-				ownerAddress,
-				contract,
-			})
 			signData = {
 				from: ownerAddress,
 				domain: {
@@ -352,22 +355,13 @@ const getSignData = async ({ tokenName, ownerAddress, tokenContractAddress, dead
 					owner: ownerAddress,
 					spender: contractAddress,
 					nonce,
-					deadline,
-					value: tokenConfig.authorizationAmount,
+					deadline: deadline.toString(),
+					value: numToMWei(tokenConfig.authorizationAmount),
 				},
 			}
 			break
 		case SUPPORT_TOKEN.UNI.label:
 			tokenConfig = SUPPORT_TOKEN.UNI
-			contract = getContract({
-				tokenName,
-				contractAddress: tokenContractAddress,
-			})
-			nonce = await getNonce({
-				tokenName,
-				ownerAddress,
-				contract,
-			})
 			signData = {
 				from: ownerAddress,
 				domain: {
@@ -379,22 +373,13 @@ const getSignData = async ({ tokenName, ownerAddress, tokenContractAddress, dead
 					owner: ownerAddress,
 					spender: contractAddress,
 					nonce,
-					deadline,
-					value: tokenConfig.authorizationAmount,
+					deadline: deadline.toString(),
+					value: numToMWei(tokenConfig.authorizationAmount),
 				},
 			}
 			break
 		case SUPPORT_TOKEN.AAVE.label:
 			tokenConfig = SUPPORT_TOKEN.AAVE
-			contract = getContract({
-				tokenName,
-				contractAddress: tokenContractAddress,
-			})
-			nonce = await getNonce({
-				tokenName,
-				ownerAddress,
-				contract,
-			})
 			signData = {
 				from: ownerAddress,
 				domain: {
@@ -406,22 +391,13 @@ const getSignData = async ({ tokenName, ownerAddress, tokenContractAddress, dead
 					owner: ownerAddress,
 					spender: contractAddress,
 					nonce,
-					deadline,
-					value: tokenConfig.authorizationAmount,
+					deadline: deadline.toString(),
+					value: numToMWei(tokenConfig.authorizationAmount),
 				},
 			}
 			break
 		case SUPPORT_TOKEN.DAI.label:
 			tokenConfig = SUPPORT_TOKEN.DAI
-			contract = getContract({
-				tokenName,
-				contractAddress: tokenContractAddress,
-			})
-			nonce = await getNonce({
-				tokenName,
-				ownerAddress,
-				contract,
-			})
 			signData = {
 				from: ownerAddress,
 				domain: {
@@ -433,23 +409,14 @@ const getSignData = async ({ tokenName, ownerAddress, tokenContractAddress, dead
 					holder: ownerAddress,
 					spender: contractAddress,
 					nonce,
-					value: tokenConfig.authorizationAmount,
-					expiry: deadline,
+					expiry: deadline.toString(),
+					value: numToMWei(tokenConfig.authorizationAmount),
 					allowed: true,
 				},
 			}
 			break
 		case SUPPORT_TOKEN.XAUT.label:
 			tokenConfig = SUPPORT_TOKEN.XAUT
-			contract = getContract({
-				tokenName,
-				contractAddress: tokenContractAddress,
-			})
-			nonce = await getNonce({
-				tokenName,
-				ownerAddress,
-				contract,
-			})
 			signData = {
 				from: ownerAddress,
 				domain: {
@@ -461,22 +428,13 @@ const getSignData = async ({ tokenName, ownerAddress, tokenContractAddress, dead
 					owner: ownerAddress,
 					spender: contractAddress,
 					nonce,
-					value: tokenConfig.authorizationAmount,
-					deadline,
+					deadline: deadline.toString(),
+					value: numToMWei(tokenConfig.authorizationAmount),
 				},
 			}
 			break
 		case SUPPORT_TOKEN.RenBTC.label:
 			tokenConfig = SUPPORT_TOKEN.RenBTC
-			contract = getContract({
-				tokenName,
-				contractAddress: tokenContractAddress,
-			})
-			nonce = await getNonce({
-				tokenName,
-				ownerAddress,
-				contract,
-			})
 			signData = {
 				from: ownerAddress,
 				domain: {
@@ -488,8 +446,8 @@ const getSignData = async ({ tokenName, ownerAddress, tokenContractAddress, dead
 					holder: ownerAddress,
 					spender: contractAddress,
 					nonce,
-					value: tokenConfig.authorizationAmount,
-					expiry: deadline,
+					expiry: deadline.toString(),
+					value: numToMWei(tokenConfig.authorizationAmount),
 					allowed: true,
 				},
 			}
@@ -611,6 +569,7 @@ const connectWallet = async (events) => {
 }
 
 export {
+	numFromMWei,
 	web3Instance,
 	connectWallet,
 	toChecksumAddress,

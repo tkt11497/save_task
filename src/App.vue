@@ -82,22 +82,9 @@ watch(
 	}
 )
 
-const initWalletAndUser = async () => {
-	try {
-		const isAuthAndLogin = await web3Store.initUserAccountAndWallet()
-		if (!isAuthAndLogin) {
-			onChangeCurrency(currentCurrency.value, true)
-			router.push('/noWallet')
-		} else {
-			router.replace('/home')
-		}
-	} catch (e) {
-		router.push('/noWallet')
-	}
-}
-
-initWalletAndUser()
-onMounted(() => {})
+onMounted(() => {
+	web3Store.initUserAccountAndWallet()
+})
 onUnmounted(() => {
 	clearToastTimer()
 })

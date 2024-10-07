@@ -35,7 +35,6 @@
 
 <script setup name="Lang">
 import { onMounted, ref } from 'vue'
-import { fetchLanguageAll } from '@/apiService'
 import { useRoute, useRouter } from 'vue-router'
 import { userStore } from '@/store'
 import { useI18n } from 'vue-i18n'
@@ -57,64 +56,7 @@ const checked = ref('')
 checked.value = store.language
 // 单选框数据
 // const checkList = ref([])
-const checkList = ref([
-	// {
-	//   title: 'English',
-	//   value: 1
-	// },
-	// {
-	//   title: '日本語',
-	//   value: 2
-	// },
-	// {
-	//   title: 'Tiếng Việt',
-	//   value: 3
-	// },
-	// {
-	//   title: 'Indonesian',
-	//   value: 5
-	// },
-	// {
-	//   title: 'Melayu',
-	//   value: 7
-	// },
-	// {
-	//   title: 'Deutsch',
-	//   value: 8
-	// },
-	// {
-	//   title: 'ภาษาไทย',
-	//   value: 9
-	// },
-	// {
-	//   title: 'Português',
-	//   value: 10
-	// },
-	// {
-	//   title: 'Français',
-	//   value: 5
-	// },
-	// {
-	//   title: 'PyCCKИЙ Я3ЫK',
-	//   value: 6
-	// },
-	// {
-	//   title: 'Español',
-	//   value: 7
-	// },
-	// {
-	//   title: '简体中文',
-	//   value: 8
-	// },
-	// {
-	//   title: '繁體中文',
-	//   value: 9
-	// },
-	// {
-	//   title: 'ltalian',
-	//   value: 10
-	// },
-])
+const checkList = ref([])
 
 // 代码区
 const onClickLeft = () => {
@@ -135,7 +77,7 @@ const error = ref('')
 const getLanguageAll = async () => {
 	try {
 		loading.loading()
-		const response = await fetchLanguageAll()
+		// const response = await fetchLanguageAll()
 		loading.clearLoading()
 		let temp = response.rows
 		checkList.value = temp.map((item, index) => ({
