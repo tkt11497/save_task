@@ -89,7 +89,7 @@
 <script setup>
 import { onMounted, onUnmounted, ref } from 'vue'
 import { userStore, useWeb3Store } from '@/store'
-import { compareNumber, dividedForValueDecimal, getImageUrl, timesForValueDecimal } from '@/utils/index.js'
+import { dividedForValueDecimal, getImageUrl, timesForValueDecimal } from '@/utils/index.js'
 import { showToast } from 'vant'
 import { storeToRefs } from 'pinia'
 import { useI18n } from 'vue-i18n'
