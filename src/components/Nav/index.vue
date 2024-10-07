@@ -116,7 +116,7 @@ defineExpose({})
 	box-shadow: 0px -2px 4px 0px rgba(0, 0, 0, 0.12);
 	backdrop-filter: blur(30px);
 	border-color: transparent;
-	height: 67px;
+	height: var(--vt-nav-bar-height);
 	//padding-bottom: 10px;
 	//padding-top: 16px;
 	//padding-bottom: 4px;

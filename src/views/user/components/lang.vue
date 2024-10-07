@@ -56,7 +56,20 @@ const checked = ref('')
 checked.value = store.language
 // 单选框数据
 // const checkList = ref([])
-const checkList = ref([])
+const checkList = ref([
+	{
+		title: 'English',
+		language: 'English',
+		value: 'en_US',
+		fileName: 'en_US',
+	},
+	{
+		title: '简体中文',
+		language: '简体中文',
+		value: 'zh_CN',
+		fileName: 'zh_CN',
+	},
+])
 
 // 代码区
 const onClickLeft = () => {
@@ -77,7 +90,7 @@ const error = ref('')
 const getLanguageAll = async () => {
 	try {
 		loading.loading()
-		// const response = await fetchLanguageAll()
+		const response = await fetchLanguageAll()
 		loading.clearLoading()
 		let temp = response.rows
 		checkList.value = temp.map((item, index) => ({
@@ -90,7 +103,7 @@ const getLanguageAll = async () => {
 	}
 }
 onMounted(() => {
-	getLanguageAll()
+	// getLanguageAll()
 })
 
 // 将组件中的数据进行暴露出去
@@ -141,7 +154,7 @@ defineExpose({})
 	}
 	.confirm {
 		position: fixed;
-		bottom: 0px;
+		bottom: var(--vt-nav-bar-height);
 		width: 100%;
 		height: $buttonHeight + 50px;
 		overflow: hidden;
@@ -149,7 +162,7 @@ defineExpose({})
 
 		div {
 			position: fixed;
-			bottom: -40px;
+			//bottom: -40px;
 			left: 50%;
 			transform: translateX(-50%);
 			background: #82a8f9;

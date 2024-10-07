@@ -23,6 +23,9 @@
 	--vt-c-text-light-2: rgba(60, 60, 60, 0.66);
 	--vt-c-text-dark-1: var(--vt-c-white);
 	--vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
+
+
+	--vt-nav-bar-height: 67PX;
 }
 
 /* semantic color variables for this project */
@@ -168,7 +171,7 @@ input {
 	padding-bottom: 20px;
 
 	&.full-page {
-		min-height: 100vh;
+		min-height: calc(100vh - var(--vt-nav-bar-height));
 		background-color: #fff;
 	}
 
