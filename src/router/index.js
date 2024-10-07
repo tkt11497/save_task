@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useWeb3Store, userStore } from '@/store/index.js'
+import { storeToRefs } from 'pinia'
 
 const router = createRouter({
 	history: createWebHistory(),
@@ -138,6 +139,16 @@ const router = createRouter({
 			redirect: '/',
 		},
 	],
+})
+
+router.beforeEach((to, from, next) => {
+	const usersStore = userStore()
+	const { userId } = storeToRefs(usersStore)
+	if (!userId.value && to.name !== 'noWallet') {
+		next('noWallet')
+	} else {
+		next()
+	}
 })
 
 export default router
