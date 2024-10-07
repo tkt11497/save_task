@@ -84,7 +84,7 @@
 			</div>
 			<!-- Button -->
 			<div class="Borrow">
-				<van-button :disabled="userKycRecordData.approvalStatus !== '1'" block round type="primary" @click="addLoad">{{ t('立即借款') }}</van-button>
+				<van-button block round type="primary" @click="addLoad">{{ t('立即借款') }}</van-button>
 			</div>
 		</div>
 	</div>
@@ -183,6 +183,7 @@ const addLoad = async () => {
 		return
 	}
 
+	await userKycRecord()
 	if (userKycRecordData.value.approvalStatus !== '1') {
 		showToast({
 			message: t('需要kyc审核通过'),
