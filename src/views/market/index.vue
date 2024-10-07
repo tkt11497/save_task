@@ -1132,11 +1132,6 @@ defineExpose({})
 		border-radius: 0 !important;
 	}
 
-	.el-dialog__body {
-		margin: 0;
-		width: 100%;
-	}
-
 	.el-dialog__header,
 	.el-dialog__footer {
 		width: 100%;
@@ -1146,10 +1141,17 @@ defineExpose({})
 
 	.el-dialog__header {
 		padding: 40px 50px 20px;
+		position: fixed;
+		background-color: #fff;
+	}
+	.el-dialog__body {
+		padding-top: 100px;
+		margin: 0;
+		width: 100%;
 	}
 	.el-dialog__footer {
 		padding: 40px 26px 20px;
-		margin-top: 200px;
+		padding-top: 200px;
 		background: #fff;
 	}
 
