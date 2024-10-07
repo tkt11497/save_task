@@ -17,7 +17,12 @@ export const fetchFinancialStakeListApi = () => {
 
 // 首页-智能合约 固定质押信息
 export const fetchFixStakeApi = () => {
-	return request.get('stake/fix')
+	return request.get('/stake/fix')
+}
+
+// 首页-智能合约 固定质押订单信息
+export const fetchFixStakeOrderApi = (orderId) => {
+	return request.get('/stakeOrder/fix/get', { params: { orderId } })
 }
 
 // 添加 理财质押订单、联合质押订单、个人质押订单

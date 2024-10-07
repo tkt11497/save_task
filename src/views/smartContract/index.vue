@@ -24,37 +24,37 @@
 				<div class="list">
 					<div class="item">
 						<span class="p1">{{ t('同意的金额') }}:</span>
-						<span class="p2">{{ contractData.stakeAmount }} {{ contractData.stakeToken }}</span>
+						<span class="p2">{{ stakeOrder.stakeAmount }} {{ stakeOrder.stakeToken }}</span>
 					</div>
 					<div class="item">
 						<span class="p1">{{ t('质押期限') }}:</span>
-						<span class="p2">{{ contractData.stakeDay }} {{ t('天') }}</span>
+						<span class="p2">{{ stakeOrder.stakeDay }} {{ t('天') }}</span>
 					</div>
 					<div class="item">
 						<span class="p1">{{ t('收益 / 回报') }}:</span>
-						<span class="p2">{{ contractData.stakeRate }}%</span>
+						<span class="p2">{{ stakeOrder.stakeRate }}%</span>
 					</div>
 					<div class="item">
 						<span class="p1">{{ t('奖励') }}:</span>
-						<span class="p2">{{ contractData.awardAmount }} {{ contractData.awardToken }}</span>
+						<span class="p2">{{ stakeOrder.awardAmout }} {{ stakeOrder.awardToken }}</span>
 					</div>
 					<div class="item">
 						<span class="p1">{{ t('总回报') }}:</span>
 						<span class="p2">
 							{{
 								timesForValueDecimal(
-									timesForValueDecimal(contractData.stakeAmount, contractData.stakeDay),
-									dividedForValueDecimal(contractData.stakeRate, 100)
+									timesForValueDecimal(stakeOrder.stakeAmount, stakeOrder.stakeDay),
+									dividedForValueDecimal(stakeOrder.stakeRate, 100)
 								)
 							}}
-							{{ contractData.awardToken }}
+							{{ stakeOrder.stakeToken }}
 						</span>
 					</div>
 					<div class="item">
 						<span class="p1">{{ t('今日回报') }}:</span>
 						<span class="p2">
-							{{ timesForValueDecimal(timesForValueDecimal(contractData.stakeAmount, 1), dividedForValueDecimal(contractData.stakeRate, 100)) }}
-							{{ contractData.awardToken }}
+							{{ timesForValueDecimal(timesForValueDecimal(stakeOrder.stakeAmount, 1), dividedForValueDecimal(stakeOrder.stakeRate, 100)) }}
+							{{ stakeOrder.stakeToken }}
 						</span>
 					</div>
 				</div>
@@ -95,7 +95,7 @@ import { storeToRefs } from 'pinia'
 import { useI18n } from 'vue-i18n'
 import { useToken } from '@/hooks/useToken'
 import useLoading from '@/hooks/useLoading.js'
-import { addNodeAmountApi, fetchFixStakeApi } from '@/apis/stake.js'
+import { addNodeAmountApi, fetchFixStakeApi, fetchFixStakeOrderApi } from '@/apis/stake.js'
 
 const loading = useLoading()
 
@@ -106,7 +106,9 @@ const { currentCurrency, address } = storeToRefs(useWeb3Store())
 const { getChainBalanceByTokenName } = useToken()
 
 onMounted(() => {
-	fixactivityClient()
+	fixactivityClient().then(() => {
+		getStakeOrder()
+	})
 	userStoreData.SET_PATH_DATA('no')
 })
 const arrow = getImageUrl('user/arrow.png')
@@ -116,7 +118,9 @@ const showPopType = ref('node')
 const amount = ref('')
 
 const opened = () => {
-	fixactivityClient()
+	fixactivityClient().then(() => {
+		getStakeOrder()
+	})
 }
 const closed = () => {
 	showPopType.value = 'node'
@@ -136,6 +140,18 @@ const fixactivityClient = async () => {
 		contractData.value = res.data || {}
 	} catch (error) {
 		console.log(error)
+	}
+}
+
+const stakeOrder = ref({})
+const getStakeOrder = async () => {
+	try {
+		if (!contractData.value || !contractData.value.stateOrderId) return
+		const res = await fetchFixStakeOrderApi(contractData.value.stateOrderId)
+		stakeOrder.value = res.data
+		console.log(res)
+	} catch (e) {
+		console.log(e)
 	}
 }
 
