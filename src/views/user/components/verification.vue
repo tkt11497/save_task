@@ -15,12 +15,14 @@
 							label=""
 							:placeholder="t('名字')"
 							name="firstName"
+							maxlength="20"
 							:rules="[{ required: true, message: t('不能为空', { name: t('名字') }) }]"
 						/>
 						<van-field
 							v-model="form.lastName"
 							label=""
 							:placeholder="t('姓氏')"
+							maxlength="20"
 							name="lastName"
 							:rules="[{ required: true, message: t('不能为空', { name: t('姓氏') }) }]"
 						/>
@@ -92,6 +94,7 @@
 							type="tel"
 							label=""
 							:placeholder="t('电话号码')"
+							maxlength="20"
 							name="phone"
 							:rules="[{ required: true, message: t('不能为空', { name: t('电话号码') }) }]"
 						>
