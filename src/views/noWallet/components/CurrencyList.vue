@@ -72,8 +72,12 @@ const onChange = async (currency) => {
 			isSuccess: true,
 			tokenName: currency,
 		})
-		if (isAuthToken && route.name !== 'home') {
-			router.push('/home')
+		if (isAuthToken) {
+			const changePlatformTokenType = await getPlatformTokenByCoinType(currency)
+			changePlatformTokenType.isAuthrize = 1
+			if (route.name !== 'home') {
+				router.push('/home')
+			}
 		}
 	} catch (error) {
 		loading.clearLoading()
@@ -82,8 +86,8 @@ const onChange = async (currency) => {
 	}
 }
 
-const { getPlatformTokenList } = useToken()
-const checkAuthCoinTYpeList = async () => {
+const { getPlatformTokenList, getPlatformTokenByCoinType } = useToken()
+const checkAuthCoinTypeList = async () => {
 	const list = await getPlatformTokenList()
 	if (list && list.length) {
 		currencyList.value.forEach((c) => {
@@ -99,7 +103,7 @@ const checkAuthCoinTYpeList = async () => {
 onMounted(async () => {
 	await getCurrencyList()
 	if (props.checkAuthStatus) {
-		await checkAuthCoinTYpeList()
+		await checkAuthCoinTypeList()
 	}
 })
 defineOptions({ name: 'CurrencyList' })

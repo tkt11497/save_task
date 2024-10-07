@@ -86,7 +86,7 @@
 							</div>
 
 							<!-- 贷款申请成功 并 开始还款-->
-							<div class="content-row" v-if="list.status === 1 && list.repaymentStatus !== 0">
+							<div class="content-row" v-if="list.repaymentStatus !== 0">
 								<p class="left-text">{{ t('还款状态') }}:</p>
 								<p class="right-text">
 									<!-- 还款状态(0.未还款；1.提交还款;2.审核通过;3.审核失败) -->
@@ -99,7 +99,7 @@
 							<!--  还款申请成功 才显示还款日期-->
 							<div class="content-row" v-if="list.repaymentStatus === 2">
 								<p class="left-text">{{ t('还款日期') }}:</p>
-								<p class="right-text">{{ formatDate(list.endDate) }}</p>
+								<p class="right-text">{{ formatDate(list.repaymentDate) }}</p>
 							</div>
 
 							<!-- 借贷审核成功或贷款订单结束-->

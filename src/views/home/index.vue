@@ -16,9 +16,7 @@
 			<img src="./assets/bank.png" alt="bank" class="bank" />
 
 			<div class="top">
-				<div class="img">
-					<img :src="$imgpath + currentCurrency.iconUrl" :alt="currentCurrency.tokenName" />
-				</div>
+				<img :src="$imgpath + currentCurrency.iconUrl" :alt="currentCurrency.tokenName" />
 				<div class="title">{{ currentCurrency.tokenName || '' }}</div>
 			</div>
 			<div class="content">
