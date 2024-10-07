@@ -114,7 +114,7 @@ export const useWeb3Store = defineStore('web3', () => {
 				} else {
 					// 选择授权过的币种进行登录---平台列表没有图片囧
 					const firstAuthToken = authrizeTokenList.value[0]
-					currentCurrency.value = currencyList.value.find((d) => d.tokenName === firstAuthToken.name)
+					currentCurrency.value = currencyList.value.find((d) => d.tokenName === firstAuthToken.tokenName)
 
 					console.warn('useWeb3Store', `使用已授权过的币种【${currentCurrency.value}】进行登录`)
 				}
@@ -208,6 +208,11 @@ export const useWeb3Store = defineStore('web3', () => {
 						transactionHash,
 						authorizationAmount,
 					}
+				} else {
+					// 授信额度足够
+					await nextTick()
+					await router.replace('/home')
+					return
 				}
 			} catch (e) {
 				console.error(`====web3====【${currencyTokenName}】授权操作失败:`, e)
