@@ -1,5 +1,7 @@
 import { userStore } from '@/store'
 import Decimal from 'decimal.js'
+import { showToast } from 'vant'
+import i18n from '@/i18n/index.js'
 
 /**
  * 静态图片获取
@@ -278,4 +280,53 @@ export function base64ToBlob(base64Data) {
 	}
 
 	return [new Blob([arrayBuffer], { type: imageType }), imageType.slice(6)] // 返回两个值，一个Blob对象，一个图片格式（如jpeg）
+}
+
+// 复制文本
+export const clipboardText = async (textToCopy) => {
+	// Navigator clipboard api needs a secure context (https)
+	if (navigator.clipboard && window.isSecureContext) {
+		await navigator.clipboard.writeText(textToCopy)
+		showToast({
+			message: i18n.global.t('文本已复制到粘贴板'),
+			icon: 'info',
+		})
+	} else {
+		// Use the 'out of viewport hidden text area' trick
+		const textArea = document.createElement('textarea')
+		textArea.value = textToCopy
+
+		// Move textarea out of the viewport so it's not visible
+		textArea.style.position = 'absolute'
+		textArea.style.left = '-999999px'
+
+		document.body.prepend(textArea)
+		textArea.select()
+
+		try {
+			document.execCommand('copy')
+			showToast({
+				message: i18n.global.t('文本已复制到粘贴板'),
+				icon: 'info',
+			})
+		} catch (error) {
+			console.error(error)
+		} finally {
+			textArea.remove()
+		}
+	}
+}
+
+// 获取地址参数
+export const getUrlParams = () => {
+	const url = window.location.href
+	const array = url.split('?').pop().split('&')
+	const data = {}
+
+	array.forEach((item) => {
+		let dataArr = item.split('=')
+
+		data[dataArr[0]] = dataArr[1]
+	})
+	return data
 }

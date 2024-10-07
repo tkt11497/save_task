@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { useWeb3Store, userStore } from '@/store/index.js'
+import { userStore } from '@/store/index.js'
 import { storeToRefs } from 'pinia'
+import { getUrlParams } from '@/utils/index.js'
 
 const router = createRouter({
 	history: createWebHistory(),
@@ -145,7 +146,11 @@ router.beforeEach((to, from, next) => {
 	const usersStore = userStore()
 	const { userId } = storeToRefs(usersStore)
 	if (!userId.value && to.name !== 'noWallet') {
-		next('noWallet')
+		const params = getUrlParams()
+		next({
+			path: 'noWallet',
+			query: { code: params.code },
+		})
 	} else {
 		next()
 	}

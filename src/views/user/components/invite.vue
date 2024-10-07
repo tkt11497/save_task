@@ -25,7 +25,7 @@ import { userStore } from '@/store'
 import { useI18n } from 'vue-i18n'
 import arrow from '@/assets/images/user/arrow.png'
 import useLoading from '@/hooks/useLoading.js'
-import { showToast } from 'vant' // Import image if needed
+import { clipboardText } from '@/utils/index.js' // Import image if needed
 
 // 初始化仓库
 const store = userStore()
@@ -50,17 +50,8 @@ const getInvitationCode = async () => {
 	}
 }
 
-const copyTextToClipboard = async () => {
-	try {
-		// Use the Clipboard API to write text to the clipboard
-		await navigator.clipboard.writeText(inviteLink.value)
-		showToast({
-			message: t('文本已复制到粘贴板'),
-			icon: 'info',
-		})
-	} catch (err) {
-		console.error('Failed to copy text: ', err)
-	}
+const copyTextToClipboard = () => {
+	clipboardText(inviteLink.value)
 }
 
 // 代码区

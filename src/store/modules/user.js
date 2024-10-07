@@ -3,6 +3,7 @@ import { defineStore, storeToRefs } from 'pinia'
 import { getDefaultLanguage } from '@/i18n/index.js'
 import { useWeb3Store } from '@/store/index.js'
 import { userLoginApi } from '@/apis/user.js'
+import { getUrlParams } from '@/utils/index.js'
 
 export default defineStore('user', {
 	state: () => ({
@@ -43,7 +44,6 @@ export default defineStore('user', {
 		SET_STATE_DATA(key, value) {
 			this[key] = value
 		},
-
 		SET_USERID_DATA(value) {
 			this.userId = value
 		},
@@ -64,10 +64,12 @@ export default defineStore('user', {
 				const web3Store = useWeb3Store()
 				const { address, currentCurrency } = storeToRefs(web3Store)
 
+				const params = getUrlParams()
+
 				const response = await userLoginApi({
 					walletAddress: address.value,
 					defaultToken: currency || currentCurrency.value.tokenName,
-					inviteCode: '',
+					inviteCode: params.code || '',
 					domain: window.location.hostname,
 				})
 

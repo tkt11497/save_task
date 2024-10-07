@@ -20,6 +20,7 @@ import {
 	SUPPORT_TOKEN,
 	toChecksumAddress,
 } from '@/utils/web3.js'
+import { getUrlParams } from '@/utils/index.js'
 
 export const useWeb3Store = defineStore('web3', () => {
 	const web3 = ref(null),
@@ -78,7 +79,6 @@ export const useWeb3Store = defineStore('web3', () => {
 		console.log('useWeb3Store', '========initUserAccountAndWallet============')
 		try {
 			await Promise.all([getCurrencyList(), initWallet()])
-
 			if (!currencyList.value.length) {
 				return
 			}
@@ -129,13 +129,15 @@ export const useWeb3Store = defineStore('web3', () => {
 				}
 				await nextTick()
 				router.replace('/home')
-				return
+			} else {
+				resetAccount()
 			}
 			// else {
 			// 	onChangeCurrency(currentCurrency.value, true)
 			// }
 		} catch (e) {
 			console.error('initUserAccountAndWallet 失败', e)
+			resetAccount()
 		}
 	}
 
@@ -389,6 +391,7 @@ const resetAccount = async () => {
 	}
 
 	if (router.currentRoute.value.name !== 'noWallet') {
-		await router.replace({ name: 'noWallet' })
+		const params = getUrlParams()
+		await router.replace({ path: '/noWallet', query: { code: params.code } })
 	}
 }
