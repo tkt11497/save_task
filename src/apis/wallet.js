@@ -55,7 +55,12 @@ export const walletExchangeApi = (data) => {
 	return request.post('/wallet/exchange', data)
 }
 
-// 获取钱包全局配置-充值收款地址：collectionAddress  合约地址：contractAddress  单笔最大借款：dufaultBorrowLimit
+// 合约地址：contractAddress
 export const fetchWalletConfig = () => {
 	return request.get('/wallet/getGlobalConfig')
+}
+
+// 获取充值地址
+export const fetchWithdrawalAddressApi = () => {
+	return request.get('/collection/address/get')
 }

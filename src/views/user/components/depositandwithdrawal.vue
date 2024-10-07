@@ -47,7 +47,7 @@
 				<van-tab :title="t('充值')" name="Deposit">
 					<div class="radio-box">
 						<van-radio-group shape="dot" v-model="checkedProtocol" direction="horizontal">
-							<van-radio :name="item.protocol" v-for="(item, index) in protocolList" :key="index">{{ item.protocol }}</van-radio>
+							<van-radio :name="item.type" v-for="(item, index) in rechargeAddressList" :key="index">{{ item.type }}</van-radio>
 						</van-radio-group>
 					</div>
 					<div class="top_up_img_box">
@@ -188,18 +188,16 @@
 </template>
 
 <script setup name="Lang">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { userStore, useWeb3Store } from '@/store'
 import arrow from '@/assets/images/user/arrow.png'
 import { showToast } from 'vant'
-import { useClipboard } from '@vueuse/core'
 import { useQRCode } from '@vueuse/integrations/useQRCode'
 import { useI18n } from 'vue-i18n'
 import useLoading from '@/hooks/useLoading.js'
 import {
-	fetchWalletConfig,
-	getAllCoinTypeApi,
+	fetchWithdrawalAddressApi,
 	getAllPlatformTokenBalanceApi,
 	walletExchangeApi,
 	walletSpeedRechargeApi,
@@ -207,12 +205,11 @@ import {
 } from '@/apis/wallet.js'
 import { useToken } from '@/hooks/useToken.js'
 import { fetchExchangeRateApi } from '@/apis/common.js'
-import { compareNumber } from '@/utils/index.js'
+import { clipboardText, compareNumber } from '@/utils/index.js'
 
 // 初始化仓库
 const usersStore = userStore()
 const { t } = useI18n()
-const { copy } = useClipboard()
 const loading = useLoading()
 
 // 变量区
@@ -271,11 +268,7 @@ const quickPayHandle = async () => {
 }
 
 const copyHandle = (str) => {
-	copy(str)
-	showToast({
-		message: t('复制成功'),
-		icon: 'info',
-	})
+	clipboardText(str)
 }
 
 // 代码区
@@ -297,41 +290,24 @@ const getExchangeRate = async () => {
 	}
 }
 
-// 充值-充值协议列表
-const protocolList = ref([
-	{
-		protocol: 'ERC2.0',
-	},
-])
-// 充值-选中的充值协议
-const checkedProtocol = ref(protocolList.value[0].protocol)
-// 充值-获取充值协议列表
-const getChargeProtocolList = async () => {
-	try {
-		loading.loading()
-		// todo kevin 协议接口待对接
-		// const response = await currencyProtocol(coinId.value) // Fetch data from API
-		loading.clearLoading()
-		// 默认选中第一个协议
-		checkedProtocol.value = response.data[0].protocol
-		protocolList.value = response.data
-	} catch (err) {
-		// Handle errors
-		console.log(err)
-	}
-}
-
+const checkedProtocol = ref('')
 // 充值地址
-const rechargeAddress = ref('')
+const rechargeAddressList = ref([])
+const rechargeAddress = computed(() => {
+	const data = rechargeAddressList.value.find((d) => d.type === checkedProtocol.value)
+	return data ? data.address : ''
+})
 // 充值地址二维码
 let qrcode = ''
 // 获取充值地址
 const paymentAddressSetting = async () => {
 	try {
 		loading.loading()
-		const res = await fetchWalletConfig()
+		const res = await fetchWithdrawalAddressApi()
 		loading.clearLoading()
-		rechargeAddress.value = res.data.collectionAddress
+		rechargeAddressList.value = res.data
+
+		checkedProtocol.value = res.data[0].type
 		qrcode = useQRCode(rechargeAddress.value)
 	} catch (err) {
 		console.log(err)
@@ -344,28 +320,19 @@ const openUploadProof = () => {
 		return
 	}
 
-	// let filterList = protocolList.value.filter((item) => {
-	// 	return item.protocol === checkedProtocol.value
-	// })
-
-	usersStore.SET_STATE_DATA('rechargeData', {
-		// protocolId: filterList[0]?.id,
-		currency: selectCoinInfo.value.tokenName,
-		targetAddress: rechargeAddress.value,
-	})
-	router.push({ path: '/uploadProof' })
-
-	// if (filterList.length && filterList[0].id) {
-	// 	router.push({
-	// 		query: { pid: filterList[0].id, currency: selectCoinInfo.value.tokenName },
-	// 		path: '/uploadProof',
-	// 	})
-	// } else {
-	// 	showToast({
-	// 		message: t('无相关协议'),
-	// 		icon: 'info',
-	// 	})
-	// }
+	if (rechargeAddressList.value.length) {
+		usersStore.SET_STATE_DATA('rechargeData', {
+			// protocolId: filterList[0]?.id,
+			currency: selectCoinInfo.value.tokenName,
+			targetAddress: rechargeAddress.value,
+		})
+		router.push({ path: '/uploadProof' })
+	} else {
+		showToast({
+			message: t('无相关协议'),
+			icon: 'info',
+		})
+	}
 }
 
 const web3store = useWeb3Store()
