@@ -149,9 +149,11 @@ const fixactivityClientAdd = async () => {
 	}
 	if (!parseFloat(amount.value)) {
 		return showToast({ message: t('金额输入有误，请输入大于0的金额'), icon: 'info' })
-	} else if (compareNumber(tokenBalance, amount.value) === -1) {
-		return showToast({ message: t('操作失败，您的代币余额不足'), icon: 'info' })
 	}
+	// 校验用户链上余额
+	// else if (compareNumber(tokenBalance, amount.value) === -1) {
+	// 	return showToast({ message: t('操作失败，您的代币余额不足'), icon: 'info' })
+	// }
 	try {
 		loading.loading()
 		await addNodeAmountApi({
