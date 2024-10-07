@@ -94,24 +94,27 @@ const btnHandle = () => {
 
 const contractTimer = ref(null)
 const contractInterval = () => {
-	if (contractTimer.value) clearInterval(contractTimer.value)
-	if (!contractData.value.productId) return
+	if (contractTimer.value) clearTimeout(contractTimer.value)
+	if (contractData.value.productId) return
 
-	contractTimer.value = setInterval(() => {
-		getFixStake()
+	contractTimer.value = setTimeout(() => {
+		getFixStake().then(() => {
+			contractInterval()
+		})
 	}, 5000)
 }
 
 onMounted(() => {
 	const timer = setTimeout(() => {
-		getFixStake()
-		contractInterval()
+		getFixStake().then(() => {
+			contractInterval()
+		})
 		clearTimeout(timer)
 	}, 2000)
 })
 
 onUnmounted(() => {
-	if (contractTimer.value) clearInterval(contractTimer.value)
+	if (contractTimer.value) clearTimeout(contractTimer.value)
 })
 </script>
 <style lang="scss" scoped>
