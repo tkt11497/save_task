@@ -28,7 +28,7 @@ import router from './router'
 import store from '@/store'
 import { IMAGE_URL } from '@/config/index.js'
 
-setToastDefaultOptions({ position: 'top', className: 'toptoast' })
+setToastDefaultOptions({ position: 'top', className: 'toptoast', duration: 3000 })
 
 // 注册App
 const app = createApp(App)
