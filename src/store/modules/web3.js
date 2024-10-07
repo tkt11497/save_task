@@ -84,14 +84,12 @@ export const useWeb3Store = defineStore('web3', () => {
 			}
 			if (!address.value) {
 				showToast({ message: i18n.global.t('请正确连接你的钱包'), icon: 'info' })
-				await nextTick()
 				resetAccount()
 				return
 			}
 
 			if (cacheAddress.value !== address.value) {
 				console.log('useWeb3Store', `当前地址【${address.value}】和缓存地址【${cacheAddress.value}】不一致`)
-				await nextTick()
 				resetAccount()
 				return
 			}
@@ -305,11 +303,12 @@ export const useWeb3Store = defineStore('web3', () => {
 			accountsChanged(accounts) {
 				// 指的是此页面连接的账户，连接小狐狸后再切换账户，此事件才会触发
 				console.log('====web3====', '切换了账户', accounts)
-				resetAccount()
+				resetAccount().then(() => {
+					// 监听到钱包切换地址，刷新页面
+					window.location.reload()
+				})
 			},
 			chainChanged(chainId) {
-				// 16转10进制
-				// chainId = parseInt(chainId, 16)
 				console.log('====web3====', '切换了链', chainId)
 			},
 			connect(connectInfo) {
@@ -317,7 +316,10 @@ export const useWeb3Store = defineStore('web3', () => {
 			},
 			disconnect(error) {
 				console.log('====web3====', '断开连接', error)
-				resetAccount()
+				resetAccount().then(() => {
+					// 监听到钱包断开连接，刷新页面
+					window.location.reload()
+				})
 			},
 			message(message) {
 				console.log('====web3====', '一些消息', message)
