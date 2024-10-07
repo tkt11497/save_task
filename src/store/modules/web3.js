@@ -123,8 +123,7 @@ export const useWeb3Store = defineStore('web3', () => {
 					console.warn('useWeb3Store', '已经在平台授权过', currentCurrency.value)
 				} else {
 					// 选择授权过的币种进行登录---平台列表没有图片囧
-					const firstAuthToken = authrizeTokenList.value[0]
-					currentCurrency.value = currencyList.value.find((d) => d.tokenName === firstAuthToken.tokenName)
+					currentCurrency.value = authrizeTokenList.value[0]
 
 					console.warn('useWeb3Store', `使用已授权过的币种【${currentCurrency.value}】进行登录`)
 				}
