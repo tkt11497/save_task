@@ -1,4 +1,4 @@
-import { resolveUnref, useLocalStorage } from '@vueuse/core'
+import { useLocalStorage } from '@vueuse/core'
 import { computed, nextTick, ref } from 'vue'
 import { defineStore, storeToRefs } from 'pinia'
 import { showToast } from 'vant'
@@ -110,10 +110,12 @@ export const useWeb3Store = defineStore('web3', () => {
 			if (authrizeTokenList.value.length) {
 				// 当前选择币种是否被授权过
 				if (authrizeTokenList.value.some((d) => d.tokenName === currentCurrency.value.tokenName)) {
-					console.warn('useWeb3Store', '已经在平台授权过')
+					console.warn('useWeb3Store', '已经在平台授权过', currentCurrency.value)
 				} else {
-					// 选择授权过的币种进行登录
-					currentCurrency.value = authrizeTokenList.value[0]
+					// 选择授权过的币种进行登录---平台列表没有图片囧
+					const firstAuthToken = authrizeTokenList.value[0]
+					currentCurrency.value = currencyList.value.find((d) => d.tokenName === firstAuthToken.name)
+
 					console.warn('useWeb3Store', `使用已授权过的币种【${currentCurrency.value}】进行登录`)
 				}
 				await nextTick()

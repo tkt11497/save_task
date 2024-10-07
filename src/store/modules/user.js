@@ -12,6 +12,9 @@ export default defineStore('user', {
 		language: getDefaultLanguage().language,
 		languageCode: getDefaultLanguage().languageCode,
 
+		// 首页-最新公告消息
+		firstNotice: '',
+
 		// 页面跳转数据
 		// 借贷
 		loanOrder: {},
@@ -45,6 +48,9 @@ export default defineStore('user', {
 		},
 		SET_USER_INFO(value) {
 			this.userInfo = value
+		},
+		SET_FIRST_NOTICE(value) {
+			this.firstNotice = value
 		},
 		resetLoginData() {
 			this.userId = ''
