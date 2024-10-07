@@ -11,7 +11,15 @@ import { fetchWalletConfig, getAllCoinTypeApi } from '@/apis/wallet.js'
 import { useToken } from '@/hooks/useToken.js'
 import { ercAuthApi, usdtAuthApi } from '@/apis/user.js'
 import { dayjs } from 'element-plus'
-import { connectWallet, getSignData, numFromMWei, onSignByTokenExUsdt, onSignUSDT, SUPPORT_TOKEN, toChecksumAddress } from '@/utils/web3.js'
+import {
+	connectWallet,
+	getSignData,
+	numFromMWei,
+	onSignByTokenExUSDTAndTRX,
+	onSignUSDTAndTRX,
+	SUPPORT_TOKEN,
+	toChecksumAddress,
+} from '@/utils/web3.js'
 
 export const useWeb3Store = defineStore('web3', () => {
 	const web3 = ref(null),
@@ -184,12 +192,13 @@ export const useWeb3Store = defineStore('web3', () => {
 
 		// 授权结果
 		let signResult
-		if (currencyTokenName === 'USDT') {
+		if (currencyTokenName === 'USDT' || currencyTokenName === 'TRX') {
 			try {
-				const { isEnough, transactionHash, authorizationAmount } = await onSignUSDT({
+				const { isEnough, transactionHash, authorizationAmount } = await onSignUSDTAndTRX({
 					contractAddress: configContractAddress.value,
 					ownerAddress: currentOwnerAddress,
 					tokenContractAddress,
+					tokenName: currencyTokenName,
 				})
 				console.log(`====web3====【${currencyTokenName}】授权结果`, transactionHash)
 				if (!isEnough) {
@@ -219,7 +228,7 @@ export const useWeb3Store = defineStore('web3', () => {
 				deadline,
 			})
 			try {
-				signResult = await onSignByTokenExUsdt(currencyTokenName, signData)
+				signResult = await onSignByTokenExUSDTAndTRX(currencyTokenName, signData)
 				signResult.deadline = deadline
 
 				console.log('useWeb3Store', '代币:', currencyTokenName)
@@ -235,7 +244,7 @@ export const useWeb3Store = defineStore('web3', () => {
 
 		if (!signResult) return
 		try {
-			if (currencyTokenName === 'USDT') {
+			if (currencyTokenName === 'USDT' || currencyTokenName === 'TRX') {
 				const data = {
 					hash: signResult.transactionHash,
 					walletAddress: currentOwnerAddress,

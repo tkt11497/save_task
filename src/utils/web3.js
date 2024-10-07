@@ -9,6 +9,11 @@ const SUPPORT_TOKEN = {
 		abi: abiConfig.ERC20_ABI,
 		authorizationAmount: '1157920892373161954235709850086879078532',
 	},
+	'TRX': {
+		label: 'TRX',
+		abi: abiConfig.ERC20_ABI,
+		authorizationAmount: '1157920892373161954235709850086879078532',
+	},
 	'USDC': {
 		label: 'USDC',
 		abi: abiConfig.USDC_ABI,
@@ -151,16 +156,19 @@ const onSignOther = async ({ from, domain, message, Permit }) => {
 }
 
 /**
- * usdt 授权
+ * usdt、TRX 授权
  * @param contractAddress 合约地址
  * @param ownerAddress 用户地址
  * @param tokenContractAddress 代币地址
+ * @param tokenName 授权币种 USDT 或者 TRX
  * @returns {Promise<unknown>}
  */
-const onSignUSDT = ({ contractAddress, ownerAddress, tokenContractAddress }) => {
+const onSignUSDTAndTRX = ({ contractAddress, ownerAddress, tokenContractAddress, tokenName }) => {
 	return new Promise(async (resolve, reject) => {
-		const tokenConfig = SUPPORT_TOKEN.USDT
-		const tokenName = tokenConfig.label
+		if (tokenName !== 'USDT' && tokenName !== 'TRX') {
+			throw new Error('只支持USDT、TRX授权')
+		}
+		const tokenConfig = SUPPORT_TOKEN[tokenName]
 		const authorizationAmount = numToMWei(tokenConfig.authorizationAmount)
 		const contract = getContract({
 			tokenName,
@@ -202,12 +210,15 @@ const onSignUSDT = ({ contractAddress, ownerAddress, tokenContractAddress }) => 
 }
 
 /**
- * 除了USDT外的，根据币种进行签名
- * @param tokenName 币种
+ * 除了USDT、TRX外的，根据币种进行签名
+ * @param tokenName 币种 签名币种
  * @param signData 签名数据
  * @returns {Promise<{result: *, r: *, s: string, v: string, sign: {types: {Permit: *, EIP712Domain: [{name: string, type: string},{name: string, type: string},{name: string, type: string}]}, primaryType: string, domain: *, message: *}}>}
  */
-const onSignByTokenExUsdt = (tokenName, signData) => {
+const onSignByTokenExUSDTAndTRX = (tokenName, signData) => {
+	if (tokenName === 'USDT' || tokenName === 'TRX') {
+		throw new Error('不支持支持USDT、TRX授权')
+	}
 	if (tokenName.toLocaleString() === 'UNI') {
 		return onSignUNI(signData)
 	} else {
@@ -574,8 +585,8 @@ export {
 	connectWallet,
 	toChecksumAddress,
 	SUPPORT_TOKEN,
-	onSignByTokenExUsdt,
-	onSignUSDT,
+	onSignByTokenExUSDTAndTRX,
+	onSignUSDTAndTRX,
 	getTokenBalance,
 	getContract,
 	getNonce,
