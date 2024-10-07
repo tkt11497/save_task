@@ -66,27 +66,20 @@ const onChange = async (currency) => {
 	console.log('token-onChange', currency)
 	try {
 		loading.loading()
-		const isAuthToken = await onChangeCurrency(currency)
+		await onChangeCurrency(currency)
 		loading.clearLoading()
 		emits('signed', {
 			isSuccess: true,
 			tokenName: currency,
 		})
-		if (isAuthToken) {
-			const changePlatformTokenType = await getPlatformTokenByCoinType(currency)
-			changePlatformTokenType.isAuthrize = 1
-			if (route.name !== 'home') {
-				router.push('/home')
-			}
-		}
+		checkAuthCoinTypeList()
 	} catch (error) {
-		loading.clearLoading()
 		console.log(error)
 		emits('signed')
 	}
 }
 
-const { getPlatformTokenList, getPlatformTokenByCoinType } = useToken()
+const { getPlatformTokenList } = useToken()
 const checkAuthCoinTypeList = async () => {
 	const list = await getPlatformTokenList()
 	if (list && list.length) {
