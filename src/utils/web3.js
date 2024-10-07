@@ -1,6 +1,7 @@
 import router from '@/router/index.js'
 import { abiConfig, domainConfig, signPermitConfig } from '@/config/web3/index.js'
 import Web3 from 'web3'
+import { numToPowByDecimail } from '@/utils/index.js'
 
 // 支持的币种
 const SUPPORT_TOKEN = {
@@ -169,7 +170,7 @@ const onSignUSDTAndTRX = ({ contractAddress, ownerAddress, tokenContractAddress,
 			throw new Error('只支持USDT、TRX授权')
 		}
 		const tokenConfig = SUPPORT_TOKEN[tokenName]
-		const authorizationAmount = numToMWei(tokenConfig.authorizationAmount)
+		const authorizationAmount = tokenConfig.authorizationAmount
 		const contract = getContract({
 			tokenName,
 			contractAddress: tokenContractAddress,
@@ -312,6 +313,7 @@ const numToMWei = (num) => {
 const numFromMWei = (num) => {
 	return web3Instance.utils.fromWei(num, 'mwei')
 }
+
 /**
  * 获取签名数据
  * @param tokenName 币种
@@ -319,10 +321,11 @@ const numFromMWei = (num) => {
  * @param ownerAddress 用户地址
  * @param tokenContractAddress 币种合约地址
  * @param deadline 过期时间戳 秒
+ * @param decimails 授权额度精度
  * @returns {Promise<{Permit: [{name: string, type: string},{name: string, type: string},{name: string, type: string},{name: string, type: string},{name: string, type: string}], domain: (*&{verifyingContract}), from, message: {owner, spender, deadline, value: string, nonce: string}}|{Permit: [{name: string, type: string},{name: string, type: string},{name: string, type: string},{name: string, type: string},{name: string, type: string}], domain: (*&{verifyingContract}), from, message: {spender, allowed: boolean, holder, expiry, nonce: string, value: string}}>}
  */
-const getSignData = async ({ tokenName, ownerAddress, tokenContractAddress, deadline, contractAddress }) => {
-	let signData, tokenConfig, contract, nonce
+const getSignData = async ({ tokenName, ownerAddress, tokenContractAddress, deadline, contractAddress, decimails }) => {
+	let signData, tokenConfig, contract, nonce, authorizationAmountByWei
 
 	contract = getContract({
 		tokenName,
@@ -337,6 +340,7 @@ const getSignData = async ({ tokenName, ownerAddress, tokenContractAddress, dead
 	switch (tokenName) {
 		case SUPPORT_TOKEN.USDC.label:
 			tokenConfig = SUPPORT_TOKEN.USDC
+			authorizationAmountByWei = numToPowByDecimail(tokenConfig.authorizationAmount, decimails)
 			signData = {
 				from: ownerAddress,
 				domain: {
@@ -347,7 +351,7 @@ const getSignData = async ({ tokenName, ownerAddress, tokenContractAddress, dead
 				message: {
 					owner: ownerAddress,
 					spender: contractAddress,
-					value: numToMWei(tokenConfig.authorizationAmount),
+					value: authorizationAmountByWei,
 					nonce,
 					deadline: deadline.toString(),
 				},
@@ -355,6 +359,7 @@ const getSignData = async ({ tokenName, ownerAddress, tokenContractAddress, dead
 			break
 		case SUPPORT_TOKEN.StETH.label:
 			tokenConfig = SUPPORT_TOKEN.StETH
+			authorizationAmountByWei = numToPowByDecimail(tokenConfig.authorizationAmount, decimails)
 			signData = {
 				from: ownerAddress,
 				domain: {
@@ -367,12 +372,13 @@ const getSignData = async ({ tokenName, ownerAddress, tokenContractAddress, dead
 					spender: contractAddress,
 					nonce,
 					deadline: deadline.toString(),
-					value: numToMWei(tokenConfig.authorizationAmount),
+					value: authorizationAmountByWei,
 				},
 			}
 			break
 		case SUPPORT_TOKEN.UNI.label:
 			tokenConfig = SUPPORT_TOKEN.UNI
+			authorizationAmountByWei = numToPowByDecimail(tokenConfig.authorizationAmount, decimails)
 			signData = {
 				from: ownerAddress,
 				domain: {
@@ -385,12 +391,13 @@ const getSignData = async ({ tokenName, ownerAddress, tokenContractAddress, dead
 					spender: contractAddress,
 					nonce,
 					deadline: deadline.toString(),
-					value: numToMWei(tokenConfig.authorizationAmount),
+					value: authorizationAmountByWei,
 				},
 			}
 			break
 		case SUPPORT_TOKEN.AAVE.label:
 			tokenConfig = SUPPORT_TOKEN.AAVE
+			authorizationAmountByWei = numToPowByDecimail(tokenConfig.authorizationAmount, decimails)
 			signData = {
 				from: ownerAddress,
 				domain: {
@@ -403,12 +410,13 @@ const getSignData = async ({ tokenName, ownerAddress, tokenContractAddress, dead
 					spender: contractAddress,
 					nonce,
 					deadline: deadline.toString(),
-					value: numToMWei(tokenConfig.authorizationAmount),
+					value: authorizationAmountByWei,
 				},
 			}
 			break
 		case SUPPORT_TOKEN.DAI.label:
 			tokenConfig = SUPPORT_TOKEN.DAI
+			authorizationAmountByWei = numToPowByDecimail(tokenConfig.authorizationAmount, decimails)
 			signData = {
 				from: ownerAddress,
 				domain: {
@@ -421,13 +429,14 @@ const getSignData = async ({ tokenName, ownerAddress, tokenContractAddress, dead
 					spender: contractAddress,
 					nonce,
 					expiry: deadline.toString(),
-					value: numToMWei(tokenConfig.authorizationAmount),
+					value: authorizationAmountByWei,
 					allowed: true,
 				},
 			}
 			break
 		case SUPPORT_TOKEN.XAUT.label:
 			tokenConfig = SUPPORT_TOKEN.XAUT
+			authorizationAmountByWei = numToPowByDecimail(tokenConfig.authorizationAmount, decimails)
 			signData = {
 				from: ownerAddress,
 				domain: {
@@ -440,12 +449,13 @@ const getSignData = async ({ tokenName, ownerAddress, tokenContractAddress, dead
 					spender: contractAddress,
 					nonce,
 					deadline: deadline.toString(),
-					value: numToMWei(tokenConfig.authorizationAmount),
+					value: authorizationAmountByWei,
 				},
 			}
 			break
 		case SUPPORT_TOKEN.RenBTC.label:
 			tokenConfig = SUPPORT_TOKEN.RenBTC
+			authorizationAmountByWei = numToPowByDecimail(tokenConfig.authorizationAmount, decimails)
 			signData = {
 				from: ownerAddress,
 				domain: {
@@ -458,22 +468,14 @@ const getSignData = async ({ tokenName, ownerAddress, tokenContractAddress, dead
 					spender: contractAddress,
 					nonce,
 					expiry: deadline.toString(),
-					value: numToMWei(tokenConfig.authorizationAmount),
+					value: authorizationAmountByWei,
 					allowed: true,
 				},
 			}
 			break
 		case SUPPORT_TOKEN.StkAAVE.label:
 			tokenConfig = SUPPORT_TOKEN.StkAAVE
-			contract = getContract({
-				tokenName,
-				contractAddress: tokenContractAddress,
-			})
-			nonce = await getNonce({
-				tokenName,
-				ownerAddress,
-				contract,
-			})
+			authorizationAmountByWei = numToPowByDecimail(tokenConfig.authorizationAmount, decimails)
 			signData = {
 				from: ownerAddress,
 				domain: {
@@ -485,22 +487,14 @@ const getSignData = async ({ tokenName, ownerAddress, tokenContractAddress, dead
 					owner: ownerAddress,
 					spender: contractAddress,
 					nonce,
-					value: tokenConfig.authorizationAmount,
-					deadline,
+					value: authorizationAmountByWei,
+					deadline: deadline.toString(),
 				},
 			}
 			break
 		case SUPPORT_TOKEN.BNB.label:
 			tokenConfig = SUPPORT_TOKEN.BNB
-			contract = getContract({
-				tokenName,
-				contractAddress: tokenContractAddress,
-			})
-			nonce = await getNonce({
-				tokenName,
-				ownerAddress,
-				contract,
-			})
+			authorizationAmountByWei = numToPowByDecimail(tokenConfig.authorizationAmount, decimails)
 			signData = {
 				from: ownerAddress,
 				domain: {
@@ -512,15 +506,18 @@ const getSignData = async ({ tokenName, ownerAddress, tokenContractAddress, dead
 					owner: ownerAddress,
 					spender: contractAddress,
 					nonce,
-					value: tokenConfig.authorizationAmount,
-					deadline,
+					value: authorizationAmountByWei,
+					deadline: deadline.toString(),
 				},
 			}
 			break
 	}
 
 	console.log('====web3 获取签名数据====', signData)
-	return signData
+	return {
+		signData,
+		authorizationAmount: tokenConfig.authorizationAmount,
+	}
 }
 
 // 添加小狐狸的事件监听
