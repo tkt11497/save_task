@@ -436,6 +436,8 @@ defineExpose({})
 					font-size: 30px;
 					color: #fff;
 					font-weight: 700;
+					position: relative;
+					top: -13px;
 				}
 			}
 
