@@ -73,10 +73,12 @@ request.interceptors.response.use(
 
 			if (res.data.code !== 500) {
 				loadingStoreObj.subtractCount()
-				showToast({
-					message: res.data.msg,
-					icon: 'info',
-				})
+				if (!res.config._hideError) {
+					showToast({
+						message: res.data.msg,
+						icon: 'info',
+					})
+				}
 			} else {
 				loadingStoreObj.clearCount()
 				// 关闭单例模式下，请求的loading
