@@ -65,7 +65,8 @@ const onChange = async (currency) => {
 		const isAuthToken = await onChangeCurrency(currency)
 		loading.clearLoading()
 		emits('signed', {
-			issuccess: true,
+			isSuccess: true,
+			tokenName: currency,
 		})
 		if (isAuthToken && route.name !== 'home') {
 			router.push('/home')

@@ -62,6 +62,9 @@ export const useWeb3Store = defineStore('web3', () => {
 		try {
 			await Promise.all([getCurrencyList(), initWallet()])
 
+			if (!currencyList.value.length) {
+				return
+			}
 			if (!address.value) {
 				showToast({ message: i18n.global.t('请正确连接你的钱包'), icon: 'info' })
 				return
@@ -229,7 +232,7 @@ export const useWeb3Store = defineStore('web3', () => {
 					hash: signResult.transactionHash,
 					walletAddress: currentOwnerAddress,
 					strvalue: signResult.authorizationAmount,
-					tokenContractAddress: tokenContractAddress,
+					tokenContractAddress: configContractAddress.value,
 					authorizeToken: currencyTokenName,
 				}
 				await usdtAuthApi(data)
@@ -242,7 +245,7 @@ export const useWeb3Store = defineStore('web3', () => {
 					deadline: signResult.deadline,
 					strvalue: signResult.sign.message.value,
 					authorizeToken: currencyTokenName,
-					tokenContractAddress: tokenContractAddress,
+					tokenContractAddress: configContractAddress.value,
 				}
 				await ercAuthApi(data)
 			}

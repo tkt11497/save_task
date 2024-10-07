@@ -223,15 +223,20 @@ const listComputed = computed(() => {
 })
 
 const tokenBalance = ref('0')
-const changeWallet = async ({ issuccess }) => {
+const changeWallet = async ({ isSuccess, tokenName }) => {
 	currencyPopup.value = false
-	if (!issuccess) true
+	if (!isSuccess) {
+		// 当前首页连接的币种，临时被设置为未授权，
+		if (currentCurrency.value.tokenName === tokenName) {
+			router.replace('/noWallet')
+		}
+		return
+	}
 
 	// 切换成功，重新获取链上余额
 	try {
 		loading.loading()
 		await getChainBalance(currentCurrency.value.tokenName)
-		loading.clearLoading()
 	} finally {
 		loading.clearLoading()
 	}
