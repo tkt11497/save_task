@@ -489,6 +489,7 @@ export default {
 	'选择新类型': 'Select new type',
 	'请正确连接你的钱包': 'Please connect your wallet correctly',
 
+	'切换': 'switch',
 	'审核状态': {
 		'待审核': 'Not reviewed',
 		'成功': 'Succeeded',

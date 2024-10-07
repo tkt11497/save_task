@@ -136,7 +136,7 @@
 				</div>
 			</div>
 			<div class="currency-currency-label title2">{{ t('选择新类型') }}</div>
-			<CurrencyList hide-selected @signed="changeWallet" />
+			<CurrencyList hide-selected check-auth-status @signed="changeWallet" />
 		</van-popup>
 	</div>
 </template>
