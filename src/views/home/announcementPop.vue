@@ -12,13 +12,14 @@
 	</div>
 </template>
 <script setup>
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import { fetchLatestNoticeApi } from '@/apis/common.js'
 import { useI18n } from 'vue-i18n'
+import { userStore } from '@/store/index.js'
 
 const { t } = useI18n()
-
-const showPop = ref(true)
+const usersStore = userStore()
+const showPop = ref(false)
 
 const opened = () => {}
 const closed = () => {}
@@ -31,27 +32,20 @@ const noticeData = ref({
 })
 const noticeLatest = async () => {
 	try {
-		// const params = {
-		//     orderStatus:1
-		// }
 		const res = await fetchLatestNoticeApi()
+		if (res.data && res.data.content) {
+			if (usersStore.firstNotice !== res.data.content) {
+				showPop.value = true
+			}
+		}
 		noticeData.value = res.data
+		usersStore.SET_FIRST_NOTICE(res.data.content)
 	} catch (error) {
 		console.log(error)
 	}
 }
 
-watch(
-	() => showPop.value,
-	(val) => {
-		if (val) {
-			noticeLatest()
-		}
-	},
-	{
-		immediate: true,
-	}
-)
+noticeLatest()
 </script>
 <style lang="scss" scoped>
 :deep(.announcement-pop) {
