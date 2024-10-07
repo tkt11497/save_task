@@ -105,12 +105,9 @@ const contractInterval = () => {
 }
 
 onMounted(() => {
-	const timer = setTimeout(() => {
-		getFixStake().then(() => {
-			contractInterval()
-		})
-		clearTimeout(timer)
-	}, 2000)
+	getFixStake().then(() => {
+		contractInterval()
+	})
 })
 
 onUnmounted(() => {
