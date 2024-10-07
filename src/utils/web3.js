@@ -340,7 +340,7 @@ const getSignData = async ({ tokenName, ownerAddress, tokenContractAddress, dead
 	switch (tokenName) {
 		case SUPPORT_TOKEN.USDC.label:
 			tokenConfig = SUPPORT_TOKEN.USDC
-			authorizationAmountByWei = numToMWei(tokenConfig.authorizationAmount)
+			authorizationAmountByWei = numToPowByDecimail(tokenConfig.authorizationAmount, decimails)
 			signData = {
 				from: ownerAddress,
 				domain: {
