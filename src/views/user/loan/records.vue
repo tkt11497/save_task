@@ -67,7 +67,6 @@
 								</p>
 							</div>
 
-							<!-- todo 借贷状态-->
 							<!-- 订单未结束 并且 未开始还款时，显示贷款状态-->
 							<div class="content-row" v-if="list.status !== 3 && list.repaymentStatus === 0">
 								<p class="left-text">{{ t('状态') }}:</p>
@@ -206,7 +205,6 @@ const showPop = ref(false)
 const confirmRepayment = async () => {
 	try {
 		loading.loading()
-		// todo  接口待测试操作
 		await repaymentLoanApi({
 			orderId: rowData.value.orderId,
 		})
