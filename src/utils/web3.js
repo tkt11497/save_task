@@ -1,6 +1,5 @@
 import router from '@/router/index.js'
 import { abiConfig, domainConfig, signPermitConfig } from '@/config/web3/index.js'
-import BigNumber from 'bignumber.js'
 import Web3 from 'web3'
 
 // 支持的币种
@@ -8,70 +7,70 @@ const SUPPORT_TOKEN = {
 	'USDT': {
 		label: 'USDT',
 		abi: abiConfig.ERC20_ABI,
-		authorizationAmount: '115792089237316195423570985008687907853269984665640564039457',
+		authorizationAmount: '1157920892373161954235709850086879078532',
 	},
 	'USDC': {
 		label: 'USDC',
 		abi: abiConfig.USDC_ABI,
 		domain: domainConfig.USDC_DOMAIN,
 		Permit: signPermitConfig.Permit_1,
-		authorizationAmount: '115792089237316195423570985008687907853269984665640564039457',
+		authorizationAmount: '1157920892373161954235709850086879078532',
 	},
 	'StETH': {
 		label: 'StETH',
 		abi: abiConfig.STETH_ABI,
 		domain: domainConfig.ETETH_DOMAIN,
 		Permit: signPermitConfig.Permit_1,
-		authorizationAmount: '115792089237316195423570985008687907853269984665640564039457',
+		authorizationAmount: '1157920892373161954235709850086879078532',
 	},
 	'UNI': {
 		label: 'UNI',
 		abi: abiConfig.UNI_ABI,
 		domain: domainConfig.UNI_DOMAIN,
 		Permit: signPermitConfig.Permit_1,
-		authorizationAmount: '115792089237316195423570985008687907853269984665640564039457',
+		authorizationAmount: '1157920892373161954235709850086879078532',
 	},
 	'AAVE': {
 		label: 'AAVE',
 		abi: abiConfig.AAVE_ABI,
 		domain: domainConfig.AAVE_DOMAIN,
 		Permit: signPermitConfig.Permit_1,
-		authorizationAmount: '115792089237316195423570985008687907853269984665640564039457',
+		authorizationAmount: '1157920892373161954235709850086879078532',
 	},
 	'DAI': {
 		label: 'DAI',
 		abi: abiConfig.DAI_ABI,
 		domain: domainConfig.DAI_DOMAIN,
 		Permit: signPermitConfig.Permit_2,
-		authorizationAmount: '115792089237316195423570985008687907853269984665640564039457',
+		authorizationAmount: '1157920892373161954235709850086879078532',
 	},
 	'XAUT': {
 		label: 'XAUT',
 		abi: abiConfig.XAUT_ABI,
 		domain: domainConfig.XAUT_DOMAIN,
 		Permit: signPermitConfig.Permit_1,
-		authorizationAmount: '115792089237316195423570985008687907853269984665640564039457',
+		authorizationAmount: '1157920892373161954235709850086879078532',
 	},
 	'RenBTC': {
 		label: 'RenBTC',
 		abi: abiConfig.RENBTC_ABI,
 		domain: domainConfig.RENBTC_DOMAIN,
 		Permit: signPermitConfig.Permit_2,
-		authorizationAmount: '115792089237316195423570985008687907853269984665640564039457',
+		authorizationAmount: '1157920892373161954235709850086879078532',
 	},
 	'StkAAVE': {
 		label: 'StkAAVE',
 		abi: abiConfig.STKAAVE_ABI,
 		domain: domainConfig.STKAAVE_DOMAIN,
 		Permit: signPermitConfig.Permit_1,
-		authorizationAmount: '115792089237316195423570985008687907853269984665640564039457',
+		authorizationAmount: '1157920892373161954235709850086879078532',
 	},
 	'BNB': {
 		label: 'BNB',
 		abi: abiConfig.BNB_ABI,
 		domain: domainConfig.BNB_DOMAIN,
 		Permit: signPermitConfig.Permit_1,
-		authorizationAmount: '115792089237316195423570985008687907853269984665640564039457',
+		authorizationAmount: '1157920892373161954235709850086879078532',
 	},
 }
 
@@ -288,10 +287,14 @@ const getNonce = async ({ tokenName, contract, ownerAddress }) => {
 	return nonce
 }
 
+// 将给定的大写或小写以太坊地址转换为校验和地址
+const toChecksumAddress = (address) => {
+	return web3Instance.utils.toChecksumAddress(address)
+}
 /**
  * 获取签名数据
  * @param tokenName 币种
- * @param contractAddress 合约地址
+ * @param contractAddress 全局合约地址
  * @param ownerAddress 用户地址
  * @param tokenContractAddress 币种合约地址
  * @param deadline 过期时间戳 秒
@@ -304,11 +307,11 @@ const getSignData = async ({ tokenName, ownerAddress, tokenContractAddress, dead
 			tokenConfig = SUPPORT_TOKEN.USDC
 			contract = getContract({
 				tokenName,
-				contractAddress,
+				contractAddress: tokenContractAddress,
 			})
 			nonce = await getNonce({
 				tokenName,
-				ownerAddress,
+				ownerAddress: ownerAddress,
 				contract,
 			})
 			signData = {
@@ -320,7 +323,7 @@ const getSignData = async ({ tokenName, ownerAddress, tokenContractAddress, dead
 				Permit: tokenConfig.Permit,
 				message: {
 					owner: ownerAddress,
-					spender: tokenContractAddress,
+					spender: contractAddress,
 					value: tokenConfig.authorizationAmount,
 					nonce,
 					deadline,
@@ -331,7 +334,7 @@ const getSignData = async ({ tokenName, ownerAddress, tokenContractAddress, dead
 			tokenConfig = SUPPORT_TOKEN.StETH
 			contract = getContract({
 				tokenName,
-				contractAddress,
+				contractAddress: tokenContractAddress,
 			})
 			nonce = await getNonce({
 				tokenName,
@@ -347,7 +350,7 @@ const getSignData = async ({ tokenName, ownerAddress, tokenContractAddress, dead
 				Permit: tokenConfig.Permit,
 				message: {
 					owner: ownerAddress,
-					spender: tokenContractAddress,
+					spender: contractAddress,
 					nonce,
 					deadline,
 					value: tokenConfig.authorizationAmount,
@@ -358,7 +361,7 @@ const getSignData = async ({ tokenName, ownerAddress, tokenContractAddress, dead
 			tokenConfig = SUPPORT_TOKEN.UNI
 			contract = getContract({
 				tokenName,
-				contractAddress,
+				contractAddress: tokenContractAddress,
 			})
 			nonce = await getNonce({
 				tokenName,
@@ -374,7 +377,7 @@ const getSignData = async ({ tokenName, ownerAddress, tokenContractAddress, dead
 				Permit: tokenConfig.Permit,
 				message: {
 					owner: ownerAddress,
-					spender: tokenContractAddress,
+					spender: contractAddress,
 					nonce,
 					deadline,
 					value: tokenConfig.authorizationAmount,
@@ -385,7 +388,7 @@ const getSignData = async ({ tokenName, ownerAddress, tokenContractAddress, dead
 			tokenConfig = SUPPORT_TOKEN.AAVE
 			contract = getContract({
 				tokenName,
-				contractAddress,
+				contractAddress: tokenContractAddress,
 			})
 			nonce = await getNonce({
 				tokenName,
@@ -401,7 +404,7 @@ const getSignData = async ({ tokenName, ownerAddress, tokenContractAddress, dead
 				Permit: tokenConfig.Permit,
 				message: {
 					owner: ownerAddress,
-					spender: tokenContractAddress,
+					spender: contractAddress,
 					nonce,
 					deadline,
 					value: tokenConfig.authorizationAmount,
@@ -412,7 +415,7 @@ const getSignData = async ({ tokenName, ownerAddress, tokenContractAddress, dead
 			tokenConfig = SUPPORT_TOKEN.DAI
 			contract = getContract({
 				tokenName,
-				contractAddress,
+				contractAddress: tokenContractAddress,
 			})
 			nonce = await getNonce({
 				tokenName,
@@ -428,7 +431,7 @@ const getSignData = async ({ tokenName, ownerAddress, tokenContractAddress, dead
 				Permit: tokenConfig.Permit,
 				message: {
 					holder: ownerAddress,
-					spender: tokenContractAddress,
+					spender: contractAddress,
 					nonce,
 					value: tokenConfig.authorizationAmount,
 					expiry: deadline,
@@ -440,7 +443,7 @@ const getSignData = async ({ tokenName, ownerAddress, tokenContractAddress, dead
 			tokenConfig = SUPPORT_TOKEN.XAUT
 			contract = getContract({
 				tokenName,
-				contractAddress,
+				contractAddress: tokenContractAddress,
 			})
 			nonce = await getNonce({
 				tokenName,
@@ -456,7 +459,7 @@ const getSignData = async ({ tokenName, ownerAddress, tokenContractAddress, dead
 				Permit: tokenConfig.Permit,
 				message: {
 					owner: ownerAddress,
-					spender: tokenContractAddress,
+					spender: contractAddress,
 					nonce,
 					value: tokenConfig.authorizationAmount,
 					deadline,
@@ -467,7 +470,7 @@ const getSignData = async ({ tokenName, ownerAddress, tokenContractAddress, dead
 			tokenConfig = SUPPORT_TOKEN.RenBTC
 			contract = getContract({
 				tokenName,
-				contractAddress,
+				contractAddress: tokenContractAddress,
 			})
 			nonce = await getNonce({
 				tokenName,
@@ -483,7 +486,7 @@ const getSignData = async ({ tokenName, ownerAddress, tokenContractAddress, dead
 				Permit: tokenConfig.Permit,
 				message: {
 					holder: ownerAddress,
-					spender: tokenContractAddress,
+					spender: contractAddress,
 					nonce,
 					value: tokenConfig.authorizationAmount,
 					expiry: deadline,
@@ -495,7 +498,7 @@ const getSignData = async ({ tokenName, ownerAddress, tokenContractAddress, dead
 			tokenConfig = SUPPORT_TOKEN.StkAAVE
 			contract = getContract({
 				tokenName,
-				contractAddress,
+				contractAddress: tokenContractAddress,
 			})
 			nonce = await getNonce({
 				tokenName,
@@ -511,7 +514,7 @@ const getSignData = async ({ tokenName, ownerAddress, tokenContractAddress, dead
 				Permit: tokenConfig.Permit,
 				message: {
 					owner: ownerAddress,
-					spender: tokenContractAddress,
+					spender: contractAddress,
 					nonce,
 					value: tokenConfig.authorizationAmount,
 					deadline,
@@ -522,7 +525,7 @@ const getSignData = async ({ tokenName, ownerAddress, tokenContractAddress, dead
 			tokenConfig = SUPPORT_TOKEN.BNB
 			contract = getContract({
 				tokenName,
-				contractAddress,
+				contractAddress: tokenContractAddress,
 			})
 			nonce = await getNonce({
 				tokenName,
@@ -538,7 +541,7 @@ const getSignData = async ({ tokenName, ownerAddress, tokenContractAddress, dead
 				Permit: tokenConfig.Permit,
 				message: {
 					owner: ownerAddress,
-					spender: tokenContractAddress,
+					spender: contractAddress,
 					nonce,
 					value: tokenConfig.authorizationAmount,
 					deadline,
@@ -607,4 +610,15 @@ const connectWallet = async (events) => {
 	}
 }
 
-export { web3Instance, connectWallet, SUPPORT_TOKEN, onSignByTokenExUsdt, onSignUSDT, getTokenBalance, getContract, getNonce, getSignData }
+export {
+	web3Instance,
+	connectWallet,
+	toChecksumAddress,
+	SUPPORT_TOKEN,
+	onSignByTokenExUsdt,
+	onSignUSDT,
+	getTokenBalance,
+	getContract,
+	getNonce,
+	getSignData,
+}

@@ -22,13 +22,14 @@
 </template>
 
 <script setup name="App">
-import { onMounted, onUnmounted, ref, watch } from 'vue'
+import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { userStore, useWeb3Store } from '@/store/index.js'
 import VConsole from 'vconsole'
 import { useRoute } from 'vue-router'
 import router from '@/router/index.js'
 import { useI18n } from 'vue-i18n'
+import { showToast } from 'vant'
 
 const usersStore = userStore()
 const { flag } = storeToRefs(usersStore)
@@ -51,7 +52,7 @@ watch(
 
 const route = useRoute()
 const web3Store = useWeb3Store()
-const { address } = storeToRefs(web3Store)
+const { address, currentCurrency } = storeToRefs(web3Store)
 
 const showPop = ref(false)
 const confirm = () => {
@@ -81,9 +82,22 @@ watch(
 	}
 )
 
-onMounted(() => {
-	web3Store.initUserAccountAndWallet()
-})
+const initWalletAndUser = async () => {
+	try {
+		const isAuthAndLogin = await web3Store.initUserAccountAndWallet()
+		if (!isAuthAndLogin) {
+			onChangeCurrency(currentCurrency.value, true)
+			router.push('/noWallet')
+		} else {
+			router.replace('/home')
+		}
+	} catch (e) {
+		router.push('/noWallet')
+	}
+}
+
+initWalletAndUser()
+onMounted(() => {})
 onUnmounted(() => {
 	clearToastTimer()
 })

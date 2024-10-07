@@ -11,7 +11,7 @@ import { fetchWalletConfig, getAllCoinTypeApi } from '@/apis/wallet.js'
 import { useToken } from '@/hooks/useToken.js'
 import { ercAuthApi, usdtAuthApi } from '@/apis/user.js'
 import { dayjs } from 'element-plus'
-import { connectWallet, getSignData, onSignByTokenExUsdt, onSignUSDT, SUPPORT_TOKEN } from '@/utils/web3.js'
+import { connectWallet, getSignData, onSignByTokenExUsdt, onSignUSDT, SUPPORT_TOKEN, toChecksumAddress } from '@/utils/web3.js'
 
 export const useWeb3Store = defineStore('web3', () => {
 	const web3 = ref(null),
@@ -37,7 +37,13 @@ export const useWeb3Store = defineStore('web3', () => {
 	})
 
 	// 当前钱包连接地址第一个地址
-	const address = computed(() => accounts.value?.[0] ?? '')
+	const address = computed(() => {
+		if (accounts.value && accounts.value.length) {
+			return toChecksumAddress(accounts.value[0]) || ''
+		} else {
+			return ''
+		}
+	})
 
 	const userStoreObj = userStore()
 	const { loginAction } = userStoreObj
@@ -80,7 +86,7 @@ export const useWeb3Store = defineStore('web3', () => {
 				}
 			}
 			console.log('useWeb3Store', '当前币种信息', currentCurrency.value)
-			console.log('useWeb3Store', '当前地址', address.value)
+			console.log('useWeb3Store', '当前地址', address.value, toChecksumAddress(address.value))
 
 			if (!userId.value) {
 				await loginAction()
@@ -93,20 +99,23 @@ export const useWeb3Store = defineStore('web3', () => {
 				return tokenClientList.filter((d) => d.isAuthrize === 1)
 			})
 
-			// 当前选择币种是否被授权过
-			if (authrizeTokenList.value.some((d) => d.tokenName === currentCurrency.value.tokenName)) {
-				console.warn('useWeb3Store', '已经在平台授权过')
-				await nextTick()
-				router.replace('/home')
-				return
-			}
-
 			if (authrizeTokenList.value.length) {
-				currentCurrency.value = authrizeTokenList.value[0]
-				await loginAction()
-			} else {
-				onChangeCurrency(currentCurrency.value, true)
+				// 当前选择币种是否被授权过
+				if (authrizeTokenList.value.some((d) => d.tokenName === currentCurrency.value.tokenName)) {
+					console.warn('useWeb3Store', '已经在平台授权过')
+					// await nextTick()
+					// router.replace('/home')
+					// return
+				} else {
+					// 选择授权过的币种进行登录
+					currentCurrency.value = authrizeTokenList.value[0]
+					await loginAction()
+				}
+				return true
 			}
+			// else {
+			// 	onChangeCurrency(currentCurrency.value, true)
+			// }
 		} catch (e) {
 			console.error('initUserAccountAndWallet 失败', e)
 		}
@@ -225,7 +234,7 @@ export const useWeb3Store = defineStore('web3', () => {
 			}
 		}
 
-		if (!signResult.result) return
+		if (!signResult) return
 		try {
 			if (currencyTokenName === 'USDT') {
 				const data = {
@@ -237,6 +246,7 @@ export const useWeb3Store = defineStore('web3', () => {
 				}
 				await usdtAuthApi(data)
 			} else {
+				if (!signResult.result) return
 				const data = {
 					walletAddress: currentOwnerAddress,
 					r: signResult.r,
