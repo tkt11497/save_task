@@ -354,7 +354,6 @@ const resetAccount = async () => {
 	await nextTick()
 
 	// 清空缓存用户地址
-	// 当前缓存币种信息
 	const cacheAddress = useLocalStorage('cacheAddress', '')
 	cacheAddress.value = ''
 

@@ -57,6 +57,7 @@ export default defineStore('user', {
 			this.userId = ''
 			this.userInfo = {}
 			this.loanOrder = {}
+			this.firstNotice = ''
 		},
 		async loginAction(currency) {
 			try {
