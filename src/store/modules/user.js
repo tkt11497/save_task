@@ -1,3 +1,4 @@
+import { useLocalStorage } from '@vueuse/core'
 import { defineStore, storeToRefs } from 'pinia'
 import { getDefaultLanguage } from '@/i18n/index.js'
 import { useWeb3Store } from '@/store/index.js'
@@ -69,6 +70,8 @@ export default defineStore('user', {
 					domain: window.location.hostname,
 				})
 
+				const cacheAddress = useLocalStorage('cacheAddress', '')
+				cacheAddress.value = address.value
 				this.userInfo = response.data
 				this.userId = response.data.userId
 				console.log('用户登录成功', response)

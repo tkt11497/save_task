@@ -44,6 +44,9 @@ export const useWeb3Store = defineStore('web3', () => {
 		picUrlStr: '',
 	})
 
+	// 当前缓存币种信息
+	const cacheAddress = useLocalStorage('cacheAddress', '')
+
 	// 当前钱包连接地址第一个地址
 	const address = computed(() => {
 		if (accounts.value && accounts.value.length) {
@@ -81,6 +84,15 @@ export const useWeb3Store = defineStore('web3', () => {
 			}
 			if (!address.value) {
 				showToast({ message: i18n.global.t('请正确连接你的钱包'), icon: 'info' })
+				await nextTick()
+				resetAccount()
+				return
+			}
+
+			if (cacheAddress.value !== address.value) {
+				console.log('useWeb3Store', `当前地址【${address.value}】和缓存地址【${cacheAddress.value}】不一致`)
+				await nextTick()
+				resetAccount()
 				return
 			}
 
@@ -340,6 +352,11 @@ const resetAccount = async () => {
 
 	await nextTick()
 
+	// 清空缓存用户地址
+	// 当前缓存币种信息
+	const cacheAddress = useLocalStorage('cacheAddress', '')
+	cacheAddress.value = ''
+
 	// 清除获取余额的合约信息
 	const { resetContracts } = useToken()
 	resetContracts()
@@ -371,5 +388,4 @@ const resetAccount = async () => {
 	if (router.currentRoute.value.name !== 'noWallet') {
 		await router.replace({ name: 'noWallet' })
 	}
-	window.location.reload()
 }
