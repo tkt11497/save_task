@@ -7,17 +7,21 @@
 		</van-nav-bar>
 		<div class="content">
 			<div class="head">
-				<!--				<div class="left">-->
-				<!--					<span class="p1">{{ t('节点数量') }}</span>-->
-				<!--					<span class="p2 ellipsis-col"-->
-				<!--						>{{ contractData.nodeAmount }} <i>{{ contractData.stakeToken }}</i>-->
-				<!--					</span>-->
-				<!--					<p class="p3">-->
-				<!--						<img src="@/assets/images/home/trends.png" alt="trends" />-->
-				<!--						{{ contractData.stakeAmount - contractData.nodeAmount || 0 }} {{ t('未达到') }}-->
-				<!--					</p>-->
-				<!--				</div>-->
-				<!--				<div class="right">{{ timesForValueDecimal(reachRate, 100) }}%</div>-->
+				<div class="left">
+					<span class="p1">{{ t('节点数量') }}</span>
+					<span class="p2 ellipsis-col"
+						>{{ stakeOrder.showNodeAmount || 0 }} <i>{{ stakeOrder.stakeToken }}</i>
+					</span>
+					<p class="p3">
+						<img src="@/assets/images/home/trends.png" alt="trends" />
+						<span
+							>{{ timesForValueDecimal(stakeOrder.stakeAmount, dividedForValueDecimal(stakeOrder.stakeRate, 100)) || 0 }}
+							{{ stakeOrder.stakeToken }}</span
+						>
+						<span>&nbsp;&nbsp;&nbsp;{{ t('未达到') }}</span>
+					</p>
+				</div>
+				<div class="right">{{ timesForValueDecimal(reachRate, 100) }}%</div>
 			</div>
 			<div class="node-block">
 				<h2 class="title">{{ t('质押信息') }}</h2>
@@ -32,7 +36,7 @@
 					</div>
 					<div class="item">
 						<span class="p1">{{ t('收益 / 回报') }}:</span>
-						<span class="p2">{{ stakeOrder.stakeRate }}%</span>
+						<span class="p2">{{ toFixedDecimal(stakeOrder.stakeRate, 2) }}%</span>
 					</div>
 					<div class="item">
 						<span class="p1">{{ t('奖励') }}:</span>
@@ -87,9 +91,9 @@
 	</div>
 </template>
 <script setup>
-import { onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { userStore, useWeb3Store } from '@/store'
-import { dividedForValueDecimal, getImageUrl, timesForValueDecimal } from '@/utils/index.js'
+import { dividedByDecimal, dividedForValueDecimal, getImageUrl, minusForValueDecimal, timesForValueDecimal, toFixedDecimal } from '@/utils/index.js'
 import { showToast } from 'vant'
 import { storeToRefs } from 'pinia'
 import { useI18n } from 'vue-i18n'
@@ -186,12 +190,16 @@ const fixactivityClientAdd = async () => {
 		showToast({
 			message: t('添加成功'),
 			icon: 'info',
-			onClose: fixactivityClient,
+			onClose: getStakeOrder,
 		})
 	} catch (error) {
 		console.log(error)
 	}
 }
+
+const reachRate = computed(() => {
+	return dividedByDecimal(dividedForValueDecimal(stakeOrder.value.stakeAmount, stakeOrder.value.showNodeAmount || 0), 100) || 0
+})
 
 const maxBalHandle = async () => {
 	try {
@@ -299,7 +307,7 @@ onUnmounted(() => {
 	border-radius: 26px;
 	font-size: 26px;
 	background: #fff;
-	margin: -400px auto 0;
+	margin: -200px auto 0;
 	width: calc(100% - 120px);
 
 	.title {
