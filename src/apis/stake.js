@@ -16,10 +16,8 @@ export const fetchFinancialStakeListApi = () => {
 }
 
 // 首页-智能合约 固定质押信息
-export const fetchFixStakeApi = (hideError) => {
-	return request.get('/stake/fix', {
-		_hideError: hideError,
-	})
+export const fetchFixStakeApi = () => {
+	return request.get('/stake/fix')
 }
 
 // 首页-智能合约 固定质押订单信息

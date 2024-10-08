@@ -48,9 +48,9 @@ const contractData = ref({
 	days: '0',
 	stakeStatus: '0',
 })
-const getFixStake = async (hideError) => {
+const getFixStake = async () => {
 	try {
-		const res = await fetchFixStakeApi(hideError)
+		const res = await fetchFixStakeApi()
 		// 0：未开始  1：进行中
 		if (res.data && res.data.stakeStatus <= 1) {
 			contractData.value = res.data
@@ -60,6 +60,7 @@ const getFixStake = async (hideError) => {
 		}
 	} catch (error) {
 		console.log(error)
+		throw error
 	}
 }
 
@@ -98,16 +99,24 @@ const contractInterval = () => {
 	if (contractData.value.productId) return
 
 	contractTimer.value = setTimeout(() => {
-		getFixStake(true).then(() => {
-			contractInterval()
-		})
+		getFixStake()
+			.then(() => {
+				contractInterval()
+			})
+			.catch(() => {
+				if (contractTimer.value) clearTimeout(contractTimer.value)
+			})
 	}, 5000)
 }
 
 onMounted(() => {
-	getFixStake().then(() => {
-		contractInterval()
-	})
+	getFixStake()
+		.then(() => {
+			contractInterval()
+		})
+		.catch((e) => {
+			console.log(e)
+		})
 })
 
 onUnmounted(() => {

@@ -38,6 +38,7 @@ request.interceptors.response.use(
 		const userStoreObj = userStore()
 		const navStoreObj = navStore()
 		const loadingStoreObj = loadingStore()
+
 		const status = res.data.code
 
 		if (0 === status) {
@@ -73,12 +74,10 @@ request.interceptors.response.use(
 
 			if (res.data.code !== 500) {
 				loadingStoreObj.subtractCount()
-				if (!res.config._hideError) {
-					showToast({
-						message: res.data.msg,
-						icon: 'info',
-					})
-				}
+				showToast({
+					message: res.data.msg,
+					icon: 'info',
+				})
 			} else {
 				loadingStoreObj.clearCount()
 				// 关闭单例模式下，请求的loading
