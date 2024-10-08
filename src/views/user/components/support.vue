@@ -44,7 +44,7 @@
         <img :src="send" alt="send">
       </div>
     </div> -->
-		<iframe class="kefu-box" src="https://chat.ssrchat.com/service/gb4kwk" frameborder="0"></iframe>
+		<iframe class="kefu-box" :src="supportLink" frameborder="0"></iframe>
 	</div>
 </template>
 
@@ -54,6 +54,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { userStore } from '@/store'
 import { useI18n } from 'vue-i18n'
 import arrow from '@/assets/images/user/arrow.png'
+import { fetchPolicyLinkApi } from '@/apis/user.js'
 
 // 初始化仓库
 const store = userStore()
@@ -70,6 +71,18 @@ const onClickLeft = () => {
 	store.SET_PATH_DATA('yes')
 }
 
+const supportLink = ref('')
+const getLink = async () => {
+	try {
+		const res = await fetchPolicyLinkApi()
+		supportLink.value = res.data
+	} catch (e) {
+		router.replace('/user')
+		console.log('获取支持链接错误', e)
+	}
+}
+
+getLink()
 onMounted(() => {
 	store.SET_PATH_DATA('no')
 })

@@ -44,3 +44,8 @@ export const fetchWithdrawOrderListApi = (data) => {
 export const fetchExchangeOrderListApi = (data) => {
 	return request.get('/userOrder/exchangeOrder', { params: data })
 }
+
+// 获取用户支持链接
+export const fetchPolicyLinkApi = () => {
+	return request.get('/customerLink/get')
+}
