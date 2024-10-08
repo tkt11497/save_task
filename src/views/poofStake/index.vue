@@ -160,6 +160,7 @@ import useLoading from '@/hooks/useLoading.js'
 import { minusForValueDecimal, plusDecimal, plusForValueDecimal } from '@/utils'
 import { addStakeOrder, fetchJointStakeListApi, fetchPersonalStakeListApi } from '@/apis/stake.js'
 import { fetchStakeIncomeApi } from '@/apis/wallet.js'
+import { useLoopFetchApi } from '@/hooks/useLoopApi.js'
 
 // 初始化仓库
 const usersStore = userStore()
@@ -342,25 +343,14 @@ const getPoofStakeAccountInfo = async (isLoading) => {
 	}
 }
 
-const loopTimer = ref(null)
-const loopInterval = () => {
-	clearLoopInterval()
-	loopTimer.value = setTimeout(() => {
-		getPoofStakeAccountInfo().finally(loopInterval)
-	}, 5000)
-}
-const clearLoopInterval = () => {
-	if (loopTimer.value) clearTimeout(loopTimer.value)
-}
+const { runLoopTimer } = useLoopFetchApi({
+	fetchApi: getPoofStakeAccountInfo.bind(null, false),
+	needImmediatelyExecute: true,
+})
 
 onMounted(() => {
 	getStakeConfig()
-	getPoofStakeAccountInfo(true)
-	loopInterval()
-})
-
-onUnmounted(() => {
-	clearLoopInterval()
+	runLoopTimer()
 })
 
 // 将组件中的数据进行暴露出去

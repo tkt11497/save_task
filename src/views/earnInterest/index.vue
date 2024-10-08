@@ -201,6 +201,7 @@ import useLoading from '@/hooks/useLoading.js'
 // 引入静态资源
 import { addStakeOrder, fetchFinancialStakeListApi } from '@/apis/stake.js'
 import { fetchFinancialStakeIncomeApi } from '@/apis/wallet.js'
+import { useLoopFetchApi } from '@/hooks/useLoopApi.js'
 
 const loading = useLoading()
 
@@ -343,35 +344,25 @@ const earnInterestAccountInfo = ref({
 	stakingDayIncome: 0, // 今日盈利
 	stakingTotalIncome: 0, // 总盈利
 })
-const getEarnInterestAccountInfo = async (isLoading) => {
+const getEarnInterestAccountInfo = async (showLoading) => {
 	try {
-		isLoading && loading.loading()
+		showLoading && loading.loading()
 		const res = await fetchFinancialStakeIncomeApi()
-		isLoading && loading.clearLoading()
+		showLoading && loading.clearLoading()
 		earnInterestAccountInfo.value = res.data
 	} catch (err) {
 		console.log(err)
 	}
 }
 
-const loopTimer = ref(null)
-const loopInterval = () => {
-	clearLoopInterval()
-	loopTimer.value = setTimeout(() => {
-		getEarnInterestAccountInfo().finally(loopInterval)
-	}, 5000)
-}
-const clearLoopInterval = () => {
-	if (loopTimer.value) clearTimeout(loopTimer.value)
-}
+const { runLoopTimer } = useLoopFetchApi({
+	fetchApi: getEarnInterestAccountInfo,
+})
 
 onMounted(() => {
 	loadFixPressure()
 	getEarnInterestAccountInfo(true)
-	loopInterval()
-})
-onUnmounted(() => {
-	clearLoopInterval()
+	runLoopTimer()
 })
 
 // 将组件中的数据进行暴露出去

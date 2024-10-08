@@ -36,6 +36,7 @@ import router from '@/router'
 import { useI18n } from 'vue-i18n'
 import useLoading from '@/hooks/useLoading.js'
 import { addFixStakeOrderApi, fetchFixStakeApi } from '@/apis/stake.js'
+import { useLoopFetchApi } from '@/hooks/useLoopApi.js'
 
 const { t } = useI18n()
 const loading = useLoading()
@@ -93,34 +94,13 @@ const btnHandle = () => {
 	}
 }
 
-const contractTimer = ref(null)
-const contractInterval = () => {
-	if (contractTimer.value) clearTimeout(contractTimer.value)
-	if (contractData.value.productId) return
-
-	contractTimer.value = setTimeout(() => {
-		getFixStake()
-			.then(() => {
-				contractInterval()
-			})
-			.catch(() => {
-				if (contractTimer.value) clearTimeout(contractTimer.value)
-			})
-	}, 5000)
-}
-
-onMounted(() => {
-	getFixStake()
-		.then(() => {
-			contractInterval()
-		})
-		.catch((e) => {
-			console.log(e)
-		})
+const { runLoopTimer } = useLoopFetchApi({
+	fetchApi: getFixStake,
+	needImmediatelyExecute: true,
+	needErrorLoop: false,
 })
-
-onUnmounted(() => {
-	if (contractTimer.value) clearTimeout(contractTimer.value)
+onMounted(() => {
+	runLoopTimer()
 })
 </script>
 <style lang="scss" scoped>

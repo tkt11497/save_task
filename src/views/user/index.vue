@@ -90,7 +90,7 @@
 	</div>
 </template>
 
-<script setup name="Home">
+<script setup name="User">
 import { onMounted, onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { userStore, useWeb3Store } from '@/store'
@@ -99,6 +99,7 @@ import { storeToRefs } from 'pinia'
 import { getImageUrl, plusDecimal } from '@/utils'
 import useLoading from '@/hooks/useLoading.js'
 import { fetchUserStakeIncomeApi } from '@/apis/wallet.js'
+import { useLoopFetchApi } from '@/hooks/useLoopApi.js'
 // 初始化仓库
 const usersStore = userStore()
 const { t } = useI18n()
@@ -165,21 +166,13 @@ const getUserStaticIncome = async (isFirst) => {
 	}
 }
 
-const balanceTimer = ref(null)
-const balanceInterval = () => {
-	if (balanceTimer.value) clearTimeout(balanceTimer.value)
-	balanceTimer.value = setTimeout(() => {
-		getUserStaticIncome()
-	}, 5000)
-}
+const { runLoopTimer } = useLoopFetchApi({
+	fetchApi: getUserStaticIncome.bind(null, false),
+})
 
 onMounted(() => {
 	getUserStaticIncome(true)
-	balanceInterval()
-})
-
-onUnmounted(() => {
-	if (balanceTimer.value) clearTimeout(balanceTimer.value)
+	runLoopTimer()
 })
 
 // 将组件中的数据进行暴露出去
