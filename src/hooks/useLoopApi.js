@@ -37,6 +37,8 @@ export const useLoopFetchApi = ({ fetchApi, loopCall, interval = 5000, needImmed
 					console.log('=======useLoopApi=======runLoopTimer Error', error)
 					if (needErrorLoop) {
 						runLoopTimer()
+					} else {
+						clearLoopTimer()
 					}
 				})
 		}, interval)
