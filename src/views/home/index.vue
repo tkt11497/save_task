@@ -161,6 +161,7 @@ import info3 from '@/assets/images/home/info3.svg'
 import { fetchTradingPairListApi } from '@/apis/optionAndContract.js'
 import { fetchUserStaticIncomeApi } from '@/apis/user.js'
 import { fetchStaticIncomeApi } from '@/apis/common.js'
+import { useLoopFetchApi } from '@/hooks/useLoopApi.js'
 
 const web3Store = useWeb3Store()
 const { currentCurrency, address } = storeToRefs(web3Store)
@@ -277,21 +278,9 @@ const goMarket = () => {
 	router.replace('/market')
 	navStore2.SET_NAV_DATA(1)
 }
+
 // 公告通知
 const announcementPopRef = ref(null)
-
-const balanceTimer = ref(null)
-const balanceInterval = () => {
-	balanceTimer.value = setTimeout(() => {
-		getUserIncome(false)
-
-		getChainBalance().then((balance) => {
-			console.log('balanceInterval定时器获取余额', currentCurrency.value.tokenName, balance)
-			clearTimeout(balanceTimer.value)
-			balanceInterval()
-		})
-	}, 5000)
-}
 
 // 获取当前币种链上余额
 const getChainBalance = async () => {
@@ -304,18 +293,23 @@ const getChainBalance = async () => {
 	}
 }
 
+// 定时获取链上余额、查询用户固定质押
+const { runLoopTimer } = useLoopFetchApi({
+	fetchApi: () => {
+		return Promise.all([getChainBalance(), getUserIncome(false)])
+	},
+	loopCall: ([balance]) => {
+		console.log('balanceInterval定时器获取余额', currentCurrency.value.tokenName, balance)
+	},
+	needImmediatelyExecute: true,
+})
+
 onMounted(() => {
-	getUserIncome()
 	getIncomeConfigList()
 	getCoinList()
 
-	// 获取链上余额
-	getChainBalance()
-	balanceInterval()
-})
-
-onUnmounted(() => {
-	if (balanceTimer.value) clearTimeout(balanceTimer.value)
+	// 定时轮询
+	runLoopTimer()
 })
 
 // 将组件中的数据进行暴露出去
