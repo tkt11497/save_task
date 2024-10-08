@@ -32,7 +32,7 @@
 			</div>
 			<div class="bottom">
 				<div class="trend">
-					<img src="@/assets/images/home/trends2.png" alt="trends" />
+					<img src="@/assets/images/home/trends2.svg" alt="trends" />
 				</div>
 				<div>
 					<span class="trends">{{ plusDecimal(accountFundTransaction.todayBalance || 0) }}</span>
@@ -40,76 +40,77 @@
 					<span class="trends day">{{ t('今日盈利') }}</span>
 				</div>
 			</div>
-			<div class="total">
-				<div>{{ t('总收入') }}</div>
-				<div class="number">{{ plusDecimal(accountFundTransaction.balance || 0) }} {{ accountFundTransaction.tokenName }}</div>
-			</div>
 		</div>
 		<!-- 智能合约 -->
 		<SmartContract />
-		<div class="list">
-			<div class="top">
-				<div class="title">{{ t('投资组合') }}</div>
-				<div class="all" @click="goMarket">{{ t('查看全部') }}</div>
+		<div class="bg_mask">
+			<div class="total">
+					<div>{{ t('总收入') }}</div>
+					<div class="number">{{ plusDecimal(accountFundTransaction.balance || 0) }} {{ accountFundTransaction.tokenName }}</div>
 			</div>
-			<div class="list_info">
-				<div class="item" v-for="(item, index) in listComputed" :key="item.id">
-					<div class="item_img">
-						<img :src="$imgpath + item.mainTokenIconUrl" alt="" />
-					</div>
-					<div class="coin">
-						<div class="name">{{ item.symbol }}</div>
-						<div>{{ item.mainTokenName }}</div>
-					</div>
-					<div class="echarts">
-						<!-- <img src="../../assets/images/home/echarts.png" alt="echarts"> -->
-						<EchartsLine :line-id="item.symbol || `line-${index}`" :row-data="item" />
-					</div>
-					<MarketLatestData :row-data="item" />
-					<!-- <div class="num">
-                        <div class="price">{{ item.contractPricePoints }}</div>
-                        <div class="trend" :class="{ 'red': item.randomRange < 0 }">{{ item.randomRange > 0 ? '+' : '-'
-                            }}{{ item.randomRange }}%
-                        </div>
-                    </div> -->
+			<div class="list">
+				<div class="top">
+					<div class="title">{{ t('投资组合') }}</div>
+					<div class="all" @click="goMarket">{{ t('查看全部') }}</div>
 				</div>
-			</div>
-		</div>
-		<div class="info">
-			<van-swipe class="my-swipe" :width="126" :show-indicators="false" :loop="false">
-				<van-swipe-item v-for="(item, index) in infoList" :key="index">
-					<div class="info_box">
-						<div class="icon">
-							<img :src="item.icon" alt="" />
+				<div class="list_info">
+					<div class="item" v-for="(item, index) in listComputed" :key="item.id">
+						<div class="item_img">
+							<img :src="$imgpath + item.mainTokenIconUrl" alt="" />
 						</div>
-						<div class="content">{{ t(item.content) }}</div>
+						<div class="coin">
+							<div class="name">{{ item.symbol }}</div>
+							<div>{{ item.mainTokenName }}</div>
+						</div>
+						<div class="echarts">
+							<!-- <img src="../../assets/images/home/echarts.png" alt="echarts"> -->
+							<EchartsLine :line-id="item.symbol || `line-${index}`" :row-data="item" />
+						</div>
+						<MarketLatestData :row-data="item" />
+						<!-- <div class="num">
+							<div class="price">{{ item.contractPricePoints }}</div>
+							<div class="trend" :class="{ 'red': item.randomRange < 0 }">{{ item.randomRange > 0 ? '+' : '-'
+								}}{{ item.randomRange }}%
+							</div>
+						</div> -->
 					</div>
-				</van-swipe-item>
-			</van-swipe>
-		</div>
-		<div class="rate">
-			<div class="rate_title">
-				<div class="img">
-					<img src="../../assets/images/home/rate.png" alt="rate" />
 				</div>
-				<span>{{ t('回报率') }}</span>
 			</div>
-			<div class="rate_content" v-for="(item, index) in clientList" :key="index">
-				<div class="left">
+			<div class="info">
+				<van-swipe class="my-swipe" :width="126" :show-indicators="false" :loop="false">
+					<van-swipe-item v-for="(item, index) in infoList" :key="index">
+						<div class="info_box">
+							<div class="icon">
+								<img :src="item.icon" alt="" />
+							</div>
+							<div class="content">{{ t(item.content) }}</div>
+						</div>
+					</van-swipe-item>
+				</van-swipe>
+			</div>
+			<div class="rate">
+				<div class="rate_title">
 					<div class="img">
-						<img src="../../assets/images/home/circle.png" alt="" />
+						<img src="../../assets/images/home/rate.png" alt="rate" />
 					</div>
-					<span>{{ item.minAmount }}-{{ item.maxAmount }}</span>
+					<span>{{ t('回报率') }}</span>
 				</div>
-				<div class="right">
-					<div class="dot">
-						<!-- <img src="../../assets/images/home/circle.png" alt="circle"> -->
+				<div class="rate_content" v-for="(item, index) in clientList" :key="index">
+					<div class="left">
+						<div class="img">
+							<img src="../../assets/images/home/circle.png" alt="" />
+						</div>
+						<span>{{ item.minAmount }}-{{ item.maxAmount }}</span>
 					</div>
-					<span>{{ timesForValueDecimal(item.minInterest, 100) }}%-{{ timesForValueDecimal(item.maxInterest, 100) }}%</span>
+					<div class="right">
+						<div class="dot">
+							<!-- <img src="../../assets/images/home/circle.png" alt="circle"> -->
+						</div>
+						<span>{{ timesForValueDecimal(item.minInterest, 100) }}%-{{ timesForValueDecimal(item.maxInterest, 100) }}%</span>
+					</div>
 				</div>
 			</div>
 		</div>
-
 		<AnnouncementPop v-if="address" ref="announcementPopRef" />
 
 		<van-popup v-model:show="currencyPopup" position="bottom" class="currency-popup">
@@ -196,7 +197,8 @@ const backgroundImage = computed(() => {
 	currency = ['aave', 'bnb', 'dai', 'renbtc', 'steth', 'stkaave', 'uni', 'usdc', 'usdt', 'xaut'].includes(currency) ? currency : 'usdc'
 	// console.log('ddd', currency)
 	return {
-		'background-image': `url(${getImageUrl(`home/card_${currency}.png`)})`,
+		// 'background-image': `url(${getImageUrl(`home/card_${currency}.png`)})`,
+		'background-image': `url(${getImageUrl(`home/card_all.png`)})`,
 		'background-size': '100% 100%',
 		'background-repeat': 'no-repeat',
 		// 'background-position': "0 0",
@@ -324,7 +326,9 @@ defineExpose({})
 .home_container {
 	overflow: hidden;
 	padding-top: 40px;
-	background: #fafafa;
+	background-image: url("../../assets/images/background/sbg_2.png");
+	background-position:  top;
+	background-size: 140% 110%;
 
 	.header {
 		width: 100%;
@@ -350,23 +354,26 @@ defineExpose({})
 
 		.title {
 			font-size: 42px;
-			font-weight: 700;
+			font-weight: 600;
 			margin-left: -220px;
 			line-height: 48px;
 			margin-top: -2px;
-			color: #000;
+			color: var(--vt-header-black);
 		}
 
 		.input {
 			width: 196px;
 			height: 64px;
 			line-height: 64px;
-			background: #fff;
-			border-radius: 64px;
+
+			border-radius: 52px;
+			border: 1px solid #FF8008;
+			background: #FFF;
+
 			box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.13);
 			padding: 0 24px;
 			font-size: 26px;
-			color: #000;
+			color: #7B757F;
 			font-weight: 500;
 			text-align: center;
 		}
@@ -377,7 +384,7 @@ defineExpose({})
 		// background: url('./assets/card.png') no-repeat;
 		// background-size: 100% 100%;
 		//pointer-events: none;
-		margin: 0 48px 85px;
+		margin: 0 48px 0px;
 		padding: 24px 40px 0;
 		position: relative;
 		color: #fff;
@@ -396,9 +403,9 @@ defineExpose({})
 			}
 
 			.title {
-				font-weight: 400;
+				font-weight: 500;
 				font-size: 28px;
-				color: #fff;
+				color: var(--vt-header-black);
 			}
 		}
 
@@ -416,7 +423,7 @@ defineExpose({})
 			justify-content: space-between;
 
 			.title2 {
-				color: #fff;
+				color: var(--vt-header-black);
 				font-size: 26px;
 				font-weight: 500;
 			}
@@ -424,7 +431,7 @@ defineExpose({})
 			.number {
 				font-size: 62px;
 				font-weight: 600;
-				color: #fefefe;
+				color: var(--vt-header-black);
 				height: 86px;
 
 				.amount {
@@ -434,8 +441,8 @@ defineExpose({})
 				}
 				.unit {
 					font-size: 30px;
-					color: #fff;
-					font-weight: 700;
+					color: var(--vt-header-black);
+					font-weight: 600;
 					position: relative;
 					top: -13px;
 				}
@@ -470,8 +477,8 @@ defineExpose({})
 			align-items: center;
 
 			.trend {
-				width: 35px;
-				height: 35px;
+				width: 30px;
+				height: 30px;
 
 				img {
 					width: 100%;
@@ -480,264 +487,268 @@ defineExpose({})
 			}
 
 			.trends {
-				color: #fff;
-				font-size: 24px;
+				color: var(--vt-sub-black);
+				font-size: 22px;
 				margin-left: 16px;
-				font-weight: 700;
+				font-weight: 500;
 			}
 
 			.day {
-				color: #fff;
-				font-size: 24px;
+				color: var(--vt-sub-black);
+				font-size: 22px;
 				font-weight: normal;
-				margin-left: 10px;
+				margin-left: 6px;
 			}
 		}
 
+	}
+	.bg_mask{
+		background: rgba(217, 217, 217, 0.08);
+		backdrop-filter: blur(25.368999481201172px);
+		margin-top: -93px;
 		.total {
-			background: linear-gradient(360deg, rgba(252, 252, 252, 0.5) 80.98%, rgba(255, 255, 255, 0.5) 100%);
-			backdrop-filter: blur(24px);
-			width: calc(100% + 80px);
-			margin-left: -40px;
-			height: 130px;
-			transform: translateY(10px);
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			font-size: 24px;
-			color: #676767;
-			font-weight: 700;
-			padding: 0 46px;
-
-			.number {
-				color: #333;
-				font-size: 28px;
-				font-weight: 600;
-			}
-		}
-	}
-
-	.list {
-		padding: 0px 42px;
-
-		.top {
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			height: 48px;
-			margin-bottom: 10px;
-			padding-left: 24px;
-			padding-right: 24px;
-
-			.title {
-				font-size: 36px;
-				font-weight: 700;
-				color: #121212;
-			}
-
-			.all {
-				font-size: 28px;
-				color: #7ba9ff;
-				font-weight: 500;
-				line-height: 40px;
-			}
-		}
-
-		.list_info {
-			border-radius: 32px;
-			background: #fff;
-			padding: 0 24px;
-			overflow: hidden;
-
-			.item {
-				display: flex;
-				border-bottom: 1px solid rgba($color: #b9c1d9, $alpha: 0.2);
-				font-size: 25px;
-				padding-bottom: 20px;
-				margin-top: 30px;
-
-				.item_img {
-					flex: 0 0 96px;
-					width: 96px;
-					height: 96px;
-					border-radius: 50%;
-					margin-right: 32px;
-					overflow: hidden;
-
-					img {
-						width: 100%;
-						height: 100%;
-					}
-				}
-
-				.coin {
-					flex: 0 0 140px;
-					color: #b8b8b8;
-					font-size: 24px;
-					margin-right: 20px;
-
-					.name {
-						font-size: 28px;
-						font-weight: 700;
-						color: #121212;
-						margin-top: 8px;
-					}
-				}
-
-				.echarts {
-					width: 160px;
-				}
-
-				.num {
-					flex: 1 1 auto;
-					margin-left: 40px;
-					max-width: 140px;
-					text-align: right;
-
-					div {
-						width: 100%;
-						overflow: hidden;
-						text-overflow: ellipsis;
-						white-space: nowrap;
-					}
-
-					.price {
-						font-size: 32px;
-						color: #121212;
-						font-weight: 700;
-					}
-
-					.trend {
-						color: #7ba9ff;
-						font-size: 24px;
-						font-weight: 400;
-					}
-
-					.red {
-						color: #ff6464;
-					}
-				}
-			}
-		}
-	}
-
-	.info {
-		padding: 44px 42px 36px;
-		display: flex;
-		justify-content: space-between;
-
-		:deep(.van-swipe-item) {
-			padding-right: 20px;
-			box-sizing: border-box;
-		}
-		.info_box {
-			//width: 220px !important;
-			//height: 224px;
-			//background: #fff;
-			//border-radius: 24px;
-			//padding-top: 32px;
-			//padding-bottom: 32px;
-			//margin-right: 20px;
-			//display: flex;
-			//flex-direction: column;
-
-			background: #fff;
-			border-radius: 28px;
-			padding: 15px;
-			height: 100%;
-
-			.icon {
-				line-height: 1;
-
-				img {
-					width: 50px;
-					height: 50px;
-				}
-			}
-
-			.content {
-				margin-top: 22px;
-				font-weight: 700;
-				font-size: 28px;
-				color: #000;
-			}
-		}
-	}
-
-	.rate {
-		background: #fff;
-		margin: 0 42px 48px;
-		padding: 32px 22px;
-		border-radius: 32px;
-
-		.rate_title {
-			display: flex;
-			height: 52px;
-			align-items: center;
-			margin-bottom: 30px;
-
-			.img {
+				width: 100%;
+				margin-left: 0px;
+				height: 130px;
 				display: flex;
 				align-items: center;
+				justify-content: space-between;
+				font-size: 24px;
+				color: var(--vt-header-black);
+				font-weight: 600;
+				padding: 0 46px;
 
-				img {
-					width: 70px;
-					height: 50px;
+				.number {
+					color: #FFF7FF;
+					font-size: 26px;
+					font-weight: 600;
 				}
 			}
 
-			span {
-				font-size: 26px;
-				color: #000;
-				font-weight: 700;
+		.list {
+			padding: 0px 23px;
+
+			.top {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				height: 48px;
+				margin-bottom: 10px;
+				padding-left: 20px;
+				padding-right: 20px;
+
+				.title {
+					font-size: 30px;
+					font-weight: 600;
+					color: var(--vt-header-black);
+				}
+
+				.all {
+					font-size: 26px;
+					color: #387EFF;
+					font-weight: 500;
+					line-height: 40px;
+				}
+			}
+
+			.list_info {
+				border-radius:  20px;
+				border-top: 1.5px solid #FFF;
+				background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
+				box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
+
+				padding: 0 18px;
+				overflow: hidden;
+
+				.item {
+					display: flex;
+					font-size: 25px;
+					padding-bottom: 20px;
+					margin-top: 30px;
+
+					.item_img {
+						flex: 0 0 96px;
+						width: 96px;
+						height: 96px;
+						border-radius: 50%;
+						margin-right: 32px;
+						overflow: hidden;
+
+						img {
+							width: 100%;
+							height: 100%;
+						}
+					}
+
+					.coin {
+						flex: 0 0 140px;
+						color: #b8b8b8;
+						font-size: 24px;
+						margin-right: 20px;
+
+						.name {
+							font-size: 28px;
+							font-weight: 700;
+							color: #121212;
+							margin-top: 8px;
+						}
+					}
+
+					.echarts {
+						width: 160px;
+					}
+
+					.num {
+						flex: 1 1 auto;
+						margin-left: 40px;
+						max-width: 140px;
+						text-align: right;
+
+						div {
+							width: 100%;
+							overflow: hidden;
+							text-overflow: ellipsis;
+							white-space: nowrap;
+						}
+
+						.price {
+							font-size: 32px;
+							color: #121212;
+							font-weight: 700;
+						}
+
+						.trend {
+							color: #7ba9ff;
+							font-size: 24px;
+							font-weight: 400;
+						}
+
+						.red {
+							color: #ff6464;
+						}
+					}
+				}
 			}
 		}
 
-		.rate_content {
+		.info {
+			padding: 44px 42px 36px;
 			display: flex;
 			justify-content: space-between;
-			margin: 0px;
-			height: 90px;
-			padding-left: 20px;
-			line-height: 30px;
-			background: transparent;
-			border-top: 1px dashed rgba(185, 193, 217, 0.2);
-			border-bottom: 1px dashed rgba(185, 193, 217, 0.2);
 
-			.left,
-			.right {
-				.img {
-					width: 14px;
-					height: 14px;
+			:deep(.van-swipe-item) {
+				padding-right: 20px;
+				box-sizing: border-box;
+			}
+			.info_box {
+				//width: 220px !important;
+				//height: 224px;
+				//background: #fff;
+				//border-radius: 24px;
+				//padding-top: 32px;
+				//padding-bottom: 32px;
+				//margin-right: 20px;
+				//display: flex;
+				//flex-direction: column;
+
+				background: #fff;
+				border-radius: 28px;
+				padding: 15px;
+				height: 100%;
+
+				.icon {
+					line-height: 1;
 
 					img {
-						width: 100%;
-						height: 100%;
-						vertical-align: sub;
+						width: 50px;
+						height: 50px;
+					}
+				}
+
+				.content {
+					margin-top: 22px;
+					font-weight: 700;
+					font-size: 28px;
+					color: #000;
+				}
+			}
+		}
+
+		.rate {
+			background: #fff;
+			margin: 0 42px 48px;
+			padding: 32px 22px;
+			border-radius: 32px;
+
+			.rate_title {
+				display: flex;
+				height: 52px;
+				align-items: center;
+				margin-bottom: 30px;
+
+				.img {
+					display: flex;
+					align-items: center;
+
+					img {
+						width: 70px;
+						height: 50px;
 					}
 				}
 
 				span {
 					font-size: 26px;
-					font-weight: 500;
 					color: #000;
-					margin-left: 28px;
+					font-weight: 700;
 				}
 			}
 
-			.right {
+			.rate_content {
 				display: flex;
-				align-items: center;
+				justify-content: space-between;
+				margin: 0px;
+				height: 90px;
+				padding-left: 20px;
+				line-height: 30px;
+				background: transparent;
+				border-top: 1px dashed rgba(185, 193, 217, 0.2);
+				border-bottom: 1px dashed rgba(185, 193, 217, 0.2);
 
-				.dot {
-					width: 14px;
-					height: 12px;
-					background-color: #a9aaac;
-					border-radius: 50%;
+				.left,
+				.right {
+					.img {
+						width: 14px;
+						height: 14px;
+
+						img {
+							width: 100%;
+							height: 100%;
+							vertical-align: sub;
+						}
+					}
+
+					span {
+						font-size: 26px;
+						font-weight: 500;
+						color: #000;
+						margin-left: 28px;
+					}
 				}
 
-				span {
-					margin-left: 20px;
+				.right {
+					display: flex;
+					align-items: center;
+
+					.dot {
+						width: 14px;
+						height: 12px;
+						background-color: #a9aaac;
+						border-radius: 50%;
+					}
+
+					span {
+						margin-left: 20px;
+					}
 				}
 			}
 		}

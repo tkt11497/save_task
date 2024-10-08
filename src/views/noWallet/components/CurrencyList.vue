@@ -106,6 +106,7 @@ defineOptions({ name: 'CurrencyList' })
 .currency-list {
 	font-size: 28px;
 	font-weight: 500;
+	margin-top: 40px;
 
 	img {
 		width: 60px;
@@ -115,26 +116,35 @@ defineOptions({ name: 'CurrencyList' })
 
 	.text {
 		font-size: 28px;
-		color: #000;
-		font-weight: 400;
+		color: var(--vt-header-black);
+		font-weight: 600;
 	}
 
 	div {
-		height: 120px;
+		height: 100px;
 		display: flex;
 		align-items: center;
-		border-top: 1px solid rgba(185, 193, 217, 0.2);
+
+		padding: 8px 18px 7px 18px;
+		margin-top:11px ;
+		border-radius: 8px;
+		border-top: 1.5px solid #FFF;
+		background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
+		box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
+		
 	}
 
 	button {
 		margin-left: auto;
 		height: 54px;
-		//	border: 1px solid rgba(185, 193, 217, 0.5);
-		//	outline: none;
-		//	padding: 0 32px;
-		//	background: none;
-		//	border-radius: 54px;
-		//	color: #161616;
+
+		border-radius: 41px;
+		border-top: 0.5px solid #FFF;
+		background: linear-gradient(180deg, #F4F8F9 0%, #CCC 100%);
+		color:var(--vt-header-black);
+
+
+
 		font-size: 24px;
 		font-weight: 400;
 		min-width: 160px;

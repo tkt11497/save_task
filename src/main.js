@@ -10,7 +10,7 @@ import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 
 // 移动端你适配
-import 'amfe-flexible'
+// import 'amfe-flexible'
 
 // 全局样式
 import './assets/main.css'

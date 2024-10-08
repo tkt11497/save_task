@@ -38,6 +38,13 @@ defineOptions({ name: 'noWallet' })
 .choose {
 	padding: 48px;
 	background: #fff;
+	overflow-y: auto;
+	
+	background-image: url("../../assets/images/background/sbg_2.png");
+	background-position:  top;
+	background-size: 140% 110%;
+	height: 100vh;
+	backdrop-filter: blur(25.368999481201172px);
 
 	.title {
 		display: flex;
@@ -47,6 +54,7 @@ defineOptions({ name: 'noWallet' })
 		gap: 20px;
 		font-weight: bold;
 		margin-bottom: 48px;
+		color: var(--vt-header-black);
 	}
 
 	.subhead,
@@ -56,15 +64,14 @@ defineOptions({ name: 'noWallet' })
 
 	.subhead {
 		font-weight: 600;
-		color: #000;
+		color: var(--vt-header-black);
 		font-size: 32px;
 		margin-bottom: 16px;
 	}
 
 	.description {
 		font-size: 24px;
-		color: #b8b8b8;
-		color: #8d8d8d;
+		color: var(--vt-sub-black);
 		margin-bottom: 16px;
 	}
 }
