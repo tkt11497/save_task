@@ -68,19 +68,19 @@ onUnmounted(() => {
 	font-size: 24px;
 
 	.close {
-		font-size: 32px;
-		font-weight: 700;
-		color: #121212;
+		font-size: 29px;
+		font-weight: 500;
+		color: var(--vt-header-black);
 	}
 
 	.trend {
-		color: #82a9f9;
+		color: #387EFF;
 		font-size: 28px;
 		//font-weight: 400;
 	}
 
 	.red {
-		color: #ff6464;
+		color: #f64f4f;
 	}
 }
 </style>

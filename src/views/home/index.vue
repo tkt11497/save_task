@@ -77,7 +77,7 @@
 				</div>
 			</div>
 			<div class="info">
-				<van-swipe class="my-swipe" :width="126" :show-indicators="false" :loop="false">
+				<van-swipe class="my-swipe" :width="126" :height="130" :show-indicators="false" :loop="false">
 					<van-swipe-item v-for="(item, index) in infoList" :key="index">
 						<div class="info_box">
 							<div class="icon">
@@ -91,20 +91,20 @@
 			<div class="rate">
 				<div class="rate_title">
 					<div class="img">
-						<img src="../../assets/images/home/rate.png" alt="rate" />
+						<img src="../../assets/images/home/rate.svg" alt="rate" />
 					</div>
 					<span>{{ t('回报率') }}</span>
 				</div>
 				<div class="rate_content" v-for="(item, index) in clientList" :key="index">
 					<div class="left">
 						<div class="img">
-							<img src="../../assets/images/home/circle.png" alt="" />
+							<img src="../../assets/images/home/circle.svg" alt="" />
 						</div>
 						<span>{{ item.minAmount }}-{{ item.maxAmount }}</span>
 					</div>
 					<div class="right">
 						<div class="dot">
-							<!-- <img src="../../assets/images/home/circle.png" alt="circle"> -->
+							<img src="../../assets/images/home/circle2.svg" alt="circle">
 						</div>
 						<span>{{ timesForValueDecimal(item.minInterest, 100) }}%-{{ timesForValueDecimal(item.maxInterest, 100) }}%</span>
 					</div>
@@ -155,9 +155,9 @@ import { getImageUrl, plusDecimal, timesForValueDecimal } from '@/utils'
 import useLoading from '@/hooks/useLoading.js'
 import { useToken } from '@/hooks/useToken'
 // 引入静态资源
-import info1 from '@/assets/images/home/info1.png'
-import info2 from '@/assets/images/home/info2.png'
-import info3 from '@/assets/images/home/info3.png'
+import info1 from '@/assets/images/home/info1.svg'
+import info2 from '@/assets/images/home/info2.svg'
+import info3 from '@/assets/images/home/info3.svg'
 import { fetchTradingPairListApi } from '@/apis/optionAndContract.js'
 import { fetchUserStaticIncomeApi } from '@/apis/user.js'
 import { fetchStaticIncomeApi } from '@/apis/common.js'
@@ -563,15 +563,15 @@ defineExpose({})
 				.item {
 					display: flex;
 					font-size: 25px;
-					padding-bottom: 20px;
-					margin-top: 30px;
+					padding-bottom: 12px;
+					margin-top: 20px;
 
 					.item_img {
-						flex: 0 0 96px;
-						width: 96px;
-						height: 96px;
+						flex: 0 0 76px;
+						width: 76px;
+						height: 76px;
 						border-radius: 50%;
-						margin-right: 32px;
+						margin-right: 30px;
 						overflow: hidden;
 
 						img {
@@ -582,20 +582,22 @@ defineExpose({})
 
 					.coin {
 						flex: 0 0 140px;
-						color: #b8b8b8;
-						font-size: 24px;
+						color: var(--vt-sub-black);
+						font-size: 22px;
+						font-weight: 500;
 						margin-right: 20px;
 
 						.name {
-							font-size: 28px;
-							font-weight: 700;
-							color: #121212;
-							margin-top: 8px;
+							font-size: 25px;
+							font-weight: 600;
+							color: var(--vt-header-black);
+							margin-top: 2px;
 						}
 					}
 
 					.echarts {
-						width: 160px;
+						mix-blend-mode: hard-light;
+						width: 180px;
 					}
 
 					.num {
@@ -641,20 +643,24 @@ defineExpose({})
 				box-sizing: border-box;
 			}
 			.info_box {
-				//width: 220px !important;
+				width: 220px !important;
 				//height: 224px;
 				//background: #fff;
 				//border-radius: 24px;
 				//padding-top: 32px;
 				//padding-bottom: 32px;
 				//margin-right: 20px;
-				//display: flex;
-				//flex-direction: column;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				flex-direction: column;
+				border-radius:  8px;
+				border-top: 1.5px solid #FFF;
+				background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
+				box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
 
-				background: #fff;
-				border-radius: 28px;
 				padding: 15px;
-				height: 100%;
+				height: 99%;
 
 				.icon {
 					line-height: 1;
@@ -667,18 +673,23 @@ defineExpose({})
 
 				.content {
 					margin-top: 22px;
-					font-weight: 700;
+					font-weight: 500;
 					font-size: 28px;
-					color: #000;
+					line-height: 35px;
+					text-align: center;
+					color: var(--vt-header-black);
 				}
 			}
 		}
 
 		.rate {
-			background: #fff;
 			margin: 0 42px 48px;
 			padding: 32px 22px;
-			border-radius: 32px;
+
+			border-radius: 8px;
+			border-top: 1.5px solid #FFF;
+			background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
+			box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
 
 			.rate_title {
 				display: flex;
@@ -699,26 +710,29 @@ defineExpose({})
 				span {
 					font-size: 26px;
 					color: #000;
-					font-weight: 700;
+					font-weight: 600;
 				}
 			}
 
 			.rate_content {
 				display: flex;
 				justify-content: space-between;
+				align-items: center;
 				margin: 0px;
 				height: 90px;
-				padding-left: 20px;
+				padding-left: 0px;
 				line-height: 30px;
 				background: transparent;
-				border-top: 1px dashed rgba(185, 193, 217, 0.2);
-				border-bottom: 1px dashed rgba(185, 193, 217, 0.2);
 
 				.left,
 				.right {
+					display: flex;
+					align-items: center;
 					.img {
-						width: 14px;
-						height: 14px;
+						width: 54px;
+						height: 54px;
+						display: inline-block;
+						margin-top: -12px;
 
 						img {
 							width: 100%;
@@ -731,23 +745,31 @@ defineExpose({})
 						font-size: 26px;
 						font-weight: 500;
 						color: #000;
-						margin-left: 28px;
+						margin-left: 8px;
 					}
 				}
 
 				.right {
 					display: flex;
 					align-items: center;
+					min-width: 220px;
 
 					.dot {
-						width: 14px;
-						height: 12px;
-						background-color: #a9aaac;
-						border-radius: 50%;
+						width: 38px;
+						height: 38px;
+						display: inline-block;
+						margin-left: 7px;
+
+						img {
+							width: 100%;
+							height: 100%;
+							vertical-align: sub;
+						}
+						
 					}
 
 					span {
-						margin-left: 20px;
+						margin-left: 10px;
 					}
 				}
 			}

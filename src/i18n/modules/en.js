@@ -18,7 +18,7 @@ export default {
 	'常见问题': 'Frequently Asked Questions',
 	'复制链接': 'Copy Link',
 	'可靠的安全保障': 'Rellable Security Guarantee',
-	'稳定可靠的投资回报': 'Stable andReliable Investment',
+	'稳定可靠的投资回报': 'Stable and Reliable Investment',
 	'方便易操作': 'Convenient  and Easy Operation',
 	'借款账户': 'Loan Account',
 	'您借款': 'You borrow',

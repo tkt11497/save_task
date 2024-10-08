@@ -35,8 +35,8 @@ const colorMap = {
 		color2: '#F89A29',
 	},
 	eth: {
-		color1: '#6374C3',
-		color2: '#6374C3',
+		color1: '#DCAF77',
+		color2: '#FAF5EE',
 	},
 	xrp: {
 		color1: '#212936',
@@ -173,7 +173,7 @@ watch(
 			try {
 				let code = val.split('/')[0].toLowerCase() || 'btc'
 				option.value.series[0].lineStyle.color = colorMap[code].color1
-				option.value.series[0].areaStyle.color.colorStops[0].color = colorMap[code].color1
+				option.value.series[0].areaStyle.color.colorStops[0].color = colorMap[code].color2
 				// option.value.series[0].areaStyle.color.colorStops[1].color = colorMap[code].color1
 			} catch (error) {
 				console.log(error)
