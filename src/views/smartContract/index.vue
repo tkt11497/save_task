@@ -10,7 +10,7 @@
 				<div class="left">
 					<span class="p1">{{ t('节点数量') }}</span>
 					<span class="p2 ellipsis-col"
-						>{{ stakeOrder.nodeInputAmount || 0 }} <i>{{ stakeOrder.stakeToken }}</i>
+						>{{ stakeOrder.showNodeAmount || 0 }} <i>{{ stakeOrder.stakeToken }}</i>
 					</span>
 					<p class="p3">
 						<img src="@/assets/images/home/trends.png" alt="trends" />
@@ -21,7 +21,7 @@
 						<span>&nbsp;&nbsp;&nbsp;{{ t('未达到') }}</span>
 					</p>
 				</div>
-				<div class="right">{{ timesForValueDecimal(reachRate, 100) }}%</div>
+				<div class="right">{{ dividedByDecimal(reachRate, 100, 2) }}%</div>
 			</div>
 			<div class="node-block">
 				<h2 class="title">{{ t('质押信息') }}</h2>
