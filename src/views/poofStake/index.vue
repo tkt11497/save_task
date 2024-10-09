@@ -344,12 +344,12 @@ const getPoofStakeAccountInfo = async (isLoading) => {
 }
 
 const { runLoopTimer } = useLoopFetchApi({
-	fetchApi: getPoofStakeAccountInfo.bind(null, false),
-	needImmediatelyExecute: true,
+	fetchApi: getPoofStakeAccountInfo,
 })
 
 onMounted(() => {
 	getStakeConfig()
+	getPoofStakeAccountInfo(true)
 	runLoopTimer()
 })
 

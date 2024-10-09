@@ -12,6 +12,7 @@ import { onUnmounted, ref } from 'vue'
 export const useLoopFetchApi = ({ fetchApi, loopCall, interval = 5000, needImmediatelyExecute = false, needErrorLoop = true }) => {
 	const loopTimer = ref(null)
 
+	const isLoop = ref(true)
 	const baseFetch = () => {
 		return new Promise((resolve, reject) => {
 			fetchApi()
@@ -27,6 +28,9 @@ export const useLoopFetchApi = ({ fetchApi, loopCall, interval = 5000, needImmed
 	}
 	const runLoopTimer = () => {
 		clearLoopTimer()
+		if (!isLoop.value) {
+			return
+		}
 		console.log('=======useLoopApi=======runLoopTimer')
 		loopTimer.value = setTimeout(() => {
 			baseFetch()
@@ -49,6 +53,11 @@ export const useLoopFetchApi = ({ fetchApi, loopCall, interval = 5000, needImmed
 		console.log('=======useLoopApi=======clearLoopTimer')
 	}
 
+	const stopLoopTimer = () => {
+		isLoop.value = false
+		clearLoopTimer()
+	}
+
 	onUnmounted(() => {
 		clearLoopTimer()
 	})
@@ -60,6 +69,6 @@ export const useLoopFetchApi = ({ fetchApi, loopCall, interval = 5000, needImmed
 	return {
 		loopTimer,
 		runLoopTimer,
-		clearLoopTimer,
+		stopLoopTimer,
 	}
 }

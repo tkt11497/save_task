@@ -94,8 +94,14 @@ const btnHandle = () => {
 	}
 }
 
-const { runLoopTimer } = useLoopFetchApi({
+const { runLoopTimer, stopLoopTimer } = useLoopFetchApi({
 	fetchApi: getFixStake,
+	loopCall: () => {
+		if (isShowContract.value) {
+			console.log('====smartContract======已查询到固定质押，停止轮询')
+			stopLoopTimer()
+		}
+	},
 	needImmediatelyExecute: true,
 	needErrorLoop: false,
 })
