@@ -52,8 +52,7 @@ const contractData = ref({
 const getFixStake = async () => {
 	try {
 		const res = await fetchFixStakeApi()
-		// 0：未开始  1：进行中
-		if (res.data && res.data.stakeStatus <= 1) {
+		if (res.data) {
 			contractData.value = res.data
 			isShowContract.value = true
 		} else {
