@@ -46,7 +46,7 @@
 							</div>
 							<div class="content-row">
 								<p class="left-text">{{ t('总利息') }}:</p>
-								<p class="right-text">{{ list.interest || 0 }} {{ list.walletToken }}</p>
+								<p class="right-text">{{ list.alreadyInterest || 0 }} {{ list.walletToken }}</p>
 							</div>
 							<div class="content-row">
 								<p class="left-text">{{ t('每日利率') }}:</p>
@@ -63,7 +63,7 @@
 							<div class="content-row">
 								<p class="left-text">{{ t('需要还款') }}:</p>
 								<p class="right-text">
-									{{ plusForValueDecimal(list.overdueInterest, plusForValueDecimal(list.borrowAmount, list.interest)) }} {{ list.walletToken }}
+									{{ plusForValueDecimal(list.overdueInterest, plusForValueDecimal(list.borrowAmount, list.alreadyInterest)) }} {{ list.walletToken }}
 								</p>
 							</div>
 
@@ -146,7 +146,7 @@
 					</div>
 					<div class="each-row">
 						<p class="left-text">{{ t('总利息') }}:</p>
-						<p class="right-text">{{ rowData.interest || 0 }} {{ rowData.walletToken }}</p>
+						<p class="right-text">{{ rowData.alreadyInterest || 0 }} {{ rowData.walletToken }}</p>
 					</div>
 					<div class="each-row">
 						<p class="left-text">{{ t('违约金') }}:</p>
@@ -155,7 +155,7 @@
 					<div class="each-row">
 						<p class="left-text">{{ t('需要还款') }}:</p>
 						<p class="right-text">
-							{{ plusForValueDecimal(rowData.overdueInterest, plusForValueDecimal(rowData.borrowAmount, rowData.interest)) }}
+							{{ plusForValueDecimal(rowData.overdueInterest, plusForValueDecimal(rowData.borrowAmount, rowData.alreadyInterest)) }}
 							{{ rowData.walletToken }}
 						</p>
 					</div>
@@ -230,7 +230,7 @@ const loanData = ref({
 	loanAmount: 0, // 贷款金额
 	loanDays: 0, // 贷款天数
 	loanDayRatio: '0%', // 贷款天数比率
-	interest: 0, // 利息
+	alreadyInterest: 0, // 利息
 	repaymentAmount: 0, // 还款金额
 	latePaymentFee: 0, // 滞纳金
 	signImg: '', // 签名照片地址
@@ -244,8 +244,8 @@ const checkItem = (item, type = '') => {
 		loanAmount: rowData.value.borrowAmount, // 贷款金额
 		loanDays: rowData.value.borrowDay, // 贷款天数
 		loanDayRatio: rowData.value.dayRate, // 贷款天数比率
-		interest: rowData.value.interest, // 利息
-		repaymentAmount: plusForValueDecimal(rowData.value.borrowAmount, rowData.value.interest), // 还款金额
+		interest: rowData.value.alreadyInterest, // 利息
+		repaymentAmount: plusForValueDecimal(rowData.value.borrowAmount, rowData.value.alreadyInterest), // 还款金额
 		latePaymentFee: rowData.value.overdueRate, // 滞纳金
 		signImg: rowData.value.signatureImageUrl, // 签名照片地址
 	}
