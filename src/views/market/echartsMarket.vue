@@ -270,12 +270,13 @@ defineExpose({
 </script>
 <style lang="scss" scoped>
 .line-box {
-	width: 700px;
+	width: 100vw;
 	height: 600px;
+	background: linear-gradient(270deg, #F2ECD5 0%, #F2F2F2 100%);
 }
 
 .echarts-box {
-	width: 700px;
+	width: 100vw;
 	height: 600px;
 }
 </style>

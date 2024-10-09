@@ -1,0 +1,16 @@
+<svg width="50" height="39" viewBox="0 0 50 39" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Union" opacity="0.52" filter="url(#filter0_f_1_10193)">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M24 -8H3V13H24V-8ZM24 15H3V36H24V15ZM26 -8H47V13H26V-8ZM47 15H26V36H47V15Z" fill="url(#paint0_linear_1_10193)"/>
+</g>
+<defs>
+<filter id="filter0_f_1_10193" x="0" y="-11" width="50" height="50" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="1.5" result="effect1_foregroundBlur_1_10193"/>
+</filter>
+<linearGradient id="paint0_linear_1_10193" x1="3" y1="-8" x2="45.5" y2="36" gradientUnits="userSpaceOnUse">
+<stop stop-color="#D9D9D9"/>
+<stop offset="1" stop-color="#6FE7FD"/>
+</linearGradient>
+</defs>
+</svg>
