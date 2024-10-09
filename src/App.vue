@@ -36,6 +36,7 @@ const { flag } = storeToRefs(usersStore)
 const { t } = useI18n()
 
 onMounted(() => {
+	// todo 正式环境去除
 	const vConsole = new VConsole()
 })
 
@@ -82,9 +83,8 @@ watch(
 	}
 )
 
-onMounted(() => {
-	web3Store.initUserAccountAndWallet()
-})
+web3Store.initUserAccountAndWallet()
+onMounted(() => {})
 onUnmounted(() => {
 	clearToastTimer()
 })
