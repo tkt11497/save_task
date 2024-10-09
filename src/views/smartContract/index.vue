@@ -10,12 +10,12 @@
 				<div class="left">
 					<span class="p1">{{ t('节点数量') }}</span>
 					<span class="p2 ellipsis-col"
-						>{{ stakeOrder.showNodeAmount || 0 }} <i>{{ stakeOrder.stakeToken }}</i>
+						>{{ stakeOrder.nodeInputAmount || 0 }} <i>{{ stakeOrder.stakeToken }}</i>
 					</span>
 					<p class="p3">
 						<img src="@/assets/images/home/trends.png" alt="trends" />
 						<span
-							>{{ timesForValueDecimal(stakeOrder.stakeAmount, dividedForValueDecimal(stakeOrder.stakeRate, 100)) || 0 }}
+							>{{ timesForValueDecimal(stakeOrder.nodeInputAmount, dividedForValueDecimal(stakeOrder.stakeRate, 100)) || 0 }}
 							{{ stakeOrder.stakeToken }}</span
 						>
 						<span>&nbsp;&nbsp;&nbsp;{{ t('未达到') }}</span>
@@ -28,19 +28,19 @@
 				<div class="list">
 					<div class="item">
 						<span class="p1">{{ t('同意的金额') }}:</span>
-						<span class="p2">{{ stakeOrder.stakeAmount }} {{ stakeOrder.stakeToken }}</span>
+						<span class="p2">{{ stakeOrder.stakeAmount || 0 }} {{ stakeOrder.stakeToken }}</span>
 					</div>
 					<div class="item">
 						<span class="p1">{{ t('质押期限') }}:</span>
-						<span class="p2">{{ stakeOrder.stakeDay }} {{ t('天') }}</span>
+						<span class="p2">{{ stakeOrder.stakeDay || 0 }} {{ t('天') }}</span>
 					</div>
 					<div class="item">
 						<span class="p1">{{ t('收益 / 回报') }}:</span>
-						<span class="p2">{{ toFixedDecimal(stakeOrder.stakeRate, 2) }}%</span>
+						<span class="p2">{{ toFixedDecimal(stakeOrder.stakeRate || 0, 2) }}%</span>
 					</div>
 					<div class="item">
 						<span class="p1">{{ t('奖励') }}:</span>
-						<span class="p2">{{ stakeOrder.awardAmout }} {{ stakeOrder.awardToken }}</span>
+						<span class="p2">{{ stakeOrder.awardAmout || 0 }} {{ stakeOrder.awardToken }}</span>
 					</div>
 					<div class="item">
 						<span class="p1">{{ t('总回报') }}:</span>
@@ -198,7 +198,7 @@ const fixactivityClientAdd = async () => {
 }
 
 const reachRate = computed(() => {
-	return dividedByDecimal(dividedForValueDecimal(stakeOrder.value.stakeAmount, stakeOrder.value.showNodeAmount || 0), 100) || 0
+	return dividedForValueDecimal(stakeOrder.value.nodeInputAmount, stakeOrder.value.showNodeAmount) || 0
 })
 
 const maxBalHandle = async () => {
