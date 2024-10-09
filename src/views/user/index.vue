@@ -167,7 +167,7 @@ const getUserStaticIncome = async (isFirst) => {
 }
 
 const { runLoopTimer } = useLoopFetchApi({
-	fetchApi: getUserStaticIncome.bind(null, false),
+	fetchApi: getUserStaticIncome,
 })
 
 onMounted(() => {

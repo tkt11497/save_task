@@ -561,7 +561,8 @@ const onClickTab = ({ name }) => {
 }
 
 const getRecordApi = (data) => {
-	let fetchApi, commonData
+	let fetchApi,
+		commonData = {}
 	if (activeName.value === 'deposit') {
 		fetchApi = fetchRechargeOrderListApi
 	} else if (activeName.value === 'withdraw') {
@@ -578,7 +579,7 @@ const getRecordApi = (data) => {
 		fetchApi = fetchStakeOrderListApi
 		// 0:个人质押,1:用户定制产品,2:理财产品,3:联合质押
 		commonData = {
-			stakeTypes: [0, 1, 3],
+			stakeTypes: [0, 3],
 		}
 	} else if (activeName.value === 'option') {
 		fetchApi = fetchOptionsListApi

@@ -10,7 +10,7 @@
 				<div class="left">
 					<span class="p1">{{ t('节点数量') }}</span>
 					<span class="p2 ellipsis-col"
-						>{{ stakeOrder.nodeInputAmount || 0 }} <i>{{ stakeOrder.stakeToken }}</i>
+						>{{ stakeOrder.showNodeAmount || 0 }} <i>{{ stakeOrder.stakeToken }}</i>
 					</span>
 					<p class="p3">
 						<img src="@/assets/images/home/trends.png" alt="trends" />
@@ -21,7 +21,7 @@
 						<span>&nbsp;&nbsp;&nbsp;{{ t('未达到') }}</span>
 					</p>
 				</div>
-				<div class="right">{{ timesForValueDecimal(reachRate, 100) }}%</div>
+				<div class="right">{{ dividedByDecimal(reachRate, 100, 2) }}%</div>
 			</div>
 			<div class="node-block">
 				<h2 class="title">{{ t('质押信息') }}</h2>
@@ -67,8 +67,9 @@
 				</div>
 
 				<van-space :size="10" class="item-block">
-					<van-button plain block round type="primary" @click="onClickLeft">{{ t('取消') }}</van-button>
-					<van-button round block type="primary" @click="btnHandle('add')">{{ t('添加') }}</van-button>
+					<van-button plain round block type="primary" @click="showPop = true">{{ t('添加') }}</van-button>
+
+					<van-button block round type="primary" @click="handleClaimRewards">{{ t('提款') }}</van-button>
 				</van-space>
 			</div>
 		</div>
@@ -99,7 +100,7 @@ import { storeToRefs } from 'pinia'
 import { useI18n } from 'vue-i18n'
 import { useToken } from '@/hooks/useToken'
 import useLoading from '@/hooks/useLoading.js'
-import { addNodeAmountApi, fetchFixStakeApi, fetchFixStakeOrderApi } from '@/apis/stake.js'
+import { addNodeAmountApi, claimRewardsApi, fetchFixStakeApi, fetchFixStakeOrderApi } from '@/apis/stake.js'
 
 const loading = useLoading()
 
@@ -117,7 +118,6 @@ onMounted(() => {
 })
 const arrow = getImageUrl('user/arrow.png')
 const showPop = ref(false)
-const showPopType = ref('node')
 
 const amount = ref('')
 
@@ -127,12 +127,7 @@ const opened = () => {
 	})
 }
 const closed = () => {
-	showPopType.value = 'node'
 	showPop.value = false
-}
-const btnHandle = (type) => {
-	showPop.value = true
-	showPopType.value = type
 }
 
 // 智能合约数据
@@ -153,13 +148,33 @@ const getStakeOrder = async () => {
 		if (!contractData.value || !contractData.value.stateOrderId) return
 		const res = await fetchFixStakeOrderApi(contractData.value.stateOrderId)
 		stakeOrder.value = res.data
-		console.log(res)
 	} catch (e) {
 		console.log(e)
 	}
 }
 
-const toastTimer = ref(null)
+// 领取奖励
+const handleClaimRewards = async () => {
+	if (!contractData.value || !contractData.value.stateOrderId) {
+		return
+	}
+	try {
+		loading.loading()
+		await claimRewardsApi({
+			orderId: contractData.value.stateOrderId,
+		})
+		loading.clearLoading()
+
+		showToast({
+			icon: 'info',
+			message: t('操作成功'),
+			onClose: getStakeOrder,
+		})
+	} catch (e) {
+		console.log(e)
+	}
+}
+
 const fixactivityClientAdd = async () => {
 	const tokenBalance = await getChainBalanceByTokenName(contractData.value.stakeToken)
 	console.log('fixactivityClientAdd---', amount.value, tokenBalance)
@@ -181,9 +196,7 @@ const fixactivityClientAdd = async () => {
 			stakeOrderId: contractData.value.stateOrderId,
 		})
 		loading.clearLoading()
-		clearTimeout(toastTimer.value)
 
-		showPopType.value = 'node'
 		showPop.value = false
 		amount.value = ''
 
@@ -198,7 +211,11 @@ const fixactivityClientAdd = async () => {
 }
 
 const reachRate = computed(() => {
-	return dividedForValueDecimal(stakeOrder.value.nodeInputAmount, stakeOrder.value.showNodeAmount) || 0
+	if (stakeOrder.value.stakeOrderId) {
+		return dividedForValueDecimal(stakeOrder.value.nodeInputAmount, stakeOrder.value.showNodeAmount)
+	} else {
+		return 0
+	}
 })
 
 const maxBalHandle = async () => {
@@ -216,9 +233,7 @@ const onClickLeft = () => {
 	userStoreData.SET_PATH_DATA('yes')
 }
 
-onUnmounted(() => {
-	clearTimeout(toastTimer.value)
-})
+onUnmounted(() => {})
 </script>
 <style lang="scss" scoped>
 .main-page {

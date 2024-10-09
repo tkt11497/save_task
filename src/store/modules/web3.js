@@ -354,9 +354,9 @@ export const useWeb3Store = defineStore('web3', () => {
 // ************* sample data format ******************//
 
 const resetAccount = async () => {
-	console.log('useWeb3Store', '========resetAccount begin===========')
-
 	await nextTick()
+
+	console.log('useWeb3Store', '========resetAccount resetData begin========')
 
 	// 清空缓存用户地址
 	const cacheAddress = useLocalStorage('cacheAddress', '')
@@ -390,6 +390,7 @@ const resetAccount = async () => {
 		picUrlStr: '',
 	}
 
+	console.log('useWeb3Store', '========resetAccount resetData end========')
 	if (router.currentRoute.value.name !== 'noWallet') {
 		const params = getUrlParams()
 		await router.replace({ path: '/noWallet', query: { code: params.code } })

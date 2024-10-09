@@ -12,7 +12,7 @@
 	</div>
 </template>
 <script setup>
-import { ref } from 'vue'
+import { onBeforeMount, onMounted, ref } from 'vue'
 import { fetchLatestNoticeApi } from '@/apis/common.js'
 import { useI18n } from 'vue-i18n'
 import { userStore } from '@/store/index.js'
@@ -39,13 +39,19 @@ const noticeLatest = async () => {
 			}
 		}
 		noticeData.value = res.data
-		usersStore.SET_FIRST_NOTICE(res.data.content)
+		// 异步接口获取的原因，用户切换后钱包不一致 =》 重置数据 => 该返回仍被缓存
+		// 导致用户切换钱包，无法弹起公告
+		if (usersStore.userId) {
+			usersStore.SET_FIRST_NOTICE(res.data.content)
+		}
 	} catch (error) {
 		console.log(error)
 	}
 }
 
-noticeLatest()
+onMounted(() => {
+	noticeLatest()
+})
 </script>
 <style lang="scss" scoped>
 :deep(.announcement-pop) {

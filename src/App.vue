@@ -22,7 +22,7 @@
 </template>
 
 <script setup name="App">
-import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+import { nextTick, onBeforeMount, onMounted, onUnmounted, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { userStore, useWeb3Store } from '@/store/index.js'
 import VConsole from 'vconsole'
@@ -37,6 +37,7 @@ const { flag } = storeToRefs(usersStore)
 const { t } = useI18n()
 
 onMounted(() => {
+	// todo 正式环境去除
 	const vConsole = new VConsole()
 	flexible(window,document)
 })
@@ -84,8 +85,8 @@ watch(
 	}
 )
 
-onMounted(() => {
-	web3Store.initUserAccountAndWallet()
+onBeforeMount(async () => {
+	await web3Store.initUserAccountAndWallet()
 })
 onUnmounted(() => {
 	clearToastTimer()
