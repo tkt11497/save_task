@@ -83,8 +83,8 @@ watch(
 	}
 )
 
-onMounted(() => {
-	web3Store.initUserAccountAndWallet()
+onMounted(async () => {
+	await web3Store.initUserAccountAndWallet()
 })
 onUnmounted(() => {
 	clearToastTimer()
