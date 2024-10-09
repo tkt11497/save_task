@@ -24,7 +24,7 @@
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { userStore } from '@/store'
-import arrow from '@/assets/images/user/arrow.png'
+import arrow from '@/assets/images/market/back.svg'
 
 // 初始化仓库
 const store = userStore()

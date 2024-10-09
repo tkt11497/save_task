@@ -32,7 +32,7 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import arrow from '@/assets/images/user/arrow.png'
+import arrow from '@/assets/images/market/back.svg'
 import { userStore } from '@/store'
 import { useI18n } from 'vue-i18n'
 import useLoading from '@/hooks/useLoading.js'

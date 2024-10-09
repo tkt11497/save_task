@@ -113,7 +113,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { userStore } from '@/store'
 import { storeToRefs } from 'pinia'
-import arrow from '@/assets/images/user/arrow.png'
+import arrow from '@/assets/images/market/back.svg'
 import { base64ToBlob, dividedForValueDecimal, formatDate, timesDecimal, timesForValueDecimal } from '@/utils'
 import vueEsign from 'vue-esign'
 import { useI18n } from 'vue-i18n'

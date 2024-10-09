@@ -3,7 +3,7 @@
 		<div>
 			<van-nav-bar :fixed="true" :title="t('语言')" @click-left="onClickLeft">
 				<template #left>
-					<van-icon :name="arrow" size="18" />
+					<van-icon :name="arrow" size="23" />
 				</template>
 			</van-nav-bar>
 		</div>
@@ -19,7 +19,11 @@
 					:class="{ 'isChecked': item.value === checked }"
 				>
 					<template #right-icon>
-						<van-radio :name="item.title" />
+						<van-radio :name="item.title">
+							<template #icon="props">
+								<img class="img-icon" :src="props.checked ? active : inactive" />
+							</template>
+						</van-radio>
 					</template>
 				</van-cell>
 			</van-cell-group>
@@ -38,8 +42,10 @@ import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { userStore } from '@/store'
 import { useI18n } from 'vue-i18n'
-import arrow from '@/assets/images/user/arrow.png'
+import arrow from '@/assets/images/market/back.svg'
 import useLoading from '@/hooks/useLoading.js'
+import active from '@/assets/images/user/active.svg'
+import inactive from '@/assets/images/user/inactive.svg'
 
 const { locale, t } = useI18n()
 
@@ -115,38 +121,26 @@ defineExpose({})
 	// 单选框
 	.van-cell-group--inset {
 		margin: 0;
+		border-radius: 14px 14px 14px 14px;
+		border-top: 1.5px solid #FFF;
+		background: var(--fsdfsfds, linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%));
 	}
 	.van-cell {
 		padding: 15px 20px;
+		background: transparent;
+		.img-icon{
+			width: 20px;
+		}
 
-		&:active {
-			background-color: #fff;
-		}
-		&.isChecked {
-			color: #82a8f9;
-		}
+		// &:active {
+		// 	background-color: #fff;
+		// }
+		// &.isChecked {
+		// 	color: #82a8f9;
+		// }
 	}
 
-	:deep(.van-radio__icon--checked) {
-		.van-icon {
-			background-color: #fff;
-			position: relative;
-			border-color: #82a8f9;
-			border-width: 2px;
 
-			&:before {
-				content: '';
-				width: 10px;
-				height: 10px;
-				border-radius: 50%;
-				background-color: #82a8f9;
-				position: absolute;
-				top: 50%;
-				left: 50%;
-				transform: translate(-50%, -50%);
-			}
-		}
-	}
 
 	$buttonHeight: 100px;
 	.confirm-wrap {
@@ -158,14 +152,16 @@ defineExpose({})
 		width: 100%;
 		height: $buttonHeight + 50px;
 		overflow: hidden;
-		background-color: #fff;
+		background-color: transparent;
 
 		div {
 			position: fixed;
 			//bottom: -40px;
 			left: 50%;
 			transform: translateX(-50%);
-			background: #82a8f9;
+			border-top: 1px solid #FFF;
+			background: linear-gradient(180deg, #93B6FF 0%, #75D3FF 83%, #35DCE8 100%);
+			box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.20);
 			width: 90%;
 			height: $buttonHeight;
 			line-height: $buttonHeight;

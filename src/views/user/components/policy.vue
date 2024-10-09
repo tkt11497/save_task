@@ -3,7 +3,7 @@
 		<div>
 			<van-nav-bar :fixed="true" :title="t('隐私政策')" @click-left="onClickLeft">
 				<template #left>
-					<van-icon :name="arrow" size="18" />
+					<van-icon :name="arrow" size="23" />
 				</template>
 			</van-nav-bar>
 		</div>
@@ -79,7 +79,7 @@
 import { defineExpose, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { userStore } from '@/store'
-import arrow from '@/assets/images/user/arrow.png'
+import arrow from '@/assets/images/market/back.svg'
 import { useI18n } from 'vue-i18n'
 
 const { t, tm } = useI18n()

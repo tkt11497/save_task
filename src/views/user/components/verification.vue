@@ -266,7 +266,7 @@ import { showToast } from 'vant'
 import { useCountry } from '@/hooks/useCountry.js'
 import { useI18n } from 'vue-i18n'
 
-import arrow from '@/assets/images/user/arrow.png'
+import arrow from '@/assets/images/market/back.svg'
 import useLoading from '@/hooks/useLoading.js'
 import { createUserKycApi } from '@/apis/user.js'
 import { uploadFileApi } from '@/apis/common.js'

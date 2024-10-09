@@ -181,7 +181,7 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { userStore } from '@/store'
-import arrow from '@/assets/images/user/arrow.png'
+import arrow from '@/assets/images/market/back.svg'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { formatDate, plusForValueDecimal } from '@/utils'
