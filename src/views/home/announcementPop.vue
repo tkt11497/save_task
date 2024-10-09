@@ -12,7 +12,7 @@
 	</div>
 </template>
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { fetchLatestNoticeApi } from '@/apis/common.js'
 import { useI18n } from 'vue-i18n'
 import { userStore } from '@/store/index.js'
@@ -45,7 +45,9 @@ const noticeLatest = async () => {
 	}
 }
 
-noticeLatest()
+onMounted(() => {
+	noticeLatest()
+})
 </script>
 <style lang="scss" scoped>
 :deep(.announcement-pop) {
