@@ -3,7 +3,7 @@
 		<div>
 			<van-nav-bar :fixed="true" :title="t('什么是权益证明？')" class="nav-title" @click-left="onClickLeft">
 				<template #left>
-					<van-icon :name="arrow" size="22" />
+					<img src="@/assets/images/market/back.svg" class="back-css" alt="" />
 				</template>
 			</van-nav-bar>
 		</div>
@@ -45,6 +45,10 @@ defineExpose({})
 
 <style lang="scss" scoped>
 .stake_container {
+	.back-css {
+				width: 48px;
+				height: 48px;
+			}
 	.font {
 		padding: 0 56px 0px;
 		font-size: 25px;

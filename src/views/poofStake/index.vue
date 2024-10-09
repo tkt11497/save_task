@@ -23,7 +23,7 @@
 			<!-- ETH Today's Profit-->
 			<div class="introduce">
 				<div class="trend">
-					<img src="../../assets/images/home/trends.png" alt="trends" />
+					<img src="../../assets/images/home/trends2.svg" alt="trends" />
 				</div>
 				<span class="trends">{{ plusDecimal(poofStakeAccountInfo.stakingDayIncome || '0') }} </span>
 				<span class="trends"> {{ poofStakeAccountInfo.platformToken || stakeToken }} </span>
@@ -102,10 +102,10 @@
 				<van-cell-group inset>
 					<van-field v-model="stakeAmount" :disabled="selectedPledge === '1'" type="number" center :clearable="false" label="" placeholder="">
 						<template #left-icon>
-							<img src="@/assets/images/poofStake/minus.svg" @click="minusStepper" alt="minus" />
+							<img src="@/assets/images/market/decrease.svg" @click="minusStepper" alt="minus" />
 						</template>
 						<template #right-icon>
-							<img src="@/assets/images/poofStake/plus.svg" @click="plusStepper" alt="plus" />
+							<img src="@/assets/images/market/increase.svg" @click="plusStepper" alt="plus" />
 						</template>
 					</van-field>
 				</van-cell-group>
@@ -118,7 +118,7 @@
 				<el-dialog v-model="centerDialogVisible" width="calc(100vw - 30px)" align-center class="popup-css poofstake-order" z-index="2000">
 					<template #header>
 						<div class="dialog-title">
-							<img src="@/assets/images/poofStake/icon.png" alt="Custom Title" class="popup-image" />
+							<img src="@/assets/images/home/rate.svg" alt="Custom Title" class="popup-image" />
 						</div>
 					</template>
 					<div class="order_status">{{ t('订单状态') }}</div>
@@ -359,6 +359,9 @@ defineExpose({})
 
 <style lang="scss" scoped>
 .poof_stake_container {
+	background-image: url("../../assets/images/background/sbg_2.png");
+	background-position:  top;
+	background-size: 140% 110%;
 	padding: 48px;
 	position: relative;
 
@@ -369,14 +372,15 @@ defineExpose({})
 		.left {
 			.time {
 				font-size: 24px;
-				color: #aaa5a5;
+				font-weight: 500;
+				color: var(--vt-sub-black);
 			}
 
 			.title {
 				font-size: 40px;
-				color: #000;
-				font-weight: bold;
-				margin-top: 30px;
+				color: var(--vt-header-black);
+				font-weight: 600;
+				margin-top: 0px;
 				position: relative;
 				line-height: 68px;
 			}
@@ -387,10 +391,10 @@ defineExpose({})
 			justify-content: space-between;
 
 			span {
-				font-weight: 700;
+				font-weight: 500;
 				font-size: 28px;
 				margin-top: 20px;
-				color: #7ba9ff;
+				color: var(--vt-sub-black);
 			}
 
 			.img {
@@ -410,9 +414,9 @@ defineExpose({})
 	.account {
 		width: 100%;
 		height: 440px;
-		background: url('../../assets/images/earn/earnAccount.png') no-repeat;
+		background: url('../../assets/images/home/card_all.png') no-repeat;
 		background-size: 100%;
-		color: #fff;
+		color: var(--vt-header-black);
 		position: relative;
 		margin-top: 30px;
 		padding: 48px;
@@ -457,7 +461,12 @@ defineExpose({})
 			position: relative;
 			display: flex;
 			align-items: center;
-			background: #fff;
+			
+			border-top: 1.5px solid #FFF;
+			background: linear-gradient(270deg, rgba(153, 153, 153, 0.7) 0%, rgba(255, 255, 255, 0.7) 100%);
+			backdrop-filter: blur(25.368999481201172px);
+			box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
+
 			border-radius: 0.33333rem;
 			padding: 25px;
 			z-index: 100;
@@ -474,20 +483,21 @@ defineExpose({})
 
 			.right_font {
 				padding-left: 30px;
-				color: #000;
+				color: var(--vt-header-black);
 				flex: 1;
 				position: relative;
 				margin-right: 30px;
 
 				.question {
-					font-weight: 590;
+					font-weight: 600;
 					font-size: 24px;
-					color: #000;
+					color: var(--vt-header-black);
 					line-height: normal;
 				}
 
 				.info {
-					color: #cbcbcb;
+					color: var(--vt-sub-black);
+					font-weight: 500;
 					font-size: 20px;
 				}
 			}
@@ -511,7 +521,8 @@ defineExpose({})
 
 	.scroll_title {
 		font-size: 30px;
-		font-weight: 700;
+		font-weight: 600;
+		color: var(--vt-header-black);
 		margin-top: 60px;
 		margin-bottom: 28px;
 		position: relative;
@@ -521,8 +532,11 @@ defineExpose({})
 	}
 
 	.footer {
+		border-top: 1.5px solid #FFF;
+		background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
+		box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
+
 		border-radius: 32px;
-		background: #fff;
 		padding: 44px;
 
 		.buttons {
@@ -539,29 +553,42 @@ defineExpose({})
 					cursor: pointer;
 					padding: 22px 1px;
 					min-height: 80px;
-					font-size: 26px;
+					font-size: 24px;
 					text-align: center;
-					color: #000;
-					border-radius: 60px;
-					box-shadow: 0 0.02rem #00000008;
+					color: var(--vt-sub-black);
+					font-weight: 600;
+
+					border-radius: 12px;
+					background-image: url("../../assets/images/poofStake/stake_inactive.png");
+					background-position:  center;
+					background-size: 110% 130%;
+					border:none;
+					box-shadow: 0px -2px 0px 0px rgba(0, 0, 0, 0.10) inset, 0px 2px 4px 0px rgba(0, 0, 0, 0.25);
+
 					letter-spacing: -0.08px;
 					margin: 0 10px;
 
 					&.selectPledge {
-						background: #82a9f94d;
-						color: #7ba9ff;
+						border-radius: 12px;
+						background-image: url("../../assets/images/poofStake/stake_active.png");
+						background-position:  center;
+						background-size: 110% 130%;
+						border:none;
+						box-shadow: 0px -2px 0px 0px rgba(0, 0, 0, 0.10) inset, 0px 2px 4px 0px rgba(0, 0, 0, 0.25);
+						color: #fff;
 					}
 				}
 			}
 
 			.introduce {
-				background: #d8e4fc;
+				background: linear-gradient(90deg, rgba(217, 229, 251, 0.75) 0%, rgba(116, 165, 255, 0.75) 100%);
 				margin-top: 30px;
 				font-size: 20px;
 				padding: 20px;
-				color: #9b9b9b;
+				color: var(--vt-sub-black);
+				font-weight: 500;
 				border-radius: 20px;
-				border: 1px dashed #8df;
+				border: 1px dashed #646464;
 			}
 		}
 
@@ -576,11 +603,13 @@ defineExpose({})
 			}
 
 			.title {
-				color: #999;
+				font-weight: 500;
+				color: var(--vt-sub-black);
 			}
 
 			.title_value {
-				color: #409eff;
+				font-weight: 500;
+				color: #387EFF;
 			}
 		}
 
@@ -590,6 +619,9 @@ defineExpose({})
 			:deep .van-dropdown-menu__bar {
 				border-radius: 10px;
 				height: 55px;
+				border-top: 1.5px solid #FFF;
+				background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
+				box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
 			}
 
 			:deep(.van-dropdown-menu__title:after) {
@@ -634,9 +666,12 @@ defineExpose({})
 			// color: #eaecf0;
 
 			:deep(.van-cell-group.van-cell-group--inset) {
+				background: transparent;
+				box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
 				margin: 0;
 				.van-cell {
-					background: #f9fafb;
+					border-top: 1.5px solid #FFF;
+					background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
 					padding: 0 18px;
 					height: 56px;
 				}
@@ -681,17 +716,18 @@ defineExpose({})
 			}
 		}
 
-		//.stake {
-		//	:deep .van-button--normal {
-		//		width: 100%;
-		//		border-radius: 30px;
-		//		height: 55px;
-		//		font-size: 17px;
-		//		background: #82a8f9;
-		//		border: 1px solid #82a8f9;
-		//		font-weight: 600;
-		//	}
-		//}
+		.stake {
+			.van-button--primary {
+				width: 100%;
+				background-image: url("../../assets/images/market/p_button.png");
+				background-position:  center;
+				background-size: 110% 130%;
+				border:none;
+				height: 40px;
+				font-size: 13px;
+				font-weight: 600;
+			}
+		}
 	}
 
 	.divider {
@@ -700,19 +736,21 @@ defineExpose({})
 		top: 6px;
 		width: 1px;
 		height: 55px;
-		background: rgba(0, 0, 0, 0.15);
+		background: #d8b45a;
 	}
 }
 
 .order_status {
 	text-align: center;
+	color: var(--vt-header-black);
 	font-size: 40px;
-	font-weight: 700;
+	font-weight: 600;
 }
 
 .order_info {
 	text-align: center;
-	color: gray;
+	color: var(--vt-sub-black);
+	font-weight: 500;
 	margin-top: 10px;
 	margin-bottom: 25px;
 }
@@ -732,6 +770,7 @@ defineExpose({})
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	width: 100%;
 	/* Optionally centers the icon vertically */
 	height: 100%;
 	/* Ensures the title container has enough height */
@@ -757,7 +796,7 @@ defineExpose({})
 .each-row {
 	display: flex;
 	justify-content: space-between;
-	margin-bottom: 12px;
+	margin-bottom: 0.24rem;
 }
 
 .popup-image {
@@ -769,12 +808,12 @@ defineExpose({})
 .right-text {
 	font-size: 26px;
 	font-weight: 500;
-	color: #999;
+	color:  var(--vt-sub-black);
 }
 
 .right-text {
-	font-weight: 700;
-	color: #000;
+	font-weight: 600;
+	color: var(--vt-header-black);
 }
 
 /* Ensure dialog footer content is centered */
@@ -783,12 +822,23 @@ defineExpose({})
 	justify-content: center;
 	padding: 10px;
 	width: 100%;
+	.confirm1-btn{
+				background-image: url("../../assets/images/market/p_button.png");
+				background-position:  center;
+				background-size: 110% 130%;
+				border:none;
+			}
 }
 
 :deep(.poofstake-order) {
 	border-radius: 20px;
 	padding: 66px 48px;
-
+	background-image: url("../../assets/images/background/sbg_2.png");
+	background-position:  top;
+	background-size: 500% 500%;
+	.el-dialog__header.show-close {
+		padding-right:0 ;
+	}
 	.dialog-title {
 		.popup-image {
 			width: 76px;
@@ -797,8 +847,6 @@ defineExpose({})
 	}
 
 	.content {
-		border-top: 1px dashed #82a8f9;
-		border-bottom: 1px dashed #82a8f9;
 		padding-top: 56px;
 		padding-bottom: 56px;
 	}
