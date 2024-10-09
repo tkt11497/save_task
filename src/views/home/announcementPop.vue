@@ -39,16 +39,18 @@ const noticeLatest = async () => {
 			}
 		}
 		noticeData.value = res.data
-		usersStore.SET_FIRST_NOTICE(res.data.content)
+		// 异步接口获取的原因，用户切换后钱包不一致 =》 重置数据 => 该返回仍被缓存
+		// 导致用户切换钱包，无法弹起公告
+		if (usersStore.userId) {
+			usersStore.SET_FIRST_NOTICE(res.data.content)
+		}
 	} catch (error) {
 		console.log(error)
 	}
 }
 
-onMounted(async () => {
-	console.log('announcementPop', '========onMounted begin========')
-	await noticeLatest()
-	console.log('announcementPop', '========onMounted end========')
+onMounted(() => {
+	noticeLatest()
 })
 </script>
 <style lang="scss" scoped>

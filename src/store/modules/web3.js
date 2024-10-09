@@ -354,11 +354,7 @@ export const useWeb3Store = defineStore('web3', () => {
 // ************* sample data format ******************//
 
 const resetAccount = async () => {
-	console.log('useWeb3Store', '========resetAccount nextTick begin========')
-
 	await nextTick()
-
-	console.log('useWeb3Store', '========resetAccount nextTick end========')
 
 	console.log('useWeb3Store', '========resetAccount resetData begin========')
 
