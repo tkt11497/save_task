@@ -24,7 +24,7 @@ export function flexible (window, document) {
                 docEl.style.fontSize = '35px'
                 break;
             case (docEl.clientWidth >= 1720):
-                docEl.style.fontSize = '53px'
+                docEl.style.fontSize = '35px'
                 break;
             default:
                 docEl.style.fontSize = '33px'

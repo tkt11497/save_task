@@ -142,6 +142,7 @@ defineOptions({ name: 'CurrencyList' })
 		border-top: 0.5px solid #FFF;
 		background: linear-gradient(180deg, #F4F8F9 0%, #CCC 100%);
 		color:var(--vt-header-black);
+		border: none;
 
 
 

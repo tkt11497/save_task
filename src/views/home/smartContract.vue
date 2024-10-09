@@ -106,7 +106,7 @@ onMounted(() => {
 <style lang="scss" scoped>
 .smart-contract {
 	width: calc(100% - 80px);
-	margin: 0 auto 30px;
+	margin: 20px auto 94px;
 	border-radius: 24px;
 	background: #ffffff;
 	padding: 46px 48px;

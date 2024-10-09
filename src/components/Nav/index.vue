@@ -17,16 +17,16 @@ import { navStore, userStore } from '@/store'
 import { storeToRefs } from 'pinia'
 import { useI18n } from 'vue-i18n'
 
-import one from '@/assets/images/nav/receipt.png'
-import two from '@/assets/images/nav/status-up.png'
-import three from '@/assets/images/nav/timer.png'
-import four from '@/assets/images/nav/cpu.png'
-import five from '@/assets/images/nav/profile.png'
-import oneed from '@/assets/images/nav/receipt2.png'
-import twoed from '@/assets/images/nav/status-up2.png'
-import threeed from '@/assets/images/nav/timer2.png'
-import foured from '@/assets/images/nav/cpu2.png'
-import fiveed from '@/assets/images/nav/profile2.png'
+import one from '@/assets/images/nav/receipt.svg'
+import two from '@/assets/images/nav/status-up.svg'
+import three from '@/assets/images/nav/timer.svg'
+import four from '@/assets/images/nav/cpu.svg'
+import five from '@/assets/images/nav/profile.svg'
+import oneed from '@/assets/images/nav/receipt2.svg'
+import twoed from '@/assets/images/nav/status-up2.svg'
+import threeed from '@/assets/images/nav/timer2.svg'
+import foured from '@/assets/images/nav/cpu2.svg'
+import fiveed from '@/assets/images/nav/profile2.svg'
 
 // 初始化仓库
 const store = navStore()
@@ -111,18 +111,23 @@ defineExpose({})
 
 <style lang="scss" scoped>
 :deep(.van-tabbar) {
-	// border-radius: 20px 20px 0 0;
-	background: linear-gradient(109deg, rgba(255, 255, 255, 0.8) 1.57%, rgba(255, 255, 255, 0.8) 100%);
-	box-shadow: 0px -2px 4px 0px rgba(0, 0, 0, 0.12);
-	backdrop-filter: blur(30px);
-	border-color: transparent;
+	border-radius: 16px 16px 0px 0px;
+	border-top: 1.5px solid #FFF;
+	background: linear-gradient(90deg, rgba(99, 99, 99, 0.30) 0%, rgba(211, 211, 211, 0.30) 50.5%, rgba(99, 99, 99, 0.30) 100%);
+	box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
+
+	// backdrop-filter: blur(30px);
+	// border-color: transparent;
 	height: var(--vt-nav-bar-height);
 	//padding-bottom: 10px;
 	//padding-top: 16px;
 	//padding-bottom: 4px;
-
+	&::after{
+		border: 0 solid transparent;
+	}
 	.van-tabbar-item {
 		padding: 8px 0;
+		background: transparent;
 
 		.van-tabbar-item__icon {
 			width: 24px;

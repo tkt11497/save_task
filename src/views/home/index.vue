@@ -363,6 +363,7 @@ defineExpose({})
 			border-radius: 52px;
 			border: 1px solid #FF8008;
 			background: #FFF;
+			cursor: pointer;
 
 			box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.13);
 			padding: 0 24px;
@@ -542,6 +543,7 @@ defineExpose({})
 					color: #387EFF;
 					font-weight: 500;
 					line-height: 40px;
+					cursor: pointer;
 				}
 			}
 
@@ -777,11 +779,15 @@ defineExpose({})
 	border-top-left-radius: 32px;
 	border-top-right-radius: 32px;
 
+	background-image: url("../../assets/images/background/sbg_2.png");
+	background-position:  top;
+	background-size: 140% 110%;
+
 	.title2 {
 		font-size: 28px;
-		font-weight: 500;
+		font-weight: 600;
 		text-align: left;
-		color: #000;
+		color:var(--vt-header-black);
 		margin-top: 36px;
 	}
 }
@@ -805,12 +811,12 @@ defineExpose({})
 			font-size: 32px;
 			font-weight: 600;
 			line-height: 50px;
-			color: #000;
+			color: var(--vt-header-black);
 		}
 
 		p {
 			line-height: 44px;
-			color: #8d8d8d;
+			color: var(--vt-sub-black);
 			font-size: 24px;
 		}
 	}
@@ -820,14 +826,19 @@ defineExpose({})
 		margin-top: 72px;
 		font-size: 25px;
 		font-weight: 500;
-		color: #000;
+		color: var(--vt-header-black);
 	}
 
 	.currency-currency-selected {
 		height: 120px;
 		display: flex;
 		align-items: center;
-		border-top: 1px solid rgba(185, 193, 217, 0.2);
+		padding: 8px 18px 7px 18px;
+
+		border-radius: 8px;
+		border-top: 1.5px solid #FFF;
+		background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
+		box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
 
 		.icon {
 			flex: 0 0 60px;
@@ -838,15 +849,17 @@ defineExpose({})
 
 		.text {
 			font-size: 28px;
-			color: #000;
-			font-weight: 400;
+			color: var(--vt-header-black);
+			font-weight: 500;
 		}
 
 		button {
-			background: #80a9f5;
+			border-radius: 41px;
+			border-top: 0.5px solid #FFF;
+			background:  linear-gradient(180deg, #F4F8F9 0%, #92CFEC 83%, #35DCE8 100%);
 			margin-left: auto;
 			height: 54px;
-			color: #fff;
+			color: #0152FF;
 			font-weight: 500;
 			font-size: 24px;
 			padding: 0 32px;
