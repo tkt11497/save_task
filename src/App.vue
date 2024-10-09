@@ -22,7 +22,7 @@
 </template>
 
 <script setup name="App">
-import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+import { nextTick, onBeforeMount, onMounted, onUnmounted, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { userStore, useWeb3Store } from '@/store/index.js'
 import VConsole from 'vconsole'
@@ -83,7 +83,7 @@ watch(
 	}
 )
 
-onMounted(async () => {
+onBeforeMount(async () => {
 	await web3Store.initUserAccountAndWallet()
 })
 onUnmounted(() => {
