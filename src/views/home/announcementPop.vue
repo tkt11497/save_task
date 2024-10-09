@@ -12,7 +12,7 @@
 	</div>
 </template>
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onBeforeMount, onMounted, ref } from 'vue'
 import { fetchLatestNoticeApi } from '@/apis/common.js'
 import { useI18n } from 'vue-i18n'
 import { userStore } from '@/store/index.js'
@@ -45,7 +45,7 @@ const noticeLatest = async () => {
 	}
 }
 
-onMounted(async () => {
+onBeforeMount(async () => {
 	console.log('announcementPop', '========onMounted begin========')
 	await noticeLatest()
 	console.log('announcementPop', '========onMounted end========')
