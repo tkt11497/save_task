@@ -181,6 +181,7 @@ input {
 
 	.van-nav-bar {
 		padding: 20px 50px 10px 50px;
+		background: transparent;
 	}
 	.van-nav-bar__left {
 		left: -45px;
@@ -199,6 +200,7 @@ input {
 		font-size: 24px;
 		flex: 1;
 		max-width: calc(100vw - 60px);
+		color: var(--vt-header-black);
 		font-weight: 590;
 		height: 30px;
 		line-height: 30px;

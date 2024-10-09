@@ -781,7 +781,7 @@ defineExpose({})
 
 	background-image: url("../../assets/images/background/sbg_2.png");
 	background-position:  top;
-	background-size: 140% 110%;
+	background-size: 300% 300%;
 
 	.title2 {
 		font-size: 28px;

@@ -23,7 +23,7 @@
 			<!-- ETH Today's Profit-->
 			<div class="introduce">
 				<div class="trend">
-					<img src="../../assets/images/home/trends.png" alt="trends" />
+					<img src="../../assets/images/home/trends2.svg" alt="trends" />
 				</div>
 				<span class="trends">${{ plusDecimal(earnInterestAccountInfo.stakingDayIncome || '0') }} </span>
 				<!--				<span class="trends">Eth</span>-->
@@ -56,7 +56,7 @@
         </div>
       </div> -->
 		<div class="info">
-			<van-swipe class="my-swipe" :width="126" :show-indicators="false" :loop="false">
+			<van-swipe class="my-swipe" :width="126" :height="130" :show-indicators="false" :loop="false">
 				<!--				<template v-for="(item, index) in infoList">-->
 				<van-swipe-item v-for="(item, index) in infoList" :key="index">
 					<div class="info_box break-word">
@@ -157,7 +157,7 @@
 			<el-dialog v-model="centerDialogVisible" :show-close="false" width="calc(100vw - 30px)" align-center class="popup-css earn-order">
 				<template #header>
 					<div class="dialog-title">
-						<img src="@/assets/images/poofStake/icon.png" alt="Custom Title" class="popup-image" />
+						<img src="@/assets/images/home/rate.svg" alt="Custom Title" class="popup-image" />
 					</div>
 				</template>
 				<div class="order_status">{{ t('订单状态') }}</div>
@@ -239,15 +239,15 @@ const error = ref(null)
 // scroll
 const infoList = ref([
 	{
-		icon: getImageUrl('home/info1.png'),
+		icon: getImageUrl('home/info1.svg'),
 		content: t('可靠的安全保障'),
 	},
 	{
-		icon: getImageUrl('home/info2.png'),
+		icon: getImageUrl('home/info2.svg'),
 		content: t('稳定可靠的投资回报'),
 	},
 	{
-		icon: getImageUrl('home/info3.png'),
+		icon: getImageUrl('home/info3.svg'),
 		content: t('方便易操作'),
 	},
 ])
@@ -370,7 +370,16 @@ defineExpose({})
 </script>
 
 <style lang="scss" scoped>
+.confirm1-btn{
+	background-image: url("../../assets/images/market/p_button.png");
+	background-position:  center;
+	background-size: 110% 130%;
+	border:none;
+}
 .earn_onterset_container {
+	background-image: url("../../assets/images/background/sbg_2.png");
+	background-position:  top;
+	background-size: 140% 110%;
 	//width: 90%;
 	padding: 48px;
 	position: relative;
@@ -384,14 +393,15 @@ defineExpose({})
 		.left {
 			.time {
 				font-size: 24px;
-				color: #aaa5a5;
+				font-weight: 500;
+				color: var(--vt-sub-black);
 			}
 
 			.title {
 				font-size: 40px;
-				color: #000;
-				font-weight: bold;
-				margin-top: 30px;
+				color: var(--vt-header-black);
+				font-weight: 600;
+				margin-top: 0px;
 				position: relative;
 				//height: 28px;
 				line-height: 68px;
@@ -415,10 +425,10 @@ defineExpose({})
 			justify-content: space-between;
 
 			span {
-				font-weight: 700;
+				font-weight: 500;
 				font-size: 28px;
 				margin-top: 20px;
-				color: #7ba9ff;
+				color: var(--vt-sub-black);
 			}
 
 			.img {
@@ -439,9 +449,9 @@ defineExpose({})
 		width: 100%;
 		height: 400px;
 		box-sizing: border-box;
-		background: url('../../assets/images/earn/earnAccount.png') no-repeat;
+		background: url('../../assets/images/home/card_all.png') no-repeat;
 		background-size: 100%;
-		color: #fff;
+		color: var(--vt-header-black);
 		position: relative;
 		margin-top: 30px;
 		padding: 48px;
@@ -480,7 +490,12 @@ defineExpose({})
 			.trends {
 				margin-left: 3px;
 				margin-right: 3px;
-				//font-weight: 700;
+				color: var(--vt-sub-black);
+				font-weight: 500;
+			}
+			.day{
+				color: var(--vt-sub-black);
+				font-weight: 500;
 			}
 		}
 	}
@@ -490,7 +505,12 @@ defineExpose({})
 		//height: 1.6rem;
 		display: flex;
 		align-items: center;
-		background: #fff;
+
+		border-top: 1.5px solid #FFF;
+		background: linear-gradient(270deg, rgba(153, 153, 153, 0.7) 0%, rgba(255, 255, 255, 0.7) 100%);
+		backdrop-filter: blur(25.368999481201172px);
+		box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
+
 		border-radius: 0.33333rem;
 		padding: 25px;
 		margin-top: 30px;
@@ -508,7 +528,7 @@ defineExpose({})
 
 		.right_font {
 			padding-left: 30px;
-			color: #000;
+			color: var(--vt-header-black);
 			flex: 1;
 			position: relative;
 			margin-right: 30px;
@@ -524,14 +544,17 @@ defineExpose({})
 			//   }
 
 			.question {
-				font-weight: 590;
+				font-weight: 600;
 				font-size: 24px;
-				color: #000;
+				color: var(--vt-header-black);
 				line-height: normal;
 			}
 
 			.info {
-				color: #cbcbcb;
+				color: var(--vt-sub-black);
+				background: transparent;
+				backdrop-filter: none;
+				font-weight: 500;
 				font-size: 20px;
 				padding: 0;
 				margin-top: 12px;
@@ -557,7 +580,8 @@ defineExpose({})
 
 .scroll_title {
 	font-size: 32px;
-	font-weight: 700;
+	font-weight: 600;
+	color: var(--vt-header-black);
 	margin-top: 100px;
 	position: relative;
 	line-height: 28px;
@@ -576,53 +600,62 @@ defineExpose({})
 }
 
 .info {
-	padding: 44px 0px 36px;
-	display: flex;
-	justify-content: space-between;
+			padding: 24px 8px 36px;
+			display: flex;
+			justify-content: space-between;
+			background: rgba(217, 217, 217, 0.05);
+			backdrop-filter: blur(25.368999481201172px);
 
-	:deep(.van-swipe-item) {
-		padding-right: 20px;
-		box-sizing: border-box;
-	}
-	.info_box {
-		//width: 200px !important;
-		//height: 220px;
-		//background: #fff;
-		//border-radius: 42px;
-		//margin-right: 30px;
-		//padding: 24px 22px;
+			:deep(.van-swipe-item) {
+				padding-right: 20px;
+				box-sizing: border-box;
+			}
+			.info_box {
+				width: 220px !important;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				flex-direction: column;
+				border-radius:  8px;
+				border-top: 1.5px solid #FFF;
+				background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
+				box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
 
-		background: #fff;
-		border-radius: 28px;
-		padding: 15px;
-		height: 100%;
+				padding: 15px;
+				height: 99%;
 
-		.icon {
-			line-height: 1;
+				.icon {
+					line-height: 1;
 
-			img {
-				width: 50px;
-				height: 50px;
+					img {
+						width: 50px;
+						height: 50px;
+					}
+				}
+
+				.content {
+					margin-top: 22px;
+					font-weight: 500;
+					font-size: 28px;
+					line-height: 35px;
+					text-align: center;
+					color: var(--vt-header-black);
+				}
 			}
 		}
 
-		.content {
-			margin-top: 22px;
-			font-weight: 700;
-			font-size: 28px;
-			//line-height: normal;
-		}
-	}
-}
-
 .footer {
-	background: #fff;
+	border-top: 1.5px solid #FFF;
+	background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
+	box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
 	border-radius: 42px;
 	padding: 10px 50px 30px;
 
 	.title {
 		font-size: 23px;
-		color: #999;
+		color: var(--vt-sub-black);
+		font-weight: 500;
+		margin-top: 20px;
 		margin-bottom: 16px;
 	}
 
@@ -706,6 +739,10 @@ defineExpose({})
 			flex: 1;
 			height: 110px;
 			display: inline-flex;
+			.van-cell-group{
+				background: transparent;
+				box-shadow: 0px 2px 4.4px 1px rgba(0, 0, 0, 0.15);
+			}
 
 			:deep(.van-field__control) {
 				border: 1px solid #fff;
@@ -728,7 +765,7 @@ defineExpose({})
 				padding: 0px;
 				display: flex;
 				align-items: center;
-				background-color: #f9fafc;
+				background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
 			}
 
 			:deep(.van-cell-group--inset) {
@@ -740,7 +777,8 @@ defineExpose({})
 	.rate {
 		font-size: 27px;
 		padding-top: 48px;
-		color: #000;
+		font-weight: 600;
+		color: var(--vt-header-black);
 
 		.yield,
 		.limit {
@@ -749,7 +787,7 @@ defineExpose({})
 			// background: #F8F9FB;
 			height: 80px;
 			padding: 20px 36px;
-			border-bottom: 0.1px dashed rgb(206, 241, 241);
+			// border-bottom: 0.1px dashed rgb(206, 241, 241);
 			width: 98%;
 		}
 
@@ -758,14 +796,21 @@ defineExpose({})
 		}
 
 		.title {
-			color: #bdbdbd;
+			color: var(--vt-sub-black);
+			margin-top: 0;
 			margin-bottom: 0;
-			font-weight: normal;
+			font-weight: 600;
 		}
 	}
 
 	.subscribe {
 		margin-top: 30px;
+		.van-button{
+			background-image: url("../../assets/images/market/p_button.png");
+			background-position:  center;
+			background-size: 110% 130%;
+			border:none;
+		}
 	}
 }
 
@@ -775,18 +820,20 @@ defineExpose({})
 	top: 6px;
 	width: 1px;
 	height: 55px;
-	background: rgba(0, 0, 0, 0.15);
+	background: #d8b45a;
 }
 
 .order_status {
 	text-align: center;
+	color: var(--vt-header-black);
 	font-size: 40px;
-	font-weight: 700;
+	font-weight: 600;
 }
 
 .order_info {
 	text-align: center;
-	color: gray;
+	color: var(--vt-sub-black);
+	font-weight: 500;
 	margin-top: 10px;
 	margin-bottom: 25px;
 }
@@ -794,9 +841,14 @@ defineExpose({})
 :deep(.earn-order.el-dialog) {
 	border-radius: 20px;
 	padding: 66px 48px;
+	background-image: url("../../assets/images/background/sbg_2.png");
+	background-position:  top;
+	background-size: 500% 500%;
 
 	.dialog-title {
 		text-align: center;
+		font-weight: 600;
+		color: var(--vt-header-black);
 		.popup-image {
 			width: 76px;
 			height: 76px;
@@ -804,8 +856,6 @@ defineExpose({})
 	}
 
 	.content {
-		border-top: 1px dashed #82a8f9;
-		border-bottom: 1px dashed #82a8f9;
 		padding-top: 56px;
 		padding-bottom: 56px;
 
@@ -813,10 +863,12 @@ defineExpose({})
 			display: flex;
 			justify-content: space-between;
 			margin-bottom: 0.16rem;
+			font-weight: 500;
+			color: var(--vt-sub-black);
 
 			.right-text {
-				font-weight: 700;
-				color: #000;
+				font-weight: 500;
+				color: var(--vt-header-black);
 			}
 		}
 	}
@@ -845,14 +897,16 @@ defineExpose({})
 	.el-select {
 		.el-select__wrapper {
 			border: none;
-			color: #7ba9ff;
-			box-shadow: none;
+			color: var(--vt-header-black);
+			font-weight: 500;
 			border-radius: 10px;
 			/* Optional: rounded corners */
 			height: 110px;
 			width: 100%;
 			font-size: 27px;
-			background: #f9fafc;
+
+			background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
+			box-shadow: 0px 2px 4.4px 1px rgba(0, 0, 0, 0.15);
 			// padding: 10px 32px;
 			text-align: center;
 		}
