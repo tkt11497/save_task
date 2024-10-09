@@ -45,8 +45,10 @@ const noticeLatest = async () => {
 	}
 }
 
-onMounted(() => {
-	noticeLatest()
+onMounted(async () => {
+	console.log('announcementPop', '========onMounted begin========')
+	await noticeLatest()
+	console.log('announcementPop', '========onMounted end========')
 })
 </script>
 <style lang="scss" scoped>
