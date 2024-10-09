@@ -176,7 +176,6 @@ input {
 
 	&.full-page {
 		min-height: calc(100vh - var(--vt-nav-bar-height));
-		background-color: #fff;
 	}
 
 	.van-nav-bar {
@@ -197,7 +196,7 @@ input {
 		border-bottom-width: 0;
 	}
 	.van-nav-bar__title {
-		font-size: 24px;
+		font-size: 22px;
 		flex: 1;
 		max-width: calc(100vw - 60px);
 		color: var(--vt-header-black);

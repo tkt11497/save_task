@@ -101,6 +101,7 @@ onUnmounted(() => {
 
 .container {
 	height: 100%;
+	background: linear-gradient(5deg, rgba(251,229,173,1) 41%, rgba(242,242,242,1) 82%);
 	overflow-y: scroll;
 }
 

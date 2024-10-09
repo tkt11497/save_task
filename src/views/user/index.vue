@@ -17,7 +17,7 @@
 				<!-- Icon -->
 				<div class="icon" @click="router.push('/score')">
 					<!-- <img src="../../assets/images/user/wicon.png" alt="wicon" /> -->
-					<img src="@/assets/images/user/score.svg" alt="wicon" />
+					<img src="@/assets/images/user/score.png" alt="wicon" />
 				</div>
 			</div>
 			<!-- Number -->
@@ -33,7 +33,7 @@
 			<!-- Introduce -->
 			<div class="bottom">
 				<div class="trend">
-					<img src="@/assets/images/home/trends.png" alt="trends" />
+					<img src="@/assets/images/home/trends2.svg" alt="trends" />
 				</div>
 				<div>
 					<span class="trends">${{ plusDecimal(userStaticIncome.totalDayIncome || '0') }}</span>
@@ -81,7 +81,7 @@
 			/>
 
 			<span class="title mt-30">{{ t('隐私与安全') }}</span>
-			<van-cell :title="t('隐私与安全')" center :label="t('专注于您的安全和隐私')" :icon="getImageUrl('user/policy.png')" is-link to="/policy" />
+			<van-cell :title="t('隐私与安全')" center :label="t('专注于您的安全和隐私')" :icon="getImageUrl('user/policy.svg')" is-link to="/policy" />
 
 			<span class="title mt-30">{{ t('设置') }}</span>
 			<van-cell :title="t('更改语言')" center :icon="getImageUrl('user/language-vector-icon.svg')" is-link to="/lang" />
@@ -115,7 +115,7 @@ const value = ref('')
 // General
 const generalList = ref([
 	{
-		icon: getImageUrl('user/notification-icon.svg'),
+		icon: getImageUrl('user/notification-icon.png'),
 		title: t('通知'),
 		path: '/notifications',
 	},
@@ -181,6 +181,9 @@ defineExpose({})
 
 <style lang="scss" scoped>
 .user_container {
+	background-image: url("../../assets/images/background/sbg_2.png");
+	background-position:  top;
+	background-size: 140% 110%;
 	.header {
 		padding: 48px 48px 0;
 		line-height: 98px;
@@ -191,7 +194,7 @@ defineExpose({})
 		.logo {
 			width: 50px;
 			height: 50px;
-			margin-top: -10px;
+			margin-top: -5px;
 
 			img {
 				width: 100%;
@@ -201,7 +204,8 @@ defineExpose({})
 
 		.title {
 			font-size: 36px;
-			font-weight: 700;
+			font-weight: 600;
+			color: var(--vt-header-black);
 			margin-left: -260px;
 			line-height: 98px;
 			margin-top: -15px;
@@ -212,11 +216,14 @@ defineExpose({})
 			height: 64px;
 			line-height: 64px;
 			background: #fff;
+			border: 1px solid #FF8008;
+			cursor: pointer;
+
 			border-radius: 64px;
 			box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.13);
 			padding: 0 24px;
 			font-size: 26px;
-			color: #000;
+			color: var(--vt-sub-black);
 			font-weight: 500;
 			text-align: center;
 		}
@@ -239,10 +246,10 @@ defineExpose({})
 	.top_detail {
 		position: relative;
 		//height: 404px;
-		background: url('../../assets/images/user/header.png') no-repeat;
+		background: url('../../assets/images/home/card_all.png') no-repeat;
 		background-size: 100% 100%;
 		margin: 20px 48px 0;
-		padding: 48px 48px 100px;
+		padding: 48px 34px 100px;
 
 		.top {
 			height: 50px;
@@ -254,7 +261,8 @@ defineExpose({})
 			.title {
 				width: 100%;
 				font-size: 27px;
-				color: #fff;
+				color: var(--vt-header-black);
+				font-weight: 500;
 			}
 		}
 
@@ -279,9 +287,9 @@ defineExpose({})
 			justify-content: space-between;
 
 			.number {
-				font-size: 48px;
-				color: #fff;
-				font-weight: 700;
+				font-size: 40px;
+				font-weight: 600;
+				color: var(--vt-header-black);
 				width: 60%;
 				word-break: break-all;
 				line-height: 1;
@@ -304,16 +312,16 @@ defineExpose({})
 			}
 
 			.trends {
-				color: #fff;
+				color: var(--vt-sub-black);
 				font-size: 25px;
 				margin-left: 5px;
-				font-weight: 600;
+				font-weight: 500;
 			}
 
 			.day {
-				color: #fff;
+				color: var(--vt-sub-black);
 				font-size: 18px;
-				font-weight: normal;
+				font-weight: 500;
 				margin-left: 10px;
 			}
 		}
@@ -323,9 +331,13 @@ defineExpose({})
 			height: 70px;
 			line-height: 70px;
 			text-align: center;
-			background: #99bbfb;
+
+			border-top: 1px solid #FFF;
+			background: rgba(222, 222, 222, 0.20);
+			box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.25) inset;
+
 			color: #fff;
-			border-radius: 40px;
+			border-radius: 15px;
 			font-size: 28px;
 			font-style: normal;
 
@@ -337,32 +349,23 @@ defineExpose({})
 		}
 
 		.range {
-			// position: absolute;
-			// top: 310px;
-			// display: flex;
-			// justify-content: space-around;
-			// align-items: center;
-			// width: 75%;
-			// background: #fff;
-			// padding: 0 50px;
-			// height: 160px;
-			// border-radius: 32px;
-			// margin-left: 90px;
-			// color: #000;
-			// font-size: 24px;
-
 			position: absolute;
 			left: 48px;
 			right: 48px;
 			display: flex;
 			justify-content: space-around;
 			align-items: center;
-			background: #fff;
+
+			border-top: 1.5px solid #FFF;
+			background: linear-gradient(270deg, rgba(153, 153, 153, 0.7) 0%, rgba(255, 255, 255, 0.7) 100%);
+			backdrop-filter: blur(25.368999481201172px);
+			box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
 			//height: 90px;
 			margin-top: 30px;
 			padding: 0 20px;
-			border-radius: 24px;
+			border-radius: 0.33333rem;
 			color: #000;
+			font-weight: 500;
 			height: 140px;
 			font-size: 24px;
 
@@ -398,10 +401,10 @@ defineExpose({})
 			padding-bottom: 16px;
 			margin-bottom: 32px;
 			margin-top: 20px;
-			margin-left: 48px;
+			margin-left: 38px;
 			//height: 28px;
 			line-height: 28px;
-			color: rgb(167, 164, 164);
+			color: var(--vt-header-black);
 
 			// &::after {
 			// 	position: absolute;
@@ -415,10 +418,15 @@ defineExpose({})
 		}
 
 		:deep(.van-cell) {
-			border-radius: 0;
-			margin-bottom: 5px;
-			height: 62px;
-			padding: 0 24px 0 24px;
+			border-radius:  8px;
+			border-top: 1.5px solid #FFF;
+			background: linear-gradient(270deg, rgba(153, 153, 153, 0.50) 0%, rgba(255, 255, 255, 0.50) 100%);
+			box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
+
+			margin:0px 10px 6px 10px;
+			height: 45px;
+			width: 94%;
+			padding: 0 19px 0 16px;
 			display: flex;
 			align-items: center;
 
@@ -435,17 +443,22 @@ defineExpose({})
 			}
 
 			.van-cell__title {
-				font-size: 14px;
+				font-size: 13px;
+				color: var(--vt-sub-black);
+				font-weight: 600;
 			}
 
 			.van-cell__label {
-				font-size: 12px;
-				margin-top: 4px;
-				line-height: 1;
+				font-size: 9px;
+				margin-top: 0px;
+				margin-bottom: 9px;
+				line-height: 0.5;
 			}
 
 			.van-cell__right-icon {
-				font-size: 14px;
+				font-size: 13px;
+				color: var(--vt-sub-black);
+				font-weight: 600;
 			}
 		}
 
@@ -457,6 +470,6 @@ defineExpose({})
 
 .van-divider--vertical {
 	height: 28px;
-	border-color: rgba(0, 0, 0, 0.15);
+	border-color:#A57C15 ;
 }
 </style>

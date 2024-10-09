@@ -3,7 +3,7 @@
 		<div>
 			<van-nav-bar :fixed="true" :title="t('钱包')" @click-left="onClickLeft">
 				<template #left>
-					<van-icon :name="arrow" size="18" />
+					<img src="@/assets/images/market/back.svg" class="back-css" alt="" />
 				</template>
 			</van-nav-bar>
 		</div>
@@ -15,8 +15,8 @@
 							<img :src="$imgpath + item.iconUrl" alt="" />
 						</div>
 						<div class="title break-word">
-							<div style="font-weight: 700">{{ item.tokenName }}</div>
-							<div style="color: #b1b1b1">{{ item.tokenAbbr }}</div>
+							<div >{{ item.tokenName }}</div>
+							<div style="color: #645A6F;font-weight: 400;">{{ item.tokenAbbr }}</div>
 						</div>
 					</div>
 					<div class="right">
@@ -108,9 +108,12 @@ defineOptions({
 .wallet_container {
 	position: relative;
 	//padding: 80px 30px 0px;
-	padding-left: 48px;
-	padding-right: 48px;
-	background: #fff;
+	padding-left: 38px;
+	padding-right: 38px;
+	.back-css {
+				width: 47px;
+				height: 47px;
+				}
 
 	.container {
 		.list_info {
@@ -124,10 +127,14 @@ defineOptions({
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
-				border-bottom: 1px solid #f1f3f7;
 				font-size: 28px;
-				padding-bottom: 32px;
+				padding: 8px 18px 7px 18px;
 				margin: 32px 0;
+
+				border-radius: 15px;
+				border-top: 1.5px solid #FFF;
+				background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
+				box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
 
 				.left {
 					display: flex;
@@ -136,8 +143,8 @@ defineOptions({
 				}
 
 				.item_img {
-					width: 96px;
-					height: 96px;
+					width: 76px;
+					height: 76px;
 
 					img {
 						width: 100%;
@@ -149,15 +156,17 @@ defineOptions({
 					display: flex;
 					flex-direction: column;
 					justify-content: center;
+					color: var(--vt-header-black);
+					font-weight: 700;
 					margin-left: 20px;
 				}
 
 				.right {
 					//flex-direction: column;
 					//align-items: flex-end;
-					color: #000;
+					color: var(--vt-header-black);
 					font-size: 26px;
-					font-weight: 700;
+					font-weight: 600;
 					margin-left: 40px;
 					//flex: 1;
 					min-width: 200px;
@@ -166,7 +175,7 @@ defineOptions({
 					text-align: right;
 
 					.usd {
-						color: #82a9f9;
+						color: #387EFF;
 						font-weight: 500;
 					}
 
