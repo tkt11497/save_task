@@ -30,6 +30,11 @@ export const fetchUserStaticIncomeApi = () => {
 	return request.get('/staticIncome/getUserStaticIncome')
 }
 
+// 记录-账户记录
+export const fetchAccountOrderList = (data) => {
+	return request.get('/userOrder/list', { params: data })
+}
+
 // 记录-充值记录
 export const fetchRechargeOrderListApi = (data) => {
 	return request.get('/userOrder/rechargeOrder', { params: data })
