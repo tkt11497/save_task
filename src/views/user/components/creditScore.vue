@@ -31,6 +31,7 @@ import LoanTreaty from '@/views/user/loan/loan-treaty.vue'
 import useLoading from '@/hooks/useLoading.js'
 import { formatDate } from '@/utils/index.js'
 import { fetchUserKycApi } from '@/apis/user.js'
+import { storeToRefs } from 'pinia'
 
 const usersStore = userStore()
 const { t } = useI18n()
@@ -52,11 +53,11 @@ const onClickLeft = () => {
 	usersStore.SET_PATH_DATA('yes')
 }
 
-const isLoaded = ref(false)
+const isLoaded = ref(true)
 const userData = ref({
 	firstName: '#n1',
 	lastName: '#n2',
-	detailAddress: '#a2',
+	address: '#a2',
 	phone: '#a4',
 })
 const loanData = ref({
@@ -96,15 +97,39 @@ async function getLoadInfo() {
 			//   signImg: '#b3' // 签名图片地址
 			// }
 		}
-		isLoaded.value = true
 	} catch (e) {
 		console.log(e)
 	}
 }
 
-getLoadInfo()
+const { userInfo } = storeToRefs(usersStore)
+// 默认是0 ，上传了是 2  审核了是 1
+const userKycRecordData = ref({
+	approvalStatus: '0',
+})
+// 查询用户是否申请过kyc
+const userKycRecord = async () => {
+	try {
+		loading.loading()
+		await usersStore.loginAction()
+		userKycRecordData.value.approvalStatus = userInfo.value.isKyc + ''
+		loading.clearLoading()
+	} catch (error) {
+		console.log(error)
+	}
+}
+
 onMounted(() => {
 	usersStore.SET_PATH_DATA('no')
+	// userKycRecord()
+	// 	.then(() => {
+	// 		if (userKycRecordData.value.approvalStatus === '1') {
+	// 			return getLoadInfo()
+	// 		}
+	// 	})
+	// 	.finally(() => {
+	// 		isLoaded.value = true
+	// 	})
 })
 </script>
 <style lang="scss" scoped>
