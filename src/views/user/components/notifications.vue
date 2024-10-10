@@ -3,7 +3,7 @@
 		<div>
 			<van-nav-bar :fixed="true" :title="t('通知')" @click-left="onClickLeft">
 				<template #left>
-					<van-icon :name="arrow" size="18" />
+					<van-icon :name="arrow" size="23" />
 				</template>
 			</van-nav-bar>
 		</div>
@@ -57,7 +57,7 @@
 <script setup name="Notifications">
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import arrow from '@/assets/images/user/arrow.png'
+import arrow from '@/assets/images/market/back.svg'
 import { userStore } from '@/store'
 import { useI18n } from 'vue-i18n'
 import useLoading from '@/hooks/useLoading.js'
@@ -111,14 +111,15 @@ defineExpose({})
 
 		.title {
 			font-size: 42px;
-			color: #000;
+			color: var(--vt-header-black);
 			font-weight: 700;
 			margin: 30px 0px;
 		}
 
 		.info {
 			font-size: 25px;
-			color: #a4a4a4;
+			color: var(--vt-sub-black);
+			font-weight: 500;
 		}
 	}
 }
@@ -127,10 +128,12 @@ defineExpose({})
 	margin: 32px 60px;
 
 	.each-block {
-		background: #fff;
-		padding: 10px 0 24px;
 		margin-bottom: 44px;
-		border-bottom: 1px solid #b7b7b7;
+		padding: 25px 0 24px;
+		border-radius: 14px;
+		border-top: 1.5px solid #FFF;
+		background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
+		box-shadow: 0px 2px 4.4px 2px rgba(0, 0, 0, 0.15);
 
 		.each-container {
 			position: relative;
@@ -153,7 +156,8 @@ defineExpose({})
 			.day-text {
 				font-size: 26px;
 				font-style: normal;
-				font-weight: 700;
+				font-weight: 600;
+				color: var(--vt-header-black);
 				line-height: 44px;
 				position: relative;
 				padding-left: 26px;
@@ -164,7 +168,8 @@ defineExpose({})
 					left: 0;
 					width: 8px;
 					height: 40px;
-					background-color: #82a9f9;
+					border-radius: 26px;
+					background: linear-gradient(180deg, rgba(216, 228, 252, 0.80) 0%, rgba(21, 177, 220, 0.80) 78%, rgba(60, 150, 223, 0.80) 100%);
 				}
 			}
 		}
@@ -177,20 +182,21 @@ defineExpose({})
 		.content-row1 {
 			margin-bottom: 24px;
 			.contentcss {
-				color: #2f2f2f;
+				color: var(--vt-sub-black);
+				padding-left: 24px;
 				font-size: 26px;
 				font-style: normal;
-				font-weight: 600;
+				font-weight: 500;
 				line-height: 44px;
 				min-height: 106px;
 			}
 		}
 		.content-row {
 			.date-left {
-				color: #b7b7b7;
+				color: #7B757F;
 				font-size: 23.2px;
 				font-style: normal;
-				//font-weight: 600;
+				font-weight: 400;
 				line-height: 44px; /* 189.655% */
 			}
 
@@ -202,14 +208,15 @@ defineExpose({})
 				}
 
 				.time {
-					color: #b7b7b7;
+					color: #7B757F;
 					font-size: 22.4px;
 					font-style: normal;
-					//font-weight: 600;
+					font-weight: 400;
 					line-height: 44px; /* 196.429% */
 
 					position: relative;
 					padding-left: 17px;
+					padding-right: 24px;
 					margin-left: 10px;
 					&::before {
 						content: '';
