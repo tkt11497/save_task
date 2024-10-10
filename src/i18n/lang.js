@@ -98,4 +98,9 @@ const LANS = [
 	},
 ]
 
+const langFileMap = import.meta.glob('/src/i18n/modules/*.js')
+export const getLangDataByUrl = async (url) => {
+	const fullUrl = `/src/i18n/modules/${url}`
+	return (await langFileMap[fullUrl]()).default
+}
 export default LANS

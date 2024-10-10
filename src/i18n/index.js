@@ -1,6 +1,6 @@
 // i18n
 import { createI18n } from 'vue-i18n'
-import LANS from '@/i18n/lang.js'
+import LANS, { getLangDataByUrl } from '@/i18n/lang.js'
 //
 // import en from './modules/en'
 // import japan from './modules/japan.js'
@@ -144,15 +144,12 @@ export async function changLang(lang, isInit = false) {
 	await loadLanguageAsync(lang)
 }
 
-export function loadLanguageAsync(lang) {
+export async function loadLanguageAsync(lang) {
 	let file = LANS.find((d) => d.code === lang)
-	return import(/* webpackChunkName: "lang-request" */ `./modules/${file.file}`).then((messages) => {
-		// 动态加载对应的语言包
-		console.log(messages.default)
-		i18n.global.setLocaleMessage(lang, messages.default)
-		console.log(i18n.global.locale)
-		setI18nLanguage(lang)
-	})
+	const messages = await getLangDataByUrl(file.file)
+	// 动态加载对应的语言包
+	i18n.global.setLocaleMessage(lang, messages)
+	setI18nLanguage(lang)
 }
 
 export function setI18nLanguage(locale) {
