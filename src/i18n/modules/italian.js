@@ -481,4 +481,25 @@ export default {
 	'请求失败，点击重新加载': 'Richiesta fallita, clicca per ricaricare',
 	'选择新类型': 'Seleziona nuovo tipo',
 	'请正确连接你的钱包': 'Per favore, collega correttamente il tuo portafoglio',
+
+	'切换': 'cambiare',
+	'审核状态': {
+		'待审核': 'in attesa di revisione',
+		'成功': 'riuscito',
+		'失败': 'fallito',
+		'审核中': 'in revisione',
+	},
+	'状态': 'stato',
+	'赎回状态': 'stato del riscatto',
+	'领取状态': 'stato di raccolta',
+	'借款状态': 'stato del prestito',
+	'还款状态': 'stato del rimborso',
+	'理财质押': 'garanzia finanziaria',
+	'领取奖励': 'richiedi premi',
+	'领取': 'ricevere',
+	'如果提前终止交易，您将无法获得完整的收益 {金额}。':
+		'Se la transazione viene interrotta in anticipo, non riceverai il beneficio completo {amount}{symbol}.',
+	'币种未授权': 'La valuta {tokenName} non è autorizzata',
+	'钱包授权失败，请重新连接。': 'Autorizzazione del portafoglio non riuscita, si prega di riconnettersi.',
+	'接收方': 'destinatario',
 }

@@ -490,4 +490,25 @@ export default {
 	'请求失败，点击重新加载': 'Anfrage fehlgeschlagen, klicken Sie zum Neuladen',
 	'选择新类型': 'Neuen Typ auswählen',
 	'请正确连接你的钱包': 'Bitte verbinden Sie Ihre Brieftasche korrekt',
+
+	'切换': 'wechseln',
+	'审核状态': {
+		'待审核': 'ausstehende Überprüfung',
+		'成功': 'erfolgreich',
+		'失败': 'fehlgeschlagen',
+		'审核中': 'in Überprüfung',
+	},
+	'状态': 'Status',
+	'赎回状态': 'Rücknahmestatus',
+	'领取状态': 'Abholstatus',
+	'借款状态': 'Darlehensstatus',
+	'还款状态': 'Rückzahlungsstatus',
+	'理财质押': 'Finanzielle Verpfändung',
+	'领取奖励': 'Belohnungen einfordern',
+	'领取': 'erhalten',
+	'如果提前终止交易，您将无法获得完整的收益 {金额}。':
+		'Wenn die Transaktion vorzeitig beendet wird, erhalten Sie nicht den vollen Nutzen {amount}{symbol}.',
+	'币种未授权': 'Die Währung {tokenName} ist nicht autorisiert',
+	'钱包授权失败，请重新连接。': 'Wallet-Autorisierung fehlgeschlagen, bitte erneut verbinden.',
+	'接收方': 'Empfänger',
 }

@@ -488,4 +488,25 @@ export default {
 	'请求失败，点击重新加载': 'Permintaan gagal, klik untuk memuat ulang',
 	'选择新类型': 'Pilih jenis baru',
 	'请正确连接你的钱包': 'Silakan sambungkan dompet Anda dengan benar',
+
+	'切换': 'beralih',
+	'审核状态': {
+		'待审核': 'menunggu peninjauan',
+		'成功': 'berhasil',
+		'失败': 'gagal',
+		'审核中': 'sedang ditinjau',
+	},
+	'状态': 'status',
+	'赎回状态': 'status penebusan',
+	'领取状态': 'status pengambilan',
+	'借款状态': 'status pinjaman',
+	'还款状态': 'status pembayaran kembali',
+	'理财质押': 'jaminan keuangan',
+	'领取奖励': 'klaim hadiah',
+	'领取': 'terima',
+	'如果提前终止交易，您将无法获得完整的收益 {金额}。':
+		'Jika transaksi dihentikan lebih awal, Anda tidak akan menerima manfaat penuh {amount}{symbol}.',
+	'币种未授权': 'Mata uang {tokenName} tidak diotorisasi',
+	'钱包授权失败，请重新连接。': 'Otorisasi dompet gagal, silakan sambungkan kembali.',
+	'接收方': 'penerima',
 }
