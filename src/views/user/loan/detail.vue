@@ -2,7 +2,7 @@
 	<div class="loan-detail custom-page full-page">
 		<van-nav-bar :fixed="true" :title="t('借款')" @click-left="onClickLeft">
 			<template #left>
-				<van-icon :name="arrow" size="18" />
+				<van-icon :name="arrow" size="23" />
 			</template>
 		</van-nav-bar>
 		<template v-if="stepPage === 'home'">
@@ -100,7 +100,7 @@
 		<template v-if="stepPage === 'success'">
 			<div class="content success">
 				<div class="block1">
-					<img src="@/assets/images/user/check_circle.png" alt="" />
+					<img src="@/assets/images/user/check_circle.svg" alt="" />
 					<p class="p1">{{ t('成功完成！') }}</p>
 					<p class="p2">{{ t('申请成功，请等待审核') }}</p>
 					<van-button class="btns" block round type="primary" @click="continueHandle()">{{ t('前往记录') }}</van-button>
@@ -312,7 +312,7 @@ onMounted(() => {
 		}
 
 		.p2 {
-			color: #797979;
+			color: var(--vt-sub-black);
 			font-size: 24px;
 			font-weight: 500;
 		}
@@ -323,9 +323,13 @@ onMounted(() => {
 	}
 
 	.lists {
-		margin-bottom: 100px;
-		padding-left: 26px;
-		padding-right: 26px;
+		margin-bottom: 60px;
+		padding: 26px;
+
+		border-radius: 14px;
+		border-top: 1.5px solid #FFF;
+		background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
+		box-shadow: 0px 2px 4.4px 2px rgba(0, 0, 0, 0.15);
 
 		.item {
 			display: flex;
@@ -334,36 +338,43 @@ onMounted(() => {
 			margin-bottom: 28px;
 
 			.label {
-				color: #7e7e7e;
-				font-size: 20px;
+				color: var(--vt-sub-black);
+				font-size: 24px;
 				font-weight: 500;
 			}
 
 			.value {
 				text-align: right;
-				font-size: 20px;
+				font-size: 24px;
 				font-weight: 600;
-				color: #000;
+				color: var(--vt-header-black);
 			}
 		}
 	}
 
 	.van-action-bar {
 		padding: 0 25px;
-		bottom: 44px;
+		background: transparent;
+		bottom:-20px;
 		position: relative;
+		.van-button{
+			background-image: url("@/assets/images/market/p_button.png");
+			background-position:  center;
+			background-size: 110% 130%;
+			border:none;
+		}
 	}
 
 	.content {
 		padding: 20px 48px 0;
 
 		.tips {
-			color: #7e7e7e;
+			color: var(--vt-sub-black);
 			font-size: 22px;
 			font-weight: 500;
 
 			span {
-				color: #000;
+				color: #387EFF;
 				font-size: 22px;
 				font-weight: 600;
 			}
@@ -371,14 +382,15 @@ onMounted(() => {
 	}
 
 	.agreement {
-		height: calc(100% - 100px);
+		height: calc(100% - 300px);
 
 		.block2 {
 			border-radius: 20px;
-			border: 2px dashed #363636;
-			background: #d9e5fb;
+			border-top: 1.5px solid #FFF;
+			background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
+			box-shadow: 0px 2px 4.4px 2px rgba(0, 0, 0, 0.15);
 			//padding: 30px 30px 30px 20px;
-			height: calc(100% - 400px);
+			height: calc(100% - 200px);
 			overflow: hidden;
 			overflow-y: scroll;
 
@@ -417,16 +429,31 @@ onMounted(() => {
 			background: #cdddfe;
 			height: 520px;
 		}
+		.van-button--primary{
+			color: #fff;
+			border-radius: 12px;
+			background-image: url("@/assets/images/poofStake/stake_active.png");
+			background-position:  center;
+			background-size: 110% 140%;
+			border:none;
+
+		}
+		.van-button--primary.van-button--plain{
+			color: #645A6F;
+			border-radius: 12px;
+			background-image: url("@/assets/images/poofStake/stake_inactive.png");
+			background-position:  center;
+			background-size: 110% 140%;
+			border:none;
+		}
 	}
 
 	.confirmation {
 		height: calc(100% - 100px);
 		padding-left: 40px;
 		padding-right: 40px;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
+		margin-top: 30px;
+		
 
 		.block1 {
 			.p1 {
@@ -439,10 +466,27 @@ onMounted(() => {
 		}
 
 		.lists {
-			margin-bottom: 40px;
+			margin-bottom: 30px;
 			padding-left: 24px;
 			padding-right: 24px;
 			width: 100%;
+		}
+		.van-button--primary{
+			color: #fff;
+			border-radius: 12px;
+			background-image: url("@/assets/images/poofStake/stake_active.png");
+			background-position:  center;
+			background-size: 110% 140%;
+			border:none;
+
+		}
+		.van-button--primary.van-button--plain{
+			color: #645A6F;
+			border-radius: 12px;
+			background-image: url("@/assets/images/poofStake/stake_inactive.png");
+			background-position:  center;
+			background-size: 110% 140%;
+			border:none;
 		}
 	}
 
@@ -466,16 +510,22 @@ onMounted(() => {
 		}
 
 		.p1 {
-			color: #222;
+			color: var(--vt-header-black);
 			font-size: 40px;
 			font-weight: 700;
 			margin-bottom: 40px;
 		}
 
 		.p2 {
-			color: #797979;
+			color: var(--vt-sub-black);
 			font-size: 24px;
 			font-weight: 600;
+		}
+		.van-button{
+			background-image: url("@/assets/images/market/p_button.png");
+			background-position:  center;
+			background-size: 110% 130%;
+			border:none;
 		}
 	}
 }

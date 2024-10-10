@@ -2,7 +2,7 @@
 	<div class="loan-order custom-page full-page">
 		<van-nav-bar :fixed="true" :title="t('贷款订单')" @click-left="onClickLeft">
 			<template #left>
-				<van-icon :name="arrow" size="18" />
+				<van-icon :name="arrow" size="23" />
 			</template>
 		</van-nav-bar>
 		<div class="content">
@@ -287,15 +287,35 @@ onMounted(() => {
 	padding-bottom: 20px;
 	padding-left: 48px;
 	padding-right: 48px;
-	background: #f5f5f5;
+	background: transparent;
 
 	.content {
 		margin: 32px 0;
 		.each-block {
-			background: #fff;
+			border-top: 1.5px solid #FFF;
+			background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
+			box-shadow: 0px 2px 4.4px 2px rgba(0, 0, 0, 0.15);
 			padding: 34px;
 			margin-bottom: 32px;
 			border-radius: 32px;
+
+			.van-button--primary{
+			color: #fff;
+			border-radius: 12px;
+			background-image: url("@/assets/images/poofStake/stake_active.png");
+			background-position:  center;
+			background-size: 110% 140%;
+			border:none;
+
+		}
+		.van-button--primary.van-button--plain{
+			color: #645A6F;
+			border-radius: 12px;
+			background-image: url("@/assets/images/poofStake/stake_inactive.png");
+			background-position:  center;
+			background-size: 110% 140%;
+			border:none;
+		}
 
 			.each-container {
 				position: relative;
@@ -335,14 +355,14 @@ onMounted(() => {
 
 				.left-text {
 					font-size: 24px;
-					font-weight: 400;
-					color: #999;
+					font-weight:500;
+					color: var(--vt-sub-black);
 				}
 
 				.right-text {
 					font-size: 24px;
-					font-weight: 500;
-					color: #000;
+					font-weight: 600;
+					color: var(--vt-header-black);
 				}
 
 				.uptext {
@@ -431,6 +451,12 @@ onMounted(() => {
 	width: calc(100% - 40px);
 	min-height: 400px;
 	border-radius: 26px;
+	.van-button{
+		background-image: url("@/assets/images/market/p_button.png");
+		background-position:  center;
+		background-size: 110% 130%;
+		border:none;
+	}
 
 	.node-add {
 		border-radius: 26px;
@@ -528,14 +554,15 @@ onMounted(() => {
 	.agreement {
 		padding: 100px 48px 48px;
 		height: calc(100vh - 100px);
+		background: linear-gradient(5deg, rgba(251,229,173,1) 41%, rgba(242,242,242,1) 82%);
 
 		.tips {
-			color: #7e7e7e;
+			color: var(--vt-sub-black);
 			font-size: 22px;
 			font-weight: 500;
 
 			span {
-				color: #000;
+				color: var(--vt-header-black);
 				font-size: 22px;
 				font-weight: 600;
 			}
