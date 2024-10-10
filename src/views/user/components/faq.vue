@@ -3,7 +3,7 @@
 		<div>
 			<van-nav-bar :fixed="true" :title="t('常见问题解答')" @click-left="onClickLeft">
 				<template #left>
-					<van-icon :name="arrow" size="18" />
+					<van-icon :name="arrow" size="23" />
 				</template>
 			</van-nav-bar>
 		</div>
@@ -17,7 +17,7 @@
     </div> -->
 
 		<div class="info">
-			<van-swipe class="my-swipe" :width="126" :show-indicators="false" :loop="false">
+			<van-swipe class="my-swipe" :width="126" :height="130" :show-indicators="false" :loop="false">
 				<van-swipe-item v-for="(item, index) in infoList" :key="index">
 					<div class="info_box break-word">
 						<div class="icon">
@@ -52,8 +52,8 @@
 								<div class="title-row">
 									<span class="title">{{ item.question }}</span>
 									<div class="img" @click="accordionFunc(item)">
-										<img v-if="selectFAQ.answer === item.answer" src="../../../assets/images/user/minus.png" alt="minus" />
-										<img v-else src="../../../assets/images/user/plus.png" alt="plus" />
+										<img v-if="selectFAQ.answer === item.answer" src="../../../assets/images/market/decrease.svg" alt="minus" />
+										<img v-else src="../../../assets/images/market/increase.svg" alt="plus" />
 									</div>
 								</div>
 								<P v-if="selectFAQ.answer === item.answer" class="content-row">
@@ -74,9 +74,9 @@ import { useRoute, useRouter } from 'vue-router'
 import { userStore } from '@/store'
 import { useI18n } from 'vue-i18n'
 import arrow from '@/assets/images/market/back.svg'
-import info1 from '@/assets/images/home/info1.png'
-import info2 from '@/assets/images/home/info2.png'
-import info3 from '@/assets/images/home/info3.png'
+import info1 from '@/assets/images/home/info1.svg'
+import info2 from '@/assets/images/home/info2.svg'
+import info3 from '@/assets/images/home/info3.svg'
 import useLoading from '@/hooks/useLoading.js'
 import usePage from '@/hooks/usePage.js'
 import { fetchFqaListApi } from '@/apis/common.js'
@@ -138,11 +138,11 @@ defineExpose({})
 
 <style lang="scss" scoped>
 .faq_container {
-	padding-left: 40px;
-	padding-right: 40px;
+	padding-left: 30px;
+	padding-right: 30px;
 
 	.info {
-		padding: 44px 0px 36px;
+		padding: 44px 22px 36px;
 		display: flex;
 		justify-content: space-between;
 
@@ -151,11 +151,17 @@ defineExpose({})
 			box-sizing: border-box;
 		}
 		.info_box {
-			//default-width: swipe-width - swipe-padding-right
-			background: #fff;
-			border-radius: 28px;
+			width: 220px !important;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-direction: column;
+			border-radius:  8px;
+			border-top: 1.5px solid #FFF;
+			background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
+			box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
 			padding: 15px;
-			height: 100%;
+			height: 99%;
 
 			.icon {
 				line-height: 1;
@@ -167,9 +173,11 @@ defineExpose({})
 
 			.content {
 				margin-top: 22px;
-				font-weight: 700;
+				font-weight: 500;
 				font-size: 28px;
-				// line-height: normal;
+				line-height: 35px;
+				text-align: center;
+				color: var(--vt-header-black);
 			}
 		}
 	}
@@ -177,8 +185,8 @@ defineExpose({})
 	.qa-wrap {
 		& > .title {
 			font-size: 32px;
-			font-weight: 700;
-			color: #000;
+			font-weight: 600;
+			color: var(--vt-header-black);
 			margin-bottom: 40px;
 			line-height: normal;
 		}
@@ -190,7 +198,9 @@ defineExpose({})
 
 			.contant {
 				width: 100%;
-				background: #fff;
+				border-top: 2px solid #FFF;
+				background: linear-gradient(90deg, rgba(255, 255, 255, 0.30) 0%, rgba(153, 153, 153, 0.30) 100%);
+				box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
 				//margin-left: 50%;
 				//transform: translateX(-50%);
 				border-radius: 28px;
@@ -205,19 +215,19 @@ defineExpose({})
 				}
 
 				.content-row {
-					color: #999;
+					color: var(--vt-sub-black);
 					font-size: 22.9px;
 					font-style: normal;
-					font-weight: 400;
+					font-weight: 500;
 					line-height: normal;
 					padding: 24px 0;
 				}
 
 				.title {
 					font-size: 28px;
-					color: #000;
+					color: var(--vt-header-black);
 					line-height: normal;
-					font-weight: 590;
+					font-weight: 600;
 				}
 
 				.img {
