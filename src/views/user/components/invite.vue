@@ -2,13 +2,13 @@
 	<div class="invite_container custom-page full-page">
 		<van-nav-bar :fixed="true" :title="t('邀请朋友')" @click-left="onClickLeft">
 			<template #left>
-				<van-icon :name="arrow" size="18" />
+				<van-icon :name="arrow" size="23" />
 			</template>
 		</van-nav-bar>
 
 		<div class="container">
 			<div class="prize">
-				<img src="../../../assets/images/user/prize.png" alt="prize" />
+				<img src="../../../assets/images/user/prize.svg" alt="prize" />
 			</div>
 			<div class="title">{{ t('推荐并赚取') }}</div>
 			<!--			<div class="text">{{ inviteCode.inviteText }}</div>-->
@@ -110,15 +110,17 @@ defineExpose({})
 		.link {
 			padding: 34px 22px;
 			border-radius: 24px;
-			border: 2px dashed #7ba9ff;
-			background: #e5ebf6;
+
+			border: 2px dashed #646464;
+			background: linear-gradient(90deg, rgba(217, 229, 251, 0.75) 0%, rgba(116, 165, 255, 0.75) 100%);
+
 			margin-top: 34px;
 			min-height: 106px;
 
-			color: #222;
+			color: var(--vt-header-black);
 			font-size: 28px;
 			font-style: normal;
-			font-weight: 700;
+			font-weight: 500;
 			line-height: normal;
 			letter-spacing: 0.42px;
 
@@ -130,7 +132,10 @@ defineExpose({})
 		.btn {
 			margin-top: 46px;
 			padding: 36px 15px;
-			background: #82a9f9;
+			background-image: url("@/assets/images/market/p_button.png");
+			background-position:  center;
+			background-size: 110% 130%;
+			border:none;
 			color: #fff;
 			font-size: 28px;
 			text-align: center;

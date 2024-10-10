@@ -159,9 +159,9 @@ defineExpose({})
 			//bottom: -40px;
 			left: 50%;
 			transform: translateX(-50%);
-			border-top: 1px solid #FFF;
-			background: linear-gradient(180deg, #93B6FF 0%, #75D3FF 83%, #35DCE8 100%);
-			box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.20);
+			background-image: url("@/assets/images/market/p_button.png");
+			background-position:  center;
+			background-size: 110% 130%;
 			width: 90%;
 			height: $buttonHeight;
 			line-height: $buttonHeight;

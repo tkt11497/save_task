@@ -122,6 +122,9 @@ defineExpose({})
 	//padding-bottom: 10px;
 	//padding-top: 16px;
 	//padding-bottom: 4px;
+	&::after{
+		border: 0 solid transparent;
+	}
 	.van-tabbar-item {
 		padding: 8px 0;
 		background: transparent;
