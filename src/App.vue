@@ -37,7 +37,7 @@ const { t } = useI18n()
 
 onMounted(() => {
 	// todo 正式环境去除
-	// const vConsole = new VConsole()
+	const vConsole = new VConsole()
 })
 
 const isShowNav = ref(false)
