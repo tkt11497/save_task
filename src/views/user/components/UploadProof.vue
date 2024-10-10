@@ -3,7 +3,7 @@
 		<div>
 			<van-nav-bar :fixed="false" :title="t('上传证明')" @click-left="onClickLeft">
 				<template #left>
-					<van-icon :name="arrow" size="18" />
+					<van-icon :name="arrow" size="23" />
 				</template>
 			</van-nav-bar>
 		</div>
@@ -162,10 +162,15 @@ defineExpose({})
 <style lang="scss" scoped>
 .uploadProof_container {
 	font-size: 30px;
-	background: #fff;
+	background-image: url("@/assets/images/background/sbg_2.png");
+	background-position:  top;
+	background-size: 250% 250%;
 	height: 100vh;
 	position: relative;
 	padding-bottom: 100px;
+	.van-nav-bar{
+		background: transparent;
+	}
 
 	:deep .van-uploader__input-wrapper {
 		width: 100%;
@@ -186,7 +191,9 @@ defineExpose({})
 
 		.uploader-box {
 			text-align: center;
-			border: 2px dashed #82a9f9;
+			border-top: 1.5px solid #FFF;
+			background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
+			box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
 			height: 170px;
 			width: 300px;
 			border-radius: 20px;
@@ -204,7 +211,7 @@ defineExpose({})
 				margin-top: 20px;
 
 				span {
-					color: #4d4fff;
+					color: #387EFF;
 					font-weight: 600;
 				}
 			}
@@ -222,7 +229,9 @@ defineExpose({})
 	}
 
 	.input-box {
-		background: #f9fafb;
+		border-top: 1.5px solid #FFF;
+		background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
+		box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
 		border-radius: 20px;
 		position: relative;
 		margin: 20px 60px 0 60px;
@@ -242,12 +251,16 @@ defineExpose({})
 		}
 
 		:deep .van-field {
-			background: #f9fafb;
+			border-radius: 13px;
+			background: linear-gradient(270deg, rgba(153, 153, 153, 0.50) 0%, rgba(255, 255, 255, 0.50) 100%);
+			box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
 
 			.van-field__right-icon {
-				color: #000;
+				color: var(--vt-header-black);
 			}
-
+			.van-icon{
+				color: var(--vt-header-black);
+			}
 			.van-field__left-icon {
 				margin-right: 10px;
 			}
@@ -267,7 +280,10 @@ defineExpose({})
 			width: 100%;
 			border-radius: 30px;
 			height: 60px;
-			background: #82a8f9;
+			background-image: url("@/assets/images/market/p_button.png");
+			background-position:  center;
+			background-size: 110% 130%;
+			border:none;
 		}
 	}
 }
