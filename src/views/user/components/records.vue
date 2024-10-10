@@ -3,7 +3,7 @@
 		<div>
 			<van-nav-bar :fixed="true" :title="t('记录')" @click-left="onClickLeft">
 				<template #left>
-					<van-icon :name="arrow" size="18" />
+					<van-icon :name="arrow" size="23" />
 				</template>
 			</van-nav-bar>
 		</div>
@@ -286,7 +286,7 @@
 										<p class="day-text">{{ list.symbol.toUpperCase() }}</p>
 
 										<div class="right">
-											<img v-if="list.exchangeDirection === 1" src="@/assets/images/record/shield-01.png" class="img-css success-img" alt="notice" />
+											<img v-if="list.exchangeDirection === 1" src="@/assets/images/user/verified_user.svg" class="img-css success-img" alt="notice" />
 											<img v-if="list.exchangeDirection === 0" src="@/assets/images/record/shield-02.png" class="img-css" alt="notice" />
 										</div>
 									</div>
@@ -792,7 +792,9 @@ defineExpose({})
 .records_container {
 	position: relative;
 	padding-bottom: 20px;
-	background: #f5f5f5;
+	background-image: url("@/assets/images/background/sbg_2.png");
+	background-position:  top;
+	background-size: 250% 250%;
 	min-height: 100vh;
 
 	.container {
@@ -829,12 +831,33 @@ defineExpose({})
 	.main-container {
 		margin: 32px 0;
 		padding: 0 34px;
+		
+		.van-list{
+			padding: 3px;
+		}
 
 		.each-block {
-			background: #fff;
+			border-radius: 14px;
+			border-top: 1.5px solid #FFF;
+			background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
+			box-shadow: 0px 2px 4.4px 2px rgba(0, 0, 0, 0.15);
+			position: relative;
+			
 			padding: 34px;
 			margin-bottom: 32px;
 			border-radius: 32px;
+
+			&::before {
+					content: '';
+					position: absolute;
+					top: 47px;
+					margin-top: -16px;
+					left: 0;
+					width: 13px;
+					height: 52px;
+					background:  linear-gradient(180deg, rgba(216, 228, 252, 0.80) 0%, rgba(21, 177, 220, 0.80) 78%, rgba(60, 150, 223, 0.80) 100%);
+					border-radius: 0.3rem;
+				}
 
 			.each-container {
 				position: relative;
@@ -849,9 +872,9 @@ defineExpose({})
 				margin-bottom: 20px;
 
 				.day-text {
-					color: #000;
+					color: var(--vt-header-black);
 					font-size: 28px;
-					font-weight: 500;
+					font-weight: 600;
 				}
 
 				.img-css {
@@ -872,14 +895,14 @@ defineExpose({})
 
 				.left-text {
 					font-size: 24px;
-					font-weight: 400;
-					color: #999;
+					font-weight: 500;
+					color: var(--vt-sub-black);
 				}
 
 				.right-text {
 					font-size: 24px;
-					font-weight: 500;
-					color: #000;
+					font-weight: 600;
+					color: var(--vt-header-black);
 				}
 
 				.uptext {
@@ -895,17 +918,17 @@ defineExpose({})
 				justify-content: unset;
 				position: relative;
 				margin-bottom: 30px;
-				&::before {
-					content: '';
-					position: absolute;
-					top: 50%;
-					margin-top: -16px;
-					left: 0;
-					width: 8px;
-					height: 32px;
-					background-color: #7ba9ff;
-					border-radius: 0.3rem;
-				}
+				// &::before {
+				// 	content: '';
+				// 	position: absolute;
+				// 	top: 50%;
+				// 	margin-top: -16px;
+				// 	left: 0;
+				// 	width: 8px;
+				// 	height: 32px;
+				// 	background-color: #7ba9ff;
+				// 	border-radius: 0.3rem;
+				// }
 			}
 
 			.title-row {
@@ -1004,23 +1027,25 @@ defineExpose({})
 	}
 
 	:deep(.van-tabs__wrap) {
-		height: initial;
+		height: 30px;
+		border-radius: 9px 0px 0px 9px;
+		margin-left:15px ;
 	}
 
 	:deep(.van-tab) {
-		background: #fff;
-		border: 1px solid #fff;
-		margin: 0px 7px;
+		font-size: 14px;
+		color: var(--vt-sub-black);
+		font-weight: 500;
+		margin: 0px 0.5px;
 		padding: 5px 20px;
 		border-radius: 26px;
 	}
 
 	:deep(.van-tab--active) {
-		//padding: 5px 20px;
-		//border-radius: 26px;
-		background: #d8e4fd;
-		border-color: #d8e4fd;
-		color: #82a9f9;
+		border-radius: 7px;
+		background: var(--1233456, linear-gradient(180deg, rgba(216, 228, 252, 0.80) 0%, rgba(21, 177, 220, 0.80) 78%, rgba(60, 150, 223, 0.80) 100%));
+		box-shadow: 0px 3px 8px 0px rgba(0, 0, 0, 0.12), 0px 3px 1px 0px rgba(0, 0, 0, 0.04);
+		color: #fff;
 	}
 
 	:deep(.van-tabs__line) {
@@ -1028,9 +1053,8 @@ defineExpose({})
 	}
 
 	:deep(.van-tabs__nav) {
-		background: transparent;
-		padding-left: 16px;
-		padding-right: 16px;
+		padding-left:0px ;
+		background: #DFDFDF;
 	}
 }
 
