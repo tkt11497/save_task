@@ -20,7 +20,7 @@ request.interceptors.request.use(
 		const usStore = userStore()
 		const { userId } = storeToRefs(usStore)
 
-		config.headers['Accept-Language'] = usStore.languageCode
+		config.headers['language'] = usStore.language
 
 		if (config.url !== '/user/login' && userId.value) {
 			config.headers['Authorization'] = userId.value
