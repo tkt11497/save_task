@@ -499,4 +499,25 @@ export default {
 	'请求失败，点击重新加载': 'Falha na solicitação, clique para recarregar',
 	'选择新类型': 'Selecionar novo tipo',
 	'请正确连接你的钱包': 'Por favor, conecte sua carteira corretamente',
+
+	'切换': 'alternar',
+	'审核状态': {
+		'待审核': 'aguardando revisão',
+		'成功': 'sucesso',
+		'失败': 'falha',
+		'审核中': 'em revisão',
+	},
+	'状态': 'status',
+	'赎回状态': 'status de resgate',
+	'领取状态': 'status de coleta',
+	'借款状态': 'status do empréstimo',
+	'还款状态': 'status de reembolso',
+	'理财质押': 'garantia financeira',
+	'领取奖励': 'reivindicar recompensas',
+	'领取': 'receber',
+	'如果提前终止交易，您将无法获得完整的收益 {金额}。':
+		'Se a transação for encerrada antecipadamente, você não receberá o benefício total {amount}{symbol}.',
+	'币种未授权': 'A moeda {tokenName} não está autorizada',
+	'钱包授权失败，请重新连接。': 'Falha na autorização da carteira, por favor reconecte.',
+	'接收方': 'beneficiário',
 }

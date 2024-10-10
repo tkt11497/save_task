@@ -508,4 +508,5 @@ export default {
 		'If the transaction is terminated early, you will not receive the full benefit {amount}{symbol}.',
 	'币种未授权': '{tokenName} is not authorized',
 	'钱包授权失败，请重新连接。': 'Wallet authorization failed, please reconnect.',
+	'接收方': 'receiving',
 }

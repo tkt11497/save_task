@@ -28,7 +28,8 @@
 						<template #loading>
 							<van-loading class="custom-page-loading" type="spinner" />
 						</template>
-						<div v-if="['deposit', 'withdraw', 'exchange'].indexOf(activeName) !== -1">
+						<!--            ['deposit', 'withdraw', 'exchange'].indexOf(activeName) !== -1-->
+						<div v-if="activeName === 'account'">
 							<!-- =======================账户======================= -->
 							<div v-if="!listError && !accountList.length" class="container">
 								<div class="notice">
@@ -43,10 +44,10 @@
 							<div v-else class="each-block" v-for="(list, ind1) in accountList" :key="ind1">
 								<div class="each-container">
 									<!-- 充值 -->
-									<div class="title1-row" v-if="orderTypeArr[activeName]">
-										<img :src="orderTypeArr[activeName].img" class="img-css" alt="notice" />
+									<div class="title1-row" v-if="orderTypeArr[list.type]">
+										<img :src="orderTypeArr[list.type].img" class="img-css" alt="notice" />
 										<span>
-											<p class="day-text">{{ orderTypeArr[activeName].label }}</p>
+											<p class="day-text">{{ orderTypeArr[list.type].label }}</p>
 										</span>
 									</div>
 									<div class="title1-row" v-else>
@@ -56,14 +57,15 @@
 										</span>
 									</div>
 
-									<template v-if="activeName === 'deposit'">
+									<!-- 充值-->
+									<template v-if="list.type === 3">
 										<div class="content-row">
 											<p class="left-text">{{ t('发币') }}:</p>
-											<p class="right-text">{{ toFixedDecimal(list.rechargeAmount, 8) }} {{ list.rechargeToken }}</p>
+											<p class="right-text">{{ toFixedDecimal(list.amount, 8) }} {{ list.token }}</p>
 										</div>
 										<div class="content-row">
 											<p class="left-text">{{ t('收币') }}:</p>
-											<p class="right-text">{{ toFixedDecimal(list.rechargeAmount, 8) }} {{ list.rechargeToken }}</p>
+											<p class="right-text">{{ toFixedDecimal(list.amount, 8) }} {{ list.token }}</p>
 										</div>
 										<div class="content-row">
 											<p class="left-text">{{ t('时间') }}:</p>
@@ -71,25 +73,27 @@
 										</div>
 									</template>
 
-									<template v-if="activeName === 'withdraw'">
+									<!-- 提现-->
+									<template v-if="list.type === 2">
 										<div class="content-row">
-											<p class="left-text">{{ t('发币') }}:</p>
-											<p class="right-text">{{ toFixedDecimal(list.withdrawAmount, 8) }} {{ list.withdrawToken }}</p>
+											<p class="left-text">{{ t('接收方') }}:</p>
+											<p class="right-text">{{ formatAddress(list.walletAddress) }}</p>
 										</div>
 										<div class="content-row">
 											<p class="left-text">{{ t('收币') }}:</p>
-											<p class="right-text">{{ toFixedDecimal(list.withdrawAmount, 8) }} {{ list.withdrawToken }}</p>
+											<p class="right-text">{{ toFixedDecimal(list.amount, 8) }} {{ list.token }}</p>
 										</div>
 										<div class="content-row">
 											<p class="left-text">{{ t('时间') }}:</p>
-											<p class="right-text">{{ formatDate(list.ceateTime) }}</p>
+											<p class="right-text">{{ formatDate(list.createTime) }}</p>
 										</div>
 									</template>
 
-									<template v-if="activeName === 'exchange'">
+									<!-- 兑换-->
+									<template v-if="list.type === 4">
 										<div class="content-row">
 											<p class="left-text">{{ t('发币') }}:</p>
-											<p class="right-text">{{ toFixedDecimal(list.fromAmount, 8) }} {{ list.fromToken }}</p>
+											<p class="right-text">{{ toFixedDecimal(list.amount, 8) }} {{ list.token }}</p>
 										</div>
 										<div class="content-row">
 											<p class="left-text">{{ t('收币') }}:</p>
@@ -101,7 +105,20 @@
 										</div>
 									</template>
 
-									<div class="content-row" v-if="['deposit', 'withdraw'].indexOf(activeName) !== -1">
+									<!-- 静态收益-->
+									<template v-if="list.type === 1">
+										<div class="content-row">
+											<p class="left-text">{{ t('收币') }}:</p>
+											<p class="right-text">{{ toFixedDecimal(list.amount, 8) }} ETH</p>
+										</div>
+										<div class="content-row">
+											<p class="left-text">{{ t('时间') }}:</p>
+											<p class="right-text">{{ formatDate(list.createTime) }}</p>
+										</div>
+									</template>
+
+									<!-- 充值、提现-->
+									<div class="content-row" v-if="[3, 2].indexOf(list.type) !== -1">
 										<p class="left-text">{{ t('状态') }}:</p>
 										<p class="right-text">
 											<Status v-if="list.orderStatus === 0" status="process" />
@@ -436,14 +453,14 @@ import arrow from '@/assets/images/user/arrow.png'
 import { userStore } from '@/store'
 import { useI18n } from 'vue-i18n'
 import useLoading from '@/hooks/useLoading.js'
-import { formatDate, toFixedDecimal } from '@/utils/index.js'
+import { formatAddress, formatDate, toFixedDecimal } from '@/utils/index.js'
 import { dayjs } from 'element-plus'
 import usePage from '@/hooks/usePage.js'
 import { fetchOptionsListApi } from '@/apis/optionAndContract.js'
 import { claimRewardsApi, fetchStakeOrderListApi, pledgeRedemptionApi } from '@/apis/stake.js'
 import Status from '@/components/Status/index.vue'
 import { showToast } from 'vant'
-import { fetchExchangeOrderListApi, fetchRechargeOrderListApi, fetchWithdrawOrderListApi } from '@/apis/user.js'
+import { fetchAccountOrderList, fetchExchangeOrderListApi, fetchRechargeOrderListApi, fetchWithdrawOrderListApi } from '@/apis/user.js'
 
 defineOptions({
 	name: 'Records',
@@ -467,20 +484,24 @@ const optionList = ref([])
 const contractList = ref([])
 
 // tab选中参数
-const activeName = ref('deposit')
+const activeName = ref('account')
 // tab数据
 const tabList = ref([
+	// {
+	// 	label: t('充值'),
+	// 	value: 'deposit',
+	// },
+	// {
+	// 	label: t('提现'),
+	// 	value: 'withdraw',
+	// },
+	// {
+	// 	label: t('兑换'),
+	// 	value: 'exchange',
+	// },
 	{
-		label: t('充值'),
-		value: 'deposit',
-	},
-	{
-		label: t('提现'),
-		value: 'withdraw',
-	},
-	{
-		label: t('兑换'),
-		value: 'exchange',
+		label: t('账户'),
+		value: 'account',
 	},
 	{
 		label: t('计息'),
@@ -519,19 +540,19 @@ const PledgeTypeArr = ref({
 })
 
 const orderTypeArr = ref({
-	deposit: {
+	'3': {
 		label: t('充值'),
-		value: '1',
+		value: '3',
 		img: new URL(`@/assets/images/record/card-add.png`, import.meta.url).href,
 	},
-	withdraw: {
+	'2': {
 		label: t('提现'),
 		value: '2',
 		img: new URL(`@/assets/images/record/card-minus.png`, import.meta.url).href,
 	},
-	exchange: {
+	'4': {
 		label: t('兑换'),
-		value: '20',
+		value: '4',
 		img: new URL(`@/assets/images/user/exchange.png`, import.meta.url).href,
 	},
 	'24': {
@@ -539,9 +560,9 @@ const orderTypeArr = ref({
 		value: '24',
 		img: new URL(`@/assets/images/user/send.png`, import.meta.url).href,
 	},
-	'21': {
+	'1': {
 		label: t('静态收益'),
-		value: '21',
+		value: '1',
 		img: new URL(`@/assets/images/record/card-minus.png`, import.meta.url).href,
 	},
 	default: {
@@ -563,12 +584,15 @@ const onClickTab = ({ name }) => {
 const getRecordApi = (data) => {
 	let fetchApi,
 		commonData = {}
-	if (activeName.value === 'deposit') {
-		fetchApi = fetchRechargeOrderListApi
-	} else if (activeName.value === 'withdraw') {
-		fetchApi = fetchWithdrawOrderListApi
-	} else if (activeName.value === 'exchange') {
-		fetchApi = fetchExchangeOrderListApi
+	// if (activeName.value === 'deposit') {
+	// 	fetchApi = fetchRechargeOrderListApi
+	// } else if (activeName.value === 'withdraw') {
+	// 	fetchApi = fetchWithdrawOrderListApi
+	// } else if (activeName.value === 'exchange') {
+	// 	fetchApi = fetchExchangeOrderListApi
+	// }
+	if (activeName.value === 'account') {
+		fetchApi = fetchAccountOrderList
 	} else if (activeName.value === 'interest') {
 		fetchApi = fetchStakeOrderListApi
 		// 0:个人质押,1:用户定制产品,2:理财产品,3:联合质押
@@ -598,7 +622,10 @@ watch(
 	() => dataList.value,
 	(val) => {
 		let currentList
-		if (['deposit', 'withdraw', 'exchange'].indexOf(activeName.value) !== -1) {
+		// if (['deposit', 'withdraw', 'exchange'].indexOf(activeName.value) !== -1) {
+		// 	currentList = accountList
+		// }
+		if (activeName.value === 'account') {
 			currentList = accountList
 		} else if (activeName.value === 'interest') {
 			currentList = financialClientList
@@ -752,40 +779,6 @@ defineExpose({})
 
 .tabs-wrapper {
 	margin-top: 40px;
-	/* Enable horizontal scrolling */
-	white-space: nowrap;
-	/* Prevent line breaks */
-
-	overflow-x: scroll;
-	/* Allow horizontal scrolling */
-	overflow-y: hidden;
-	/* Ensure no vertical scrolling */
-	width: 100%;
-	/* Full width */
-	scroll-behavior: smooth;
-	/* Optional: smooth scrolling effect */
-}
-
-.tabs-wrapper::-webkit-scrollbar {
-	display: none;
-}
-
-/* Hide scrollbar for WebKit browsers (Chrome, Safari) */
-.tabs-wrapper::-webkit-scrollbar {
-	display: none;
-	/* Hides the scrollbar */
-}
-
-/* Hide scrollbar for Firefox */
-.tabs-wrapper {
-	scrollbar-width: none;
-	/* Hides the scrollbar */
-}
-
-/* Hide scrollbar for IE and Edge */
-.tabs-wrapper {
-	-ms-overflow-style: none;
-	/* Hides the scrollbar */
 }
 </style>
 <style lang="scss" scoped>
@@ -1013,6 +1006,7 @@ defineExpose({})
 		margin: 0px 7px;
 		padding: 5px 20px;
 		border-radius: 26px;
+		flex: none;
 	}
 
 	:deep(.van-tab--active) {
@@ -1031,6 +1025,7 @@ defineExpose({})
 		background: transparent;
 		padding-left: 16px;
 		padding-right: 16px;
+		overflow-x: auto;
 	}
 }
 

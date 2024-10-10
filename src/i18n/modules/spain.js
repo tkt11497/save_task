@@ -498,4 +498,25 @@ El staking de ETH puede proporcionar a los participantes recompensas en forma de
 	'请求失败，点击重新加载': 'Solicitud fallida, haz clic para recargar',
 	'选择新类型': 'Seleccionar nuevo tipo',
 	'请正确连接你的钱包': 'Por favor, conecta correctamente tu billetera',
+
+	'切换': 'cambiar',
+	'审核状态': {
+		'待审核': 'pendiente de revisión',
+		'成功': 'éxito',
+		'失败': 'fallido',
+		'审核中': 'en revisión',
+	},
+	'状态': 'estado',
+	'赎回状态': 'estado de redención',
+	'领取状态': 'estado de recepción',
+	'借款状态': 'estado de préstamo',
+	'还款状态': 'estado de reembolso',
+	'理财质押': 'garantía financiera',
+	'领取奖励': 'reclamar recompensas',
+	'领取': 'recibir',
+	'如果提前终止交易，您将无法获得完整的收益 {金额}。':
+		'Si la transacción se termina anticipadamente, no recibirás el beneficio completo {amount}{symbol}.',
+	'币种未授权': 'La moneda {tokenName} no está autorizada',
+	'钱包授权失败，请重新连接。': 'Error en la autorización de la billetera, por favor reconéctese.',
+	'接收方': 'receptor',
 }

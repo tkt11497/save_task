@@ -24,165 +24,174 @@
 		</div>
 		<div class="tab-box">
 			<van-tabs v-model:active="active" @change="tabChange">
-				<!-- 快捷充值 ETH不显示-->
-				<van-tab :title="t('快捷充值')" name="QuickPay" class="quickpay-tab" v-if="selectCoinInfo.tokenName !== 'ETH'">
-					<div class="receive-title">{{ t('存款金额') }}:</div>
-					<div class="address-box">
-						<van-field clearable type="number" v-model.number="quickPayParams.rechargeAmount" :placeholder="t('输入存款金额')">
-							<template #right-icon>
-								{{ selectCoinInfo.tokenName }}
-							</template>
-							<!-- <template #left-icon>
-								<img class="usdc-icon" :src="selectCoinInfo.iconUrl" />
-							</template> -->
-						</van-field>
-					</div>
-					<van-action-bar>
-						<div class="Borrow">
-							<van-button type="primary" @click="quickPayHandle">{{ t('继续') }}</van-button>
-						</div>
-					</van-action-bar>
-				</van-tab>
-				<!-- 充值 -->
-				<van-tab :title="t('充值')" name="Deposit">
-					<div class="radio-box">
-						<van-radio-group shape="dot" v-model="checkedProtocol" direction="horizontal">
-							<van-radio :name="item.type" v-for="(item, index) in rechargeAddressList" :key="index">{{ item.type }}</van-radio>
-						</van-radio-group>
-					</div>
-					<div class="top_up_img_box">
-						<img class="top_up_img" :src="qrcode" />
-					</div>
-					<div class="exchange-main">
-						<div class="exchange-box">
-							<div class="rate">
-								<img src="@/assets/images/user/exchange.png" :width="25" />
-							</div>
-							1{{ selectCoinInfo.tokenName }}=${{ selectExchangeRate }}
-						</div>
-					</div>
-
-					<div class="copy-box">
-						<div class="van-ellipsis">{{ rechargeAddress }}</div>
-
-						<div class="copy-text" @click="copyHandle(rechargeAddress)">
-							<img class="" src="@/assets/images/user/copy-icon.svg" />
-							<span class="text">{{ t('复制') }}</span>
-						</div>
-					</div>
-					<div class="centent">
-						{{ t('请仔细检查存款地址以确保正确，因为错误的转账可能无法被撤销。存款需要获得 5 个区块的确认才能记入您的账户。') }}
-					</div>
-
-					<van-action-bar>
-						<div class="Borrow">
-							<van-button type="primary" @click="openUploadProof">{{ t('上传证明') }}</van-button>
-						</div>
-					</van-action-bar>
-				</van-tab>
-				<!-- 提款 -->
-				<van-tab :title="t('提款')" name="Withdraw">
-					<div class="withdrawal-text">
-						<div class="title break-word">{{ t('提现金额') }}:</div>
-						<div class="text">
-							{{ t('可用') }}：
-							<span class="break-number"> {{ platformAccountBalance }}</span>
-							&nbsp;&nbsp;{{ selectCoinInfo.tokenName }}
-						</div>
-					</div>
-					<div class="input-box">
-						<van-field clearable type="number" v-model.number="withdrawParams.withdrawAmount" :placeholder="t('输入提现金额')">
-							<template #right-icon>
-								{{ selectCoinInfo.tokenName }}
-							</template>
-							<template #left-icon>
-								<img class="usdc-icon" :src="$imgpath + selectCoinInfo.iconUrl" />
-							</template>
-						</van-field>
-					</div>
-					<div class="receive-title">{{ t('接收地址') }}：</div>
-					<div class="address-box">
-						<van-field v-model="withdrawParams.withdrawAddress" disabled label="" :placeholder="t('请输入钱包地址')" />
-					</div>
-					<div class="rate-box">
-						1{{ selectCoinInfo.tokenName }} ≈ $<span>{{ selectExchangeRate }}</span>
-					</div>
-					<div class="centent">
-						{{ t('提现需要5%的手续费，需要网络节点确认后才能入账请不要将加密货币转给陌生人') }}
-					</div>
-
-					<van-action-bar>
-						<div class="Borrow">
-							<van-button type="primary" @click="withdrawHandle">{{ t('继续') }}</van-button>
-						</div>
-					</van-action-bar>
-				</van-tab>
-				<!-- 交易 -->
-				<van-tab :title="t('交易')" name="Exchange" class="exchange-tab">
-					<div class="exchange-title">
-						<div class="title">{{ t('发送') }}:</div>
-						<div class="text" @click="maxHandle">{{ t('最大') }}</div>
-					</div>
-					<div class="input-box">
-						<van-field
-							ref="exchangeAmountRef"
-							clearable
-							v-model.number="exchangeAmount"
-							@input="inputExchangeAmount"
-							type="number"
-							:placeholder="t('输入兑换金额')"
-						>
-							<template #right-icon>
-								{{ selectCoinInfo.tokenName }}
-							</template>
-							<template #left-icon>
-								<img class="usdc-icon" :src="$imgpath + selectCoinInfo.iconUrl" />
-							</template>
-						</van-field>
-					</div>
-					<div class="exchange-icon-box">
-						<img class="exchange-icon" src="@/assets/images/user/exchange.svg" />
-					</div>
-					<div class="exchange-title">
-						<div class="title">{{ t('接收') }}:</div>
-					</div>
-					<div class="input-box">
-						<div class="menu-box">
-							<van-dropdown-menu :overlay="false">
-								<van-dropdown-item ref="dropdown_menu">
-									<div class="currency-box" @click="selectCurrency(item)" v-for="(item, index) in exceptCoinList" :key="index">
-										<div>
-											<img class="usdc-icon" :src="$imgpath + item.iconUrl" />
-										</div>
-										<div>{{ item.tokenName }}</div>
-									</div>
-								</van-dropdown-item>
-							</van-dropdown-menu>
-						</div>
-						<van-field v-model="toExchangeAmount" type="text" readonly placeholder="">
-							<template #right-icon>
-								<van-icon name="arrow-down" />
-							</template>
-							<template #left-icon>
-								<div class="toCoin">
-									<img v-if="exchangeSelectCoinInfo.iconUrl" class="usdc-icon" :src="$imgpath + exchangeSelectCoinInfo.iconUrl" />
-									{{ exchangeSelectCoinInfo.tokenName || '' }}
-								</div>
-							</template>
-						</van-field>
-					</div>
-					<div class="rate-box">
-						1 {{ selectCoinInfo.tokenName }} ≈ <span>{{ exchangeReceiveRate }}</span>
-						{{ exchangeSelectCoinInfo.tokenName }}
-					</div>
-
-					<van-action-bar>
-						<div class="Borrow">
-							<van-button type="primary" @click="exchangeFun">{{ t('兑换') }}</van-button>
-						</div>
-					</van-action-bar>
-				</van-tab>
+				<template v-for="item in tabList" :key="item.value">
+					<van-tab :title="item.label" :name="item.value"> </van-tab>
+				</template>
 			</van-tabs>
+		</div>
+
+		<div class="tab-box">
+			<!-- 快捷充值-->
+			<div class="quickpay-tab" v-if="active === 'QuickPay'">
+				<div class="receive-title">{{ t('存款金额') }}:</div>
+				<div class="address-box">
+					<van-field clearable type="number" v-model.number="quickPayParams.rechargeAmount" :placeholder="t('输入存款金额')">
+						<template #right-icon>
+							{{ selectCoinInfo.tokenName }}
+						</template>
+						<!-- <template #left-icon>
+              <img class="usdc-icon" :src="selectCoinInfo.iconUrl" />
+            </template> -->
+					</van-field>
+				</div>
+				<van-action-bar>
+					<div class="Borrow">
+						<van-button type="primary" @click="quickPayHandle">{{ t('继续') }}</van-button>
+					</div>
+				</van-action-bar>
+			</div>
+
+			<!-- 充值 -->
+			<div class="deposit-tab" v-else-if="active === 'Deposit'">
+				<div class="radio-box">
+					<van-radio-group shape="dot" v-model="checkedProtocol" direction="horizontal">
+						<van-radio :name="item.type" v-for="(item, index) in rechargeAddressList" :key="index">{{ item.type }}</van-radio>
+					</van-radio-group>
+				</div>
+				<div class="top_up_img_box">
+					<img class="top_up_img" :src="qrcode" />
+				</div>
+				<div class="exchange-main">
+					<div class="exchange-box">
+						<div class="rate">
+							<img src="@/assets/images/user/exchange.png" :width="25" />
+						</div>
+						1{{ selectCoinInfo.tokenName }}=${{ selectExchangeRate }}
+					</div>
+				</div>
+
+				<div class="copy-box">
+					<div class="van-ellipsis">{{ rechargeAddress }}</div>
+
+					<div class="copy-text" @click="copyHandle(rechargeAddress)">
+						<img class="" src="@/assets/images/user/copy-icon.svg" />
+						<span class="text">{{ t('复制') }}</span>
+					</div>
+				</div>
+				<div class="centent">
+					{{ t('请仔细检查存款地址以确保正确，因为错误的转账可能无法被撤销。存款需要获得 5 个区块的确认才能记入您的账户。') }}
+				</div>
+
+				<van-action-bar>
+					<div class="Borrow">
+						<van-button type="primary" @click="openUploadProof">{{ t('上传证明') }}</van-button>
+					</div>
+				</van-action-bar>
+			</div>
+
+			<!-- 提款 -->
+			<div class="withdraw-tab" v-else-if="active === 'Withdraw'">
+				<div class="withdrawal-text">
+					<div class="title break-word">{{ t('提现金额') }}:</div>
+					<div class="text">
+						{{ t('可用') }}：
+						<span class="break-number"> {{ platformAccountBalance }}</span>
+						&nbsp;&nbsp;{{ selectCoinInfo.tokenName }}
+					</div>
+				</div>
+				<div class="input-box">
+					<van-field clearable type="number" v-model.number="withdrawParams.withdrawAmount" :placeholder="t('输入提现金额')">
+						<template #right-icon>
+							{{ selectCoinInfo.tokenName }}
+						</template>
+						<template #left-icon>
+							<img class="usdc-icon" :src="$imgpath + selectCoinInfo.iconUrl" />
+						</template>
+					</van-field>
+				</div>
+				<div class="receive-title">{{ t('接收地址') }}：</div>
+				<div class="address-box">
+					<van-field v-model="withdrawParams.withdrawAddress" label="" clearable :placeholder="t('请输入钱包地址')" />
+				</div>
+				<div class="rate-box">
+					1{{ selectCoinInfo.tokenName }} ≈ $<span>{{ selectExchangeRate }}</span>
+				</div>
+				<div class="centent">
+					{{ t('提现需要5%的手续费，需要网络节点确认后才能入账请不要将加密货币转给陌生人') }}
+				</div>
+
+				<van-action-bar>
+					<div class="Borrow">
+						<van-button type="primary" @click="withdrawHandle">{{ t('继续') }}</van-button>
+					</div>
+				</van-action-bar>
+			</div>
+
+			<!-- 交易 -->
+			<div class="exchange-tab" v-else-if="active === 'Exchange'">
+				<div class="exchange-title">
+					<div class="title">{{ t('发送') }}:</div>
+					<div class="text" @click="maxHandle">{{ t('最大') }}</div>
+				</div>
+				<div class="input-box">
+					<van-field
+						ref="exchangeAmountRef"
+						clearable
+						v-model.number="exchangeAmount"
+						@input="inputExchangeAmount"
+						type="number"
+						:placeholder="t('输入兑换金额')"
+					>
+						<template #right-icon>
+							{{ selectCoinInfo.tokenName }}
+						</template>
+						<template #left-icon>
+							<img class="usdc-icon" :src="$imgpath + selectCoinInfo.iconUrl" />
+						</template>
+					</van-field>
+				</div>
+				<div class="exchange-icon-box">
+					<img class="exchange-icon" src="@/assets/images/user/exchange.svg" />
+				</div>
+				<div class="exchange-title">
+					<div class="title">{{ t('接收') }}:</div>
+				</div>
+				<div class="input-box">
+					<div class="menu-box">
+						<van-dropdown-menu :overlay="false">
+							<van-dropdown-item ref="dropdown_menu">
+								<div class="currency-box" @click="selectCurrency(item)" v-for="(item, index) in exceptCoinList" :key="index">
+									<div>
+										<img class="usdc-icon" :src="$imgpath + item.iconUrl" />
+									</div>
+									<div>{{ item.tokenName }}</div>
+								</div>
+							</van-dropdown-item>
+						</van-dropdown-menu>
+					</div>
+					<van-field v-model="toExchangeAmount" type="text" readonly placeholder="">
+						<template #right-icon>
+							<van-icon name="arrow-down" />
+						</template>
+						<template #left-icon>
+							<div class="toCoin">
+								<img v-if="exchangeSelectCoinInfo.iconUrl" class="usdc-icon" :src="$imgpath + exchangeSelectCoinInfo.iconUrl" />
+								{{ exchangeSelectCoinInfo.tokenName || '' }}
+							</div>
+						</template>
+					</van-field>
+				</div>
+				<div class="rate-box">
+					1 {{ selectCoinInfo.tokenName }} ≈ <span>{{ exchangeReceiveRate }}</span>
+					{{ exchangeSelectCoinInfo.tokenName }}
+				</div>
+
+				<van-action-bar>
+					<div class="Borrow">
+						<van-button type="primary" @click="exchangeFun">{{ t('兑换') }}</van-button>
+					</div>
+				</van-action-bar>
+			</div>
 		</div>
 	</div>
 </template>
@@ -215,17 +224,8 @@ const loading = useLoading()
 // 变量区
 const router = useRouter()
 const route = useRoute()
-const active = ref('QuickPay')
 
 const dropdown_menu = ref(null)
-
-const tabChange = (tab) => {
-	if (tab === 'QuickPay') {
-		getChainBalance()
-	} else if (tab === 'Withdraw' || tab === 'Exchange') {
-		getPlatformBalance()
-	}
-}
 
 // 快捷支付
 const quickPayParams = ref({
@@ -243,7 +243,9 @@ const quickPayHandle = async () => {
 			return
 		}
 
+		loading.loading()
 		const chainBalance = await getChainBalanceByTokenName(selectCoinInfo.value.tokenName)
+		loading.loading()
 		if (compareNumber(chainBalance, quickPayParams.value.rechargeAmount) === -1) {
 			showToast({ message: t('操作失败，您的代币余额不足'), icon: 'info' })
 			return
@@ -369,6 +371,7 @@ const withdrawHandle = async () => {
 		await walletWithdrawApi({
 			withdrawToken: selectCoinInfo.value.tokenName,
 			withdrawAmount: withdrawParams.value.withdrawAmount,
+			withdrawAddress: withdrawParams.value.withdrawAddress,
 		})
 		loading.clearLoading()
 
@@ -531,6 +534,31 @@ const handleRouter = (path) => {
 	router.push(`${path}`)
 }
 
+const active = ref('')
+const tabList = ref([
+	{
+		label: t('快捷充值'),
+		value: 'QuickPay',
+	},
+	{
+		label: t('充值'),
+		value: 'Deposit',
+	},
+	{
+		label: t('提款'),
+		value: 'Withdraw',
+	},
+	{
+		label: t('交易'),
+		value: 'Exchange',
+	},
+])
+const tabChange = (tab) => {
+	if (tab === 'Withdraw' || tab === 'Exchange') {
+		getPlatformBalance()
+	}
+}
+
 onMounted(() => {
 	if (!route.query.id) {
 		// currency.value = route.query.tokenName
@@ -540,10 +568,32 @@ onMounted(() => {
 	coinId.value = route.query.id
 	usersStore.SET_PATH_DATA('no')
 	getCurrencyList().then(() => {
-		if (selectCoinInfo.value.tokenName === 'ETH') {
-			active.value = 'Deposit'
-			tabChange()
+		if (selectCoinInfo.value.tokenName === 'USDT' || selectCoinInfo.value.tokenName === 'USDC') {
+			tabList.value = [
+				{
+					label: t('快捷充值'),
+					value: 'QuickPay',
+				},
+				{
+					label: t('提款'),
+					value: 'Withdraw',
+				},
+				{
+					label: t('交易'),
+					value: 'Exchange',
+				},
+			]
+			active.value = 'QuickPay'
+		} else {
+			tabList.value = [
+				{
+					label: t('交易'),
+					value: 'Exchange',
+				},
+			]
+			active.value = 'Exchange'
 		}
+		tabChange()
 		paymentAddressSetting()
 		// getChargeProtocolList()
 		getExchangeRate()
@@ -580,6 +630,7 @@ defineExpose({})
 		margin: 0 7.5px;
 		padding: 0 16px;
 		flex: auto;
+		flex: none;
 		white-space: nowrap;
 	}
 

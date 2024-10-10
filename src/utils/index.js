@@ -256,3 +256,9 @@ export const getUrlParams = () => {
 	})
 	return data
 }
+
+// 格式化钱包地址
+export const formatAddress = (address) => {
+	if (!address) return ''
+	return address.substring(0, 6) + '****' + address.substr(address.length - 8)
+}

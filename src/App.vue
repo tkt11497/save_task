@@ -22,7 +22,7 @@
 </template>
 
 <script setup name="App">
-import { nextTick, onBeforeMount, onMounted, onUnmounted, ref, watch } from 'vue'
+import { onBeforeMount, onMounted, onUnmounted, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { userStore, useWeb3Store } from '@/store/index.js'
 import VConsole from 'vconsole'
