@@ -32,7 +32,7 @@
 					<div v-else class="each-block" v-for="(list, ind1) in dataList" :key="ind1">
 						<div class="each-container">
 							<div class="title1-row">
-								<img src="@/assets/images/record/loan.png" class="img-css" alt="notice" />
+								<img src="@/assets/images/user/loan-icon.svg" class="img-css" alt="notice" />
 								<span class="day-text">{{ $t('贷款订单') }}</span>
 							</div>
 
@@ -134,7 +134,7 @@
 		<van-popup class="announcement-pop" overlay-class="announcement-pop-layer" v-model:show="showPop" @closed="closed">
 			<div class="node-add">
 				<div class="title">
-					<img src="@/assets/images/record/loan.png" class="icon" alt="" />
+					<img src="@/assets/images/user/loan-icon.svg" class="icon" alt="" />
 					<span class="h1">{{ t('还款') }}</span>
 					<span>{{ t('确认您的还款日期') }}</span>
 				</div>
@@ -181,7 +181,7 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { userStore } from '@/store'
-import arrow from '@/assets/images/user/arrow.png'
+import arrow from '@/assets/images/market/back.svg'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { formatDate, plusForValueDecimal } from '@/utils'

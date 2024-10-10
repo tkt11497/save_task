@@ -116,7 +116,7 @@ onMounted(() => {
 	})
 	userStoreData.SET_PATH_DATA('no')
 })
-const arrow = getImageUrl('user/arrow.png')
+const arrow = getImageUrl('market/back.svg')
 const showPop = ref(false)
 
 const amount = ref('')

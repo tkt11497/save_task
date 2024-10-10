@@ -25,7 +25,7 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
 import { userStore } from '@/store'
-import arrow from '@/assets/images/user/arrow.png'
+import arrow from '@/assets/images/market/back.svg'
 import { useI18n } from 'vue-i18n'
 import LoanTreaty from '@/views/user/loan/loan-treaty.vue'
 import useLoading from '@/hooks/useLoading.js'
