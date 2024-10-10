@@ -13,13 +13,13 @@
 				<van-cell
 					v-for="(item, index) in checkList"
 					:key="index"
-					:title="item.title"
+					:title="item.name"
 					clickable
-					@click="checked = item.title"
-					:class="{ 'isChecked': item.value === checked }"
+					@click="checked = item.code"
+					:class="{ 'isChecked': item.code === checked }"
 				>
 					<template #right-icon>
-						<van-radio :name="item.title" />
+						<van-radio :name="item.code" />
 					</template>
 				</van-cell>
 			</van-cell-group>
@@ -27,7 +27,7 @@
 		<!-- Confirm -->
 		<div class="confirm-wrap">
 			<div class="confirm" @click="selectLangFunc">
-				<div>{{ t('确认') }}</div>
+				<van-button type="primary" round block>{{ t('确认') }}</van-button>
 			</div>
 		</div>
 	</div>
@@ -40,8 +40,10 @@ import { userStore } from '@/store'
 import { useI18n } from 'vue-i18n'
 import arrow from '@/assets/images/user/arrow.png'
 import useLoading from '@/hooks/useLoading.js'
+import { changLang } from '@/i18n/index.js'
+import LANS from '@/i18n/lang.js'
 
-const { locale, t } = useI18n()
+const { t } = useI18n()
 
 // 初始化仓库
 const store = userStore()
@@ -54,57 +56,23 @@ const loading = useLoading()
 // 单选框选中参数
 const checked = ref('')
 checked.value = store.language
+
 // 单选框数据
-// const checkList = ref([])
-const checkList = ref([
-	{
-		title: 'English',
-		language: 'English',
-		value: 'en_US',
-		fileName: 'en_US',
-	},
-	{
-		title: '简体中文',
-		language: '简体中文',
-		value: 'zh_CN',
-		fileName: 'zh_CN',
-	},
-])
+const checkList = ref([...LANS])
 
 // 代码区
 const onClickLeft = () => {
 	history.back()
 	store.SET_PATH_DATA('yes')
 }
-const selectLangFunc = () => {
-	const changeLang = checkList.value.find((d) => d.title === checked.value)
-	console.log('selectLangFunc', changeLang)
-	store.SET_LAN(changeLang.language)
-	store.SET_LAN_CODE(changeLang.fileName)
-	locale.value = changeLang.language
-	history.back()
-	store.SET_PATH_DATA('yes')
+const selectLangFunc = async () => {
+	const changeLang = checkList.value.find((d) => d.code === checked.value)
+	await changLang(changeLang.code)
+	store.SET_LAN(changeLang.code)
+	onClickLeft()
 }
 
-const error = ref('')
-const getLanguageAll = async () => {
-	try {
-		loading.loading()
-		const response = await fetchLanguageAll()
-		loading.clearLoading()
-		let temp = response.rows
-		checkList.value = temp.map((item, index) => ({
-			...item,
-			title: item.language,
-			fileName: item.fileName,
-		}))
-	} catch (err) {
-		console.log(err)
-	}
-}
-onMounted(() => {
-	// getLanguageAll()
-})
+onMounted(() => {})
 
 // 将组件中的数据进行暴露出去
 defineExpose({})
@@ -148,34 +116,17 @@ defineExpose({})
 		}
 	}
 
-	$buttonHeight: 100px;
+	//$buttonHeight: 100px;
 	.confirm-wrap {
-		height: $buttonHeight + 50px;
+		height: 180px;
 	}
 	.confirm {
 		position: fixed;
 		bottom: var(--vt-nav-bar-height);
 		width: 100%;
-		height: $buttonHeight + 50px;
 		overflow: hidden;
 		background-color: #fff;
-
-		div {
-			position: fixed;
-			//bottom: -40px;
-			left: 50%;
-			transform: translateX(-50%);
-			background: #82a8f9;
-			width: 90%;
-			height: $buttonHeight;
-			line-height: $buttonHeight;
-			border-radius: 80px;
-			margin-bottom: 60px;
-			text-align: center;
-			color: #fff;
-			font-size: 32px;
-			font-weight: 590;
-		}
+		padding: 30px 30px 50px;
 	}
 }
 </style>

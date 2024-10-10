@@ -11,8 +11,7 @@ export default defineStore('user', {
 		userId: undefined,
 		userInfo: {},
 
-		language: getDefaultLanguage().language,
-		languageCode: getDefaultLanguage().languageCode,
+		language: getDefaultLanguage(),
 
 		// 首页-最新公告消息
 		firstNotice: '',
