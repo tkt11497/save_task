@@ -3,7 +3,7 @@
 		<div class="wrapper" :class="{ 'wrapper1': stepPage !== 'home' }">
 			<van-nav-bar :fixed="true" :title="t('验证')" @click-left="onClickLeft">
 				<template #left>
-					<van-icon :name="arrow" size="18" />
+					<van-icon :name="arrow" size="23" />
 				</template>
 			</van-nav-bar>
 			<div class="content" v-if="stepPage === 'home'">
@@ -144,8 +144,8 @@
 						<van-uploader :after-read="afterRead1" :before-read="beforeRead" :accept="ImgAccept">
 							<div class="uploader-box">
 								<div class="photo-img">
-									<img v-if="!form.certificate" src="@/assets/images/user/upload.png" alt="" />
-									<!-- <van-icon name="photo-o" size="50" color="#89A8E8" v-if="!certificate" /> -->
+									<img v-if="!form.certificate" src="@/assets/images/user/upload.svg" alt="" />
+									<!-- <van-icon name="photo-o" size="50" color="#387EFF" v-if="!certificate" /> -->
 									<img v-else :src="$imgpath + form.certificate" />
 								</div>
 								<div class="des">
@@ -165,8 +165,8 @@
 						<van-uploader :after-read="afterRead2" :before-read="beforeRead" :accept="ImgAccept">
 							<div class="uploader-box">
 								<div class="photo-img">
-									<img v-if="!form.certificateBack" src="@/assets/images/user/upload.png" alt="" />
-									<!-- <van-icon name="photo-o" size="50" color="#89A8E8" v-if="!form.certificateBack" /> -->
+									<img v-if="!form.certificateBack" src="@/assets/images/user/upload.svg" alt="" />
+									<!-- <van-icon name="photo-o" size="50" color="#387EFF" v-if="!form.certificateBack" /> -->
 									<img v-else :src="$imgpath + form.certificateBack" />
 								</div>
 								<div class="des">
@@ -191,8 +191,8 @@
 						<van-uploader :after-read="afterRead3" :before-read="beforeRead" :accept="ImgAccept">
 							<div class="uploader-box">
 								<div class="photo-img">
-									<img v-if="!form.certificate" src="@/assets/images/user/upload.png" alt="" />
-									<!-- <van-icon name="photo-o" size="50" color="#89A8E8" v-if="!form.idBackImg" /> -->
+									<img v-if="!form.certificate" src="@/assets/images/user/upload.svg" alt="" />
+									<!-- <van-icon name="photo-o" size="50" color="#387EFF" v-if="!form.idBackImg" /> -->
 									<img v-else :src="$imgpath + form.certificate" />
 								</div>
 								<div class="des">
@@ -216,7 +216,7 @@
 					<div class="upload-block">
 						<div class="photo-img">
 							<img v-if="!form.holdingCertificate" src="@/assets/images/user/idcard.svg" alt="" />
-							<!-- <van-icon name="photo-o" size="50" color="#89A8E8" v-if="!form.holdingCertificate" /> -->
+							<!-- <van-icon name="photo-o" size="50" color="#387EFF" v-if="!form.holdingCertificate" /> -->
 							<img v-else :src="$imgpath + form.holdingCertificate" />
 						</div>
 						<div class="title">
@@ -244,7 +244,7 @@
 
 			<div class="success-page" v-if="stepPage === 'success'">
 				<div class="block1">
-					<img src="@/assets/images/user/check_circle.png" alt="" />
+					<img src="@/assets/images/user/check_circle.svg" alt="" />
 					<p class="p1">{{ t('提交成功！') }}</p>
 					<p class="p2">
 						{{ t('请耐心等待KYC验证的审核，我们将尽快完成审核。') }}
@@ -550,13 +550,13 @@ defineExpose({})
 	}
 
 	.wrapper1 {
-		background: #fff;
+		background: transparent;
 	}
 	:deep(.van-nav-bar__title) {
 		font-size: 20px;
 	}
 	.content {
-		background: #fff;
+		background: transparent;
 		//border-radius: 32px;
 		//padding: 40px;
 		//overflow: hidden;
@@ -565,7 +565,8 @@ defineExpose({})
 			font-size: 32px;
 			font-weight: 400;
 			line-height: 30px;
-			color: #999;
+			color: var(--vt-sub-black);
+			text-align: center;
 			margin-bottom: 46px;
 		}
 
@@ -576,7 +577,9 @@ defineExpose({})
 			.van-cell {
 				height: 55px;
 				border-radius: 13px;
-				background: #f8f9fb;
+				border-top: 1.5px solid #FFF;
+				background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
+				box-shadow: 0px 2px 2.4px 0px rgba(0, 0, 0, 0.15);
 				margin-bottom: 15px;
 				padding-left: 22px;
 				padding-right: 22px;
@@ -584,7 +587,7 @@ defineExpose({})
 				font-weight: 500;
 				line-height: 16.94px;
 				text-align: left;
-				color: #000;
+				color: var(--vt-header-black);
 
 				.van-cell__value {
 					display: flex;
@@ -642,7 +645,7 @@ defineExpose({})
 
 				.empty {
 					.van-dropdown-menu__title {
-						color: #cbcbcb !important;
+						color: var(--vt-sub-black) !important;
 					}
 				}
 			}
@@ -682,6 +685,14 @@ defineExpose({})
 				padding: 0;
 				box-shadow: none;
 				background-color: transparent;
+				.el-input__inner{
+					color: var(--vt-header-black);
+					font-weight: 500;
+					&::placeholder{
+						color: var(--vt-sub-black);
+						font-weight: 500;
+					}
+				}
 			}
 			.el-input__prefix {
 				display: none;
@@ -689,8 +700,11 @@ defineExpose({})
 		}
 
 		.van-button {
-			background: #82a9f9;
+			background-image: url("@/assets/images/market/p_button.png");
+			background-position:  center;
+			background-size: 110% 130%;
 			border-radius: 25px;
+			border: none;
 			width: 100%;
 			height: 53px;
 			font-size: 16px;
@@ -733,8 +747,9 @@ defineExpose({})
 		:deep(.upload-block) {
 			margin-top: 40px;
 			border-radius: 20px;
-			border: 2px dashed #646464;
-			background: #d9e5fb;
+			border-top: 1.5px solid #FFF;
+			background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
+			box-shadow: 0px 2px 4.4px 2px rgba(0, 0, 0, 0.15);
 			padding: 30px 30px 30px;
 			width: 100%;
 			display: flex;
@@ -756,25 +771,28 @@ defineExpose({})
 
 				.title {
 					font-weight: 600;
-					color: #515151;
+					color: var(--vt-header-black);
 					font-size: 28px;
 
 					span {
-						color: #89a8e8;
+						color: #387EFF;
 						text-decoration: underline;
 					}
 				}
 
 				.text {
 					font-size: 20px;
-					color: #515151;
+					color: var(--vt-sub-black);
 					font-weight: 500;
 				}
 			}
 		}
 
 		.van-button {
-			background: #82a9f9;
+			background-image: url("@/assets/images/market/p_button.png");
+			background-position:  center;
+			background-size: 110% 130%;
+			border:none;
 			border-radius: 25px;
 			width: 100%;
 			height: 53px;
@@ -799,7 +817,7 @@ defineExpose({})
 			}
 
 			.p2 {
-				color: #797979;
+				color: var(--vt-sub-black);
 				font-size: 24px;
 				font-weight: 500;
 			}
@@ -808,8 +826,9 @@ defineExpose({})
 				padding: 48px 32px;
 				margin-top: 56px;
 				border-radius: 20px;
-				border: 2px dashed #363636;
-				background: #d9e5fb;
+				border-top: 1.5px solid #FFF;
+				background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
+				box-shadow: 0px 2px 4.4px 2px rgba(0, 0, 0, 0.15);
 				display: flex;
 				flex-direction: column;
 				align-items: center;
@@ -824,11 +843,11 @@ defineExpose({})
 					margin-top: 40px;
 					margin-bottom: 48px;
 					font-weight: 600;
-					color: #515151;
+					color: var(--vt-header-black);
 					font-size: 26px;
 
 					span {
-						color: #89a8e8;
+						color: #387EFF;
 					}
 				}
 
@@ -838,9 +857,12 @@ defineExpose({})
 				}
 
 				.van-button {
-					background: #82a9f9;
-					border-radius: 25px;
-					height: 54px;
+					background-image: url('@/assets/images/poofStake/stake_active.png');
+					background-position: center;
+					background-size: 110% 140%;
+					border: none;
+					border-radius: 15px;
+					height: 50px;
 					font-size: 14px;
 					flex: 1;
 					font-weight: 700;
@@ -848,11 +870,15 @@ defineExpose({})
 					text-align: center;
 					color: #fff;
 					margin-top: 24px;
+					font-weight: 500;
 
 					&:first-child {
 						margin-right: 17px;
-						background: transparent;
-						color: #82a9f9;
+						background-image: url('@/assets/images/poofStake/stake_inactive.png');
+						background-position: center;
+						background-size: 110% 140%;
+						color: var(--vt-sub-black);
+						border: none;
 					}
 				}
 			}
@@ -881,7 +907,10 @@ defineExpose({})
 			width: 100%;
 		}
 		.van-button {
-			background: #82a9f9;
+			background-image: url("@/assets/images/market/p_button.png");
+			background-position:  center;
+			background-size: 110% 130%;
+			border:none;
 			border-radius: 25px;
 			width: 100%;
 			height: 54px;
@@ -913,20 +942,23 @@ defineExpose({})
 		}
 
 		.p1 {
-			color: #000000;
+			color: var(--vt-header-black);
 			font-size: 40px;
-			font-weight: bold;
+			font-weight: 600;
 			margin-bottom: 40px;
 		}
 
 		.p2 {
-			color: #7a7979;
+			color: var(--vt-sub-black);
 			font-size: 24px;
-			font-weight: 600;
+			font-weight: 500;
 		}
 
 		.van-button {
-			background: #82a9f9;
+			background-image: url("@/assets/images/market/p_button.png");
+			background-position:  center;
+			background-size: 110% 130%;
+			border:none;
 			border-radius: 25px;
 			width: 100%;
 			height: 54px;
@@ -943,5 +975,6 @@ defineExpose({})
 .van-action-bar {
 	padding: 0 25px;
 	bottom: 44px;
+	background:transparent ;
 }
 </style>

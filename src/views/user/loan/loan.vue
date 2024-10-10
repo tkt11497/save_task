@@ -3,7 +3,7 @@
 		<div>
 			<van-nav-bar :fixed="true" :title="t('借款账户')" @click-left="onClickLeft" class="loan-title">
 				<template #left>
-					<van-icon :name="arrow" size="18" />
+					<van-icon :name="arrow" size="23" />
 				</template>
 			</van-nav-bar>
 		</div>
@@ -259,6 +259,9 @@ defineExpose({})
 
 	padding-left: 48px;
 	padding-right: 48px;
+	background-image: url("@/assets/images/background/sbg_2.png");
+	background-position:  top;
+	background-size: 140% 110%;
 
 	//.loan-title {
 	//	margin-top: 20px;
@@ -268,10 +271,10 @@ defineExpose({})
 		margin-top: 20px;
 		width: 100%;
 		//height: 448px;
-		background: url('../../../assets/images/earn/earnAccount.png') no-repeat;
+		background: url('@/assets/images/home/card_all.png') no-repeat;
 		background-size: 100%;
 		font-size: 25px;
-		color: #fff;
+		color: var(--vt-header-black);
 		padding: 48px;
 		// padding-top: 40px;
 		// padding-left: 30px;
@@ -285,30 +288,33 @@ defineExpose({})
 		.introduce {
 		}
 		.range {
-			// width: 90%;
-			background: #fff;
-			//height: 1.6rem;
+			border-top: 1.5px solid #FFF;
+			background: linear-gradient(270deg, rgba(153, 153, 153, 0.7) 0%, rgba(255, 255, 255, 0.7) 100%);
+			backdrop-filter: blur(25.368999481201172px);
+			box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
+
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
 			margin: 48px 0 0px;
 			padding: 24px;
-			border-radius: 20px;
+			border-radius: 0.33333rem;
 			// transform: translateX(-52%);
 
 			.right_font {
 				flex: 1;
-				color: #000;
+				color: var(--vt-header-black);
+				font-weight: 500;
 
 				.question {
-					font-weight: normal;
+					font-weight: 500;
 					font-size: 26px;
 					margin-bottom: 10px;
 				}
 
 				.info {
 					font-size: 25px;
-					color: #999;
+					color: var(--vt-sub-black);
 				}
 			}
 
@@ -319,7 +325,8 @@ defineExpose({})
 				min-width: 96px;
 				height: 54px;
 				line-height: 54px;
-				background: #82a8f9;
+				background: linear-gradient(180deg, #93B6FF 0%, #75D3FF 83%, #35DCE8 100%);
+				color: #fff;
 				border-radius: 40px;
 				text-align: center;
 
@@ -337,7 +344,7 @@ defineExpose({})
 
 	.wrapper {
 		border-radius: 32px;
-		background: #fff;
+		background: transparent;
 	}
 
 	.amount,
@@ -345,16 +352,18 @@ defineExpose({})
 		.title {
 			font-size: 24px;
 			margin-bottom: 16px;
-			color: #999;
+			font-weight: 500;
+			color: var(--vt-sub-black);
 		}
 
 		.van-cell-group--inset {
 			margin: 0px;
-			background: #f8f9fb;
+			background: transparent;
+			box-shadow: 0px 2px 4.4px 1px rgba(0, 0, 0, 0.15);
 			border-radius: 8px;
 
 			.van-cell {
-				background: #f8f9fb;
+				background: linear-gradient(270deg, rgba(153, 153, 153, 0.50) 0%, rgba(255, 255, 255, 0.50) 100%);
 				height: 48px;
 				:deep(.van-cell__value .van-field__body) {
 					height: 100%;
@@ -363,7 +372,8 @@ defineExpose({})
 		}
 
 		.loanToken {
-			color: #000;
+			color: var(--vt-header-black);
+			font-weight: 500;
 		}
 		::v-deep .van-icon__image {
 			display: block;
@@ -390,6 +400,9 @@ defineExpose({})
 
 		:deep .van-dropdown-menu__bar {
 			border-radius: 10px;
+			border-top: 1.5px solid #FFF;
+			background: linear-gradient(270deg, rgba(153, 153, 153, 0.3) 0%, rgba(255, 255, 255, 0.3) 100%);
+			box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
 		}
 
 		:deep .van-dropdown-item {
@@ -403,7 +416,8 @@ defineExpose({})
 
 	.performce {
 		font-size: 24px;
-		color: #999;
+		color: var(--vt-sub-black);
+		font-weight: 500;
 		margin-top: 54px;
 
 		div {
@@ -411,19 +425,26 @@ defineExpose({})
 			justify-content: space-between;
 			padding-bottom: 30px;
 			margin-bottom: 34px;
-			border-bottom: 1px solid rgba(185, 193, 217, 0.2);
+			border-bottom: 1px solid #645A6F;
 		}
 	}
 
 	.info {
 		font-size: 20px;
-		color: #666;
+		color: var(--vt-sub-black);
+		font-weight: 500;
 		margin-top: 10px;
 	}
 
 	.Borrow {
 		margin-top: 30px;
 		margin-bottom: 80px;
+		.van-button{
+			background-image: url("@/assets/images/market/p_button.png");
+			background-position:  center;
+			background-size: 110% 130%;
+			border:none;
+		}
 	}
 }
 
