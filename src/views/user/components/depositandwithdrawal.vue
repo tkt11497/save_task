@@ -3,7 +3,7 @@
 		<div>
 			<van-nav-bar fixed :title="selectCoinInfo.tokenName" @click-left="onClickLeft">
 				<template #left>
-					<van-icon :name="arrow" size="18" />
+					<van-icon :name="arrow" size="23" />
 				</template>
 			</van-nav-bar>
 		</div>
@@ -11,7 +11,7 @@
 		<div class="transaction_details">
 			<div class="transaction_details_left" @click="handleRouter('/records')">
 				<div class="icon-box">
-					<img src="@/assets/images/user/card.svg" />
+					<img src="@/assets/images/user/card.png" />
 				</div>
 				<div>
 					<div class="title">{{ t('交易详情') }}</div>
@@ -141,7 +141,7 @@
 						</van-field>
 					</div>
 					<div class="exchange-icon-box">
-						<img class="exchange-icon" src="@/assets/images/user/exchange.svg" />
+						<img class="exchange-icon" src="@/assets/images/user/exchange1.png" />
 					</div>
 					<div class="exchange-title">
 						<div class="title">{{ t('接收') }}:</div>
@@ -557,36 +557,42 @@ defineExpose({})
 <style lang="scss" scoped>
 .depositandwithdrawal_container {
 	font-size: 30px;
-	background: #fff;
+	background-image: url("@/assets/images/background/sbg_2.png");
+	background-position:  top;
+	background-size: 250% 250%;
 	//padding-top: 0;
 	padding-bottom: 40px;
-	//height: 100vh;
+	height: 100vh;
 
 	:deep .van-tabs__line {
 		display: none;
 	}
 
 	:deep .van-tabs__nav {
+		background: #DFDFDF;
 		overflow-x: auto;
 	}
 
 	:deep .van-tabs__wrap {
 		height: 40px;
+		border-radius: 9px;
 	}
 
 	:deep .van-tab {
-		font-size: 15px;
-		color: #000000;
-		margin: 0 7.5px;
+		font-size: 14px;
+		color: var(--vt-sub-black);
+		font-weight: 500;
+		margin: 0 0.5px;
 		padding: 0 16px;
 		flex: auto;
 		white-space: nowrap;
 	}
 
 	:deep .van-tab--active {
-		background: rgba(130, 169, 249, 0.3);
-		color: #82a9f9;
-		border-radius: 40px;
+		border-radius: 7px;
+		background: var(--1233456, linear-gradient(180deg, rgba(216, 228, 252, 0.80) 0%, rgba(21, 177, 220, 0.80) 78%, rgba(60, 150, 223, 0.80) 100%));
+		box-shadow: 0px 3px 8px 0px rgba(0, 0, 0, 0.12), 0px 3px 1px 0px rgba(0, 0, 0, 0.04);
+		color: #fff;
 	}
 
 	.transaction_details {
@@ -594,8 +600,12 @@ defineExpose({})
 		justify-content: space-between;
 		margin: 0 40px;
 		align-items: center;
-		border: 2px solid #e8e8e8;
-		border-radius: 12px;
+
+		border-top: 1.5px solid #FFF;
+		background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
+		box-shadow: 0px 2px 4.4px 2px rgba(0, 0, 0, 0.15);
+
+		border-radius: 15px;
 		padding: 20px 30px;
 		margin-top: 20px;
 
@@ -608,7 +618,6 @@ defineExpose({})
 			.icon-box {
 				width: 90px;
 				height: 90px;
-				background: rgba(130, 169, 249, 0.3);
 				border-radius: 10px;
 				display: flex;
 				align-items: center;
@@ -617,12 +626,12 @@ defineExpose({})
 			}
 
 			.title {
-				color: #121212;
+				color: var(--vt-header-black);
 				font-weight: 500;
 			}
 
 			.text {
-				color: #bbb;
+				color: var(--vt-sub-black);
 			}
 		}
 	}
@@ -680,7 +689,7 @@ defineExpose({})
 				height: 45px;
 				margin-right: 10px;
 				border-radius: 50%;
-				background: #82a9f9;
+				background: #387EFF;
 				display: flex;
 				align-items: center;
 				justify-content: center;
@@ -710,11 +719,12 @@ defineExpose({})
 			font-size: 26px;
 
 			.title {
-				color: #b8b8b8;
+				color: var(--vt-header-black);
+				font-weight: 500;
 			}
 
 			.text {
-				color: #82a9f9;
+				color: #387EFF;
 			}
 		}
 
@@ -722,7 +732,7 @@ defineExpose({})
 			display: flex;
 			align-items: center;
 			background: rgba(130, 169, 249, 0.1);
-			border: 2px dashed #82a9f9;
+			border: 2px dashed #387EFF;
 			border-radius: 10px;
 			padding: 20px 20px;
 			margin: 0 20px;
@@ -738,14 +748,15 @@ defineExpose({})
 				.text {
 					margin-left: 20px;
 					font-weight: 600;
-					color: #82a9f9;
+					color: #387EFF;
 					white-space: nowrap;
 				}
 			}
 		}
 
 		.receive-title {
-			color: #b8b8b8;
+			color: var(--vt-sub-black);
+			font-weight: 500;
 			padding: 30px 0;
 		}
 
@@ -756,7 +767,8 @@ defineExpose({})
 			margin-top: 48px;
 
 			.title {
-				color: #b8b8b8;
+				color: var(--vt-header-black);
+				font-weight: 500;
 				margin-right: 20px;
 			}
 
@@ -764,7 +776,7 @@ defineExpose({})
 				display: flex;
 
 				span {
-					color: #82a9f9;
+					color: #387EFF;
 				}
 			}
 		}
@@ -779,7 +791,10 @@ defineExpose({})
 
 			.van-cell {
 				width: 100%;
-				background: #f9fafb;
+				border-radius: 12px;
+				border-top: 1.5px solid #FFF;
+				background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
+				box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
 			}
 		}
 
@@ -790,7 +805,7 @@ defineExpose({})
 			margin-top: 40px;
 
 			span {
-				color: #82a9f9;
+				color: #387EFF;
 			}
 		}
 
@@ -815,10 +830,13 @@ defineExpose({})
 			}
 
 			:deep .van-field {
-				background: #f9fafb;
+				border-top: 1.5px solid #FFF;
+				background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
+				box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
+				border-radius: 13px;
 
 				.van-field__right-icon {
-					color: #000;
+					color: var(--vt-header-black);
 				}
 
 				.van-field__left-icon {
@@ -856,6 +874,7 @@ defineExpose({})
 	.van-action-bar {
 		height: 56px;
 		padding: 5px 25px 24px;
+		background: transparent;
 
 		.Borrow {
 			//margin-top: 40px;
@@ -865,7 +884,10 @@ defineExpose({})
 				width: 100%;
 				border-radius: 30px;
 				height: 56px;
-				background: #82a8f9;
+				background-image: url("@/assets/images/market/p_button.png");
+				background-position:  center;
+				background-size: 110% 130%;
+				border:none;
 			}
 		}
 	}
