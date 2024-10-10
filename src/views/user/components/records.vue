@@ -229,7 +229,7 @@
 										<span class="day-text">{{ PledgeTypeArr[list.stakeType].label }}</span>
 
 										<div class="right">
-											<img src="@/assets/images/record/shield-01.png" class="img-css success-img" :width="18" :height="22" alt="notice" />
+											<img src="@/assets/images/user/verified_user.svg" class="img-css success-img" :width="18" :height="22" alt="notice" />
 										</div>
 									</div>
 									<div class="content-row">
