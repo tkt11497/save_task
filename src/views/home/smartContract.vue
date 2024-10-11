@@ -113,7 +113,9 @@ onMounted(() => {
 	width: calc(100% - 80px);
 	margin: 20px auto 94px;
 	border-radius: 24px;
-	background: #ffffff;
+	border-top: 1.5px solid #FFF;
+	background: linear-gradient(270deg, rgba(153, 153, 153, 0.50) 0%, rgba(255, 255, 255, 0.50) 100%);
+	box-shadow: 0px 2px 4.4px 2px rgba(0, 0, 0, 0.15);
 	padding: 46px 48px;
 
 	.block1 {
@@ -133,7 +135,7 @@ onMounted(() => {
 				font-weight: 600;
 				line-height: 44px;
 				text-align: left;
-				color: #000;
+				color: var(--vt-header-black);
 			}
 
 			.p2 {
@@ -143,7 +145,7 @@ onMounted(() => {
 				line-height: 28px;
 				letter-spacing: -0.03em;
 				text-align: left;
-				color: #bbb;
+				color: var(--vt-sub-black);
 			}
 		}
 	}
@@ -155,9 +157,9 @@ onMounted(() => {
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
-			border: 0.01rem dashed rgba(130, 169, 249, 0.2);
-			background: rgba(130, 169, 249, 0.05);
-			border-radius: 6px;
+			border: 0.01rem dashed #646464;
+			background: linear-gradient(90deg, rgba(217, 229, 251, 0.75) 0%, rgba(116, 165, 255, 0.75) 100%);
+			border-radius: 12px;
 			padding: 20px 30px 20px 20px;
 			margin-bottom: 16px;
 
@@ -165,7 +167,7 @@ onMounted(() => {
 				font-size: 28px;
 				line-height: 28px;
 				text-align: left;
-				color: #a6a6a6;
+				color: var(--vt-sub-black);
 			}
 
 			.value {
@@ -173,9 +175,14 @@ onMounted(() => {
 				font-weight: 700;
 				line-height: 28px;
 				text-align: left;
-				color: #121212;
+				color: var(--vt-header-black);
 			}
 		}
+	}
+	.van-button{
+		background: linear-gradient(180deg, rgba(241, 241, 241, 0.80) 0%, rgba(204, 209, 219, 0.80) 78%, rgba(160, 205, 232, 0.80) 100%);
+		color: var(--vt-sub-black);
+		border: none;
 	}
 }
 </style>
