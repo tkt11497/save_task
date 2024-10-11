@@ -116,38 +116,46 @@ defineOptions({ name: 'CurrencyList' })
 
 	.text {
 		font-size: 28px;
-		color: var(--vt-header-black);
-		font-weight: 600;
+		color: #E9E9E9;
+		font-weight: 700;
 	}
 
 	div {
-		height: 100px;
+		height: 130px;
 		display: flex;
+		position: relative;
 		align-items: center;
 
-		padding: 8px 18px 7px 18px;
+		padding: 8px 18px 8px 18px;
 		margin-top:11px ;
-		border-radius: 8px;
-		border-top: 1.5px solid #FFF;
-		background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
-		box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
 		
+		&:not(:last-child):after {
+				content: "";
+				position: absolute;
+				bottom:0;
+				left:0;
+				height: 20px;
+				width: 100%;
+				background-image: url('@/assets/images/background/border.png');
+				background-repeat: no-repeat;
+				background-position: center bottom;
+			}
 	}
 
 	button {
 		margin-left: auto;
 		height: 54px;
 
-		border-radius: 41px;
-		border-top: 0.5px solid #FFF;
-		background: linear-gradient(180deg, #F4F8F9 0%, #CCC 100%);
-		color:var(--vt-header-black);
-		border: none;
+		border-radius: 22px;
+		border: 1px solid #E3FF43;
+		box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.25);
+		background: transparent;
+		color:#226764;
 
 
 
 		font-size: 24px;
-		font-weight: 400;
+		font-weight: 500;
 		min-width: 160px;
 	}
 }

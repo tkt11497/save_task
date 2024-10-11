@@ -37,14 +37,12 @@ defineOptions({ name: 'noWallet' })
 <style scoped lang="scss">
 .choose {
 	padding: 48px;
-	background: #fff;
 	overflow-y: auto;
 	
 	background-image: url("../../assets/images/background/sbg_2.png");
 	background-position:  top;
-	background-size: 140% 110%;
+	background-size: 100% 100%;
 	height: 100vh;
-	backdrop-filter: blur(25.368999481201172px);
 
 	.title {
 		display: flex;
@@ -52,9 +50,9 @@ defineOptions({ name: 'noWallet' })
 		justify-content: center;
 		font-size: 44px;
 		gap: 20px;
-		font-weight: bold;
+		font-weight: 600;
 		margin-bottom: 48px;
-		color: var(--vt-header-black);
+		color: #fff;
 	}
 
 	.subhead,
@@ -63,15 +61,15 @@ defineOptions({ name: 'noWallet' })
 	}
 
 	.subhead {
-		font-weight: 600;
-		color: var(--vt-header-black);
+		font-weight: 500;
+		color: #fff;
 		font-size: 32px;
 		margin-bottom: 16px;
 	}
 
 	.description {
 		font-size: 24px;
-		color: var(--vt-sub-black);
+		color: #90C9C6;
 		margin-bottom: 16px;
 	}
 }
