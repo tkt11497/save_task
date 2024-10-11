@@ -77,14 +77,25 @@
 				:title="item.title"
 				:icon="item.icon"
 				is-link
-				:to="item.path"
-			/>
+				:to="item.path">
+					<template #right-icon>
+						<img src="@/assets/images/user/right_icon.png" alt="right-icon"/>
+					</template>
+				</van-cell>
 
 			<span class="title mt-30">{{ t('隐私与安全') }}</span>
-			<van-cell :title="t('隐私与安全')" center :label="t('专注于您的安全和隐私')" :icon="getImageUrl('user/policy.svg')" is-link to="/policy" />
+			<van-cell :title="t('隐私与安全')" center :label="t('专注于您的安全和隐私')" :icon="getImageUrl('user/policy.svg')" is-link to="/policy" >
+				<template #right-icon>
+						<img src="@/assets/images/user/right_icon.png" alt="right-icon"/>
+					</template>
+			</van-cell>
 
 			<span class="title mt-30">{{ t('设置') }}</span>
-			<van-cell :title="t('更改语言')" center :icon="getImageUrl('user/language-vector-icon.svg')" is-link to="/lang" />
+			<van-cell :title="t('更改语言')" center :icon="getImageUrl('user/language-vector-icon.svg')" is-link to="/lang" >
+				<template #right-icon>
+						<img src="@/assets/images/user/right_icon.png" alt="right-icon"/>
+					</template>
+			</van-cell>
 		</div>
 		<router-link></router-link>
 	</div>
@@ -183,7 +194,7 @@ defineExpose({})
 .user_container {
 	background-image: url("../../assets/images/background/sbg_2.png");
 	background-position:  top;
-	background-size: 140% 110%;
+	background-size: 100% 100%;
 	.header {
 		padding: 48px 48px 0;
 		line-height: 98px;
@@ -204,8 +215,8 @@ defineExpose({})
 
 		.title {
 			font-size: 36px;
-			font-weight: 600;
-			color: var(--vt-header-black);
+			font-weight: 700;
+			color: #E9E9E9;
 			margin-left: -260px;
 			line-height: 98px;
 			margin-top: -15px;
@@ -215,16 +226,16 @@ defineExpose({})
 			width: 196px;
 			height: 64px;
 			line-height: 64px;
-			background: #fff;
-			border: 1px solid #FF8008;
+			border: 1px solid #FFF;
+			background: linear-gradient(180deg, #5CE7FF 0%, #27727F 77.5%, #50CDCD 100%);
+			box-shadow: 4.9px -4.9px 4.9px 0px rgba(165, 165, 165, 0.10) inset;
+			backdrop-filter: blur(6.199999809265137px);
 			cursor: pointer;
-
-			border-radius: 64px;
-			box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.13);
-			padding: 0 24px;
-			font-size: 26px;
-			color: var(--vt-sub-black);
-			font-weight: 500;
+			border-radius: 15px;
+			padding: 0 22px;
+			font-size: 24px;
+			color: #E9E9E9;
+			font-weight: 700;
 			text-align: center;
 		}
 
@@ -261,7 +272,7 @@ defineExpose({})
 			.title {
 				width: 100%;
 				font-size: 27px;
-				color: var(--vt-header-black);
+				color: #FBFBFB;
 				font-weight: 500;
 			}
 		}
@@ -289,7 +300,7 @@ defineExpose({})
 			.number {
 				font-size: 40px;
 				font-weight: 600;
-				color: var(--vt-header-black);
+				color: #FBFBFB;
 				width: 60%;
 				word-break: break-all;
 				line-height: 1;
@@ -312,16 +323,16 @@ defineExpose({})
 			}
 
 			.trends {
-				color: var(--vt-sub-black);
+				color: #FBFBFB;
 				font-size: 25px;
 				margin-left: 5px;
-				font-weight: 500;
+				font-weight: 700;
 			}
 
 			.day {
-				color: var(--vt-sub-black);
+				color:#FBFBFB;
 				font-size: 18px;
-				font-weight: 500;
+				font-weight: 700;
 				margin-left: 10px;
 			}
 		}
@@ -332,12 +343,11 @@ defineExpose({})
 			line-height: 70px;
 			text-align: center;
 
-			border-top: 1px solid #FFF;
-			background: rgba(222, 222, 222, 0.20);
-			box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.25) inset;
+			border-radius: 50px;
+			background: rgba(255, 255, 255, 0.30);
+			box-shadow: -1px -1px 0px 0px rgba(0, 0, 0, 0.25) inset, 1px 1px 0px 0px rgba(255, 255, 255, 0.25) inset;
 
 			color: #fff;
-			border-radius: 15px;
 			font-size: 28px;
 			font-style: normal;
 
@@ -356,15 +366,14 @@ defineExpose({})
 			justify-content: space-around;
 			align-items: center;
 
-			border-top: 1.5px solid #FFF;
-			background: linear-gradient(270deg, rgba(153, 153, 153, 0.7) 0%, rgba(255, 255, 255, 0.7) 100%);
-			backdrop-filter: blur(25.368999481201172px);
-			box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
+			border: 1px solid #CAB37D;
+			background: linear-gradient(99deg, #90C9C6 14.79%, #2194AA 76.69%);
+			box-shadow: 3px 6px 4px 0px rgba(0, 0, 0, 0.25);
 			//height: 90px;
 			margin-top: 30px;
 			padding: 0 20px;
 			border-radius: 0.33333rem;
-			color: #000;
+			color: #E9E9E9;
 			font-weight: 500;
 			height: 140px;
 			font-size: 24px;
@@ -403,7 +412,7 @@ defineExpose({})
 			position: relative;
 			font-size: 28px;
 			// font-style: normal;
-			font-weight: 600;
+			font-weight: 500;
 			display: block;
 			padding-bottom: 16px;
 			margin-bottom: 32px;
@@ -411,7 +420,7 @@ defineExpose({})
 			margin-left: 38px;
 			//height: 28px;
 			line-height: 28px;
-			color: var(--vt-header-black);
+			color: #00DCFF;
 
 			// &::after {
 			// 	position: absolute;
@@ -425,10 +434,10 @@ defineExpose({})
 		}
 
 		:deep(.van-cell) {
-			border-radius:  8px;
-			border-top: 1.5px solid #FFF;
-			background: linear-gradient(270deg, rgba(153, 153, 153, 0.50) 0%, rgba(255, 255, 255, 0.50) 100%);
-			box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
+			border-radius: 14px;
+			border: 1px solid #CAB37D;
+			background: linear-gradient(99deg, #90C9C6 14.79%, #2194AA 76.69%);
+			box-shadow: 3px 6px 4px 0px rgba(0, 0, 0, 0.25);
 
 			margin:0px 10px 6px 10px;
 			height: 45px;
@@ -436,6 +445,9 @@ defineExpose({})
 			padding: 0 19px 0 16px;
 			display: flex;
 			align-items: center;
+			&::after{
+				border-bottom: 0;
+			}
 
 			.van-cell__left-icon {
 				margin-top: 2px;
@@ -451,8 +463,8 @@ defineExpose({})
 
 			.van-cell__title {
 				font-size: 13px;
-				color: var(--vt-sub-black);
-				font-weight: 600;
+				color: #313131;
+				font-weight: 500;
 			}
 
 			.van-cell__label {
@@ -460,11 +472,12 @@ defineExpose({})
 				margin-top: 0px;
 				margin-bottom: 9px;
 				line-height: 0.5;
+				color:#313131 ;
 			}
 
 			.van-cell__right-icon {
 				font-size: 13px;
-				color: var(--vt-sub-black);
+				color:#fff;
 				font-weight: 600;
 			}
 		}
@@ -476,7 +489,7 @@ defineExpose({})
 }
 
 .van-divider--vertical {
-	height: 28px;
-	border-color:#A57C15 ;
+	height: 48px;
+	border-color:#226764 ;
 }
 </style>
