@@ -140,6 +140,10 @@ defineExpose({})
 .faq_container {
 	padding-left: 30px;
 	padding-right: 30px;
+	background-image: url("@/assets/images/background/sbg_2.png");
+	background-position:  top;
+	background-size: 100% 100%;
+	min-height: 100vh;
 
 	.info {
 		padding: 44px 22px 36px;
@@ -152,14 +156,14 @@ defineExpose({})
 		}
 		.info_box {
 			width: 220px !important;
+			height: 234px !important;
 			display: flex;
-			align-items: center;
 			justify-content: center;
 			flex-direction: column;
-			border-radius:  8px;
-			border-top: 1.5px solid #FFF;
-			background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
-			box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
+			border-radius: 18px;
+			border: 1px solid  #CAB37D;
+			background: linear-gradient(99deg, #90C9C6 14.79%, #2194AA 76.69%);
+			box-shadow: 3px 6px 4px 0px rgba(0, 0, 0, 0.25);
 			padding: 15px;
 			height: 99%;
 
@@ -172,12 +176,12 @@ defineExpose({})
 			}
 
 			.content {
-				margin-top: 22px;
+				margin-top: 12px;
 				font-weight: 500;
 				font-size: 28px;
 				line-height: 35px;
-				text-align: center;
-				color: var(--vt-header-black);
+				text-align: left;
+				color: #C7F7FF;
 			}
 		}
 	}
@@ -185,8 +189,8 @@ defineExpose({})
 	.qa-wrap {
 		& > .title {
 			font-size: 32px;
-			font-weight: 600;
-			color: var(--vt-header-black);
+			font-weight: 700;
+			color: #00DCFF;
 			margin-bottom: 40px;
 			line-height: normal;
 		}
@@ -198,9 +202,9 @@ defineExpose({})
 
 			.contant {
 				width: 100%;
-				border-top: 2px solid #FFF;
-				background: linear-gradient(90deg, rgba(255, 255, 255, 0.30) 0%, rgba(153, 153, 153, 0.30) 100%);
-				box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
+				border: 1px solid #CAB37D;
+				background: linear-gradient(99deg, #90C9C6 14.79%, #2194AA 76.69%);
+				box-shadow: 3px 6px 4px 0px rgba(0, 0, 0, 0.25);
 				//margin-left: 50%;
 				//transform: translateX(-50%);
 				border-radius: 28px;
@@ -215,7 +219,7 @@ defineExpose({})
 				}
 
 				.content-row {
-					color: var(--vt-sub-black);
+					color: #000;
 					font-size: 22.9px;
 					font-style: normal;
 					font-weight: 500;
@@ -225,7 +229,7 @@ defineExpose({})
 
 				.title {
 					font-size: 28px;
-					color: var(--vt-header-black);
+					color: #000;
 					line-height: normal;
 					font-weight: 600;
 				}

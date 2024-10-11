@@ -8,7 +8,7 @@
 
 		<div class="container">
 			<div class="prize">
-				<img src="../../../assets/images/user/prize.svg" alt="prize" />
+				<img src="../../../assets/images/user/prize.png" alt="prize" />
 			</div>
 			<div class="title">{{ t('推荐并赚取') }}</div>
 			<!--			<div class="text">{{ inviteCode.inviteText }}</div>-->
@@ -71,6 +71,9 @@ defineExpose({})
 
 <style lang="scss" scoped>
 .invite_container {
+	background-image: url("@/assets/images/background/sbg_2.png");
+	background-position:  top;
+	background-size: 100% 100%;
 	.container {
 		padding: 0 40px;
 		//display: flex;
@@ -93,14 +96,14 @@ defineExpose({})
 
 		.title {
 			font-size: 42px;
-			color: #000;
-			font-weight: 700;
+			color: #E9E9E9;
+			font-weight: 600;
 			margin-top: 84px;
 		}
 
 		.text {
 			font-size: 24px;
-			color: #999;
+			color: #AFC8FB;
 			margin-top: 44px;
 			line-height: normal;
 			letter-spacing: -0.12px;
@@ -110,15 +113,15 @@ defineExpose({})
 		.link {
 			padding: 34px 22px;
 			border-radius: 24px;
-			border: 2px dashed #646464;
-			background: linear-gradient(90deg, rgba(217, 229, 251, 0.75) 0%, rgba(116, 165, 255, 0.75) 100%);
+			border: 3px dashed #CAB37D;
+			background: #90C9C6;
 			margin-top: 34px;
 			min-height: 106px;
 
-			color: var(--vt-header-black);
+			color: #555;
 			font-size: 28px;
 			font-style: normal;
-			font-weight: 500;
+			font-weight: 600;
 			line-height: normal;
 			letter-spacing: 0.42px;
 
@@ -130,16 +133,14 @@ defineExpose({})
 		.btn {
 			margin-top: 46px;
 			padding: 36px 15px;
-			background-image: url("@/assets/images/market/p_button.png");
-			background-position:  center;
-			background-size: 110% 130%;
-			border:none;
+			border: 1px solid #FFF;
+			background: linear-gradient(180deg, #5CE7FF 0%, #27727F 77.5%, #50CDCD 100%);
+			border-radius: 20px;
 			color: #fff;
 			font-size: 28px;
 			text-align: center;
-			border-radius: 50px;
 			line-height: normal;
-			font-weight: 700;
+			font-weight: 600;
 		}
 	}
 }

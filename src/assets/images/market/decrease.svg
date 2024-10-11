@@ -1,55 +1,10 @@
-<svg width="25" height="26" viewBox="0 0 25 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g id="Group 6">
-<circle id="Ellipse 826" cx="12.5" cy="13.5" r="10" fill="#1B191A"/>
-<g id="Subtract" filter="url(#filter0_di_1_9801)">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M12.5 26C19.4036 26 25 20.4036 25 13.5C25 6.59644 19.4036 1 12.5 1C5.59644 1 0 6.59644 0 13.5C0 20.4036 5.59644 26 12.5 26ZM12.5 22.25C17.3325 22.25 21.25 18.3325 21.25 13.5C21.25 8.66751 17.3325 4.75 12.5 4.75C7.66751 4.75 3.75 8.66751 3.75 13.5C3.75 18.3325 7.66751 22.25 12.5 22.25Z" fill="url(#paint0_linear_1_9801)"/>
-</g>
-<g id="Union" filter="url(#filter1_di_1_9801)">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M19.8565 13C19.8565 12.4477 19.4088 12 18.8565 12L7 12C6.44771 12 6 12.4477 6 13C6 13.5523 6.44771 14 7 14L18.8565 14C19.4088 14 19.8565 13.5523 19.8565 13Z" fill="url(#paint1_linear_1_9801)"/>
-</g>
-</g>
-<defs>
-<filter id="filter0_di_1_9801" x="0" y="0.8" width="25" height="25.2" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-<feFlood flood-opacity="0" result="BackgroundImageFix"/>
-<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
-<feOffset dy="-0.2"/>
-<feComposite in2="hardAlpha" operator="out"/>
-<feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0"/>
-<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_1_9801"/>
-<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_1_9801" result="shape"/>
-<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
-<feOffset dy="-0.5"/>
-<feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
-<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/>
-<feBlend mode="normal" in2="shape" result="effect2_innerShadow_1_9801"/>
-</filter>
-<filter id="filter1_di_1_9801" x="6" y="11.8" width="13.8565" height="2.2" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-<feFlood flood-opacity="0" result="BackgroundImageFix"/>
-<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
-<feOffset dy="-0.2"/>
-<feComposite in2="hardAlpha" operator="out"/>
-<feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0"/>
-<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_1_9801"/>
-<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_1_9801" result="shape"/>
-<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
-<feOffset dy="-0.3"/>
-<feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
-<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/>
-<feBlend mode="normal" in2="shape" result="effect2_innerShadow_1_9801"/>
-</filter>
-<linearGradient id="paint0_linear_1_9801" x1="12.5" y1="1" x2="12.5" y2="26" gradientUnits="userSpaceOnUse">
-<stop stop-color="#A57C15"/>
-<stop offset="0.255" stop-color="#FFD568"/>
-<stop offset="0.5" stop-color="#FFE9B0"/>
-<stop offset="0.77" stop-color="#FFD874"/>
-<stop offset="1" stop-color="#AE810E"/>
-</linearGradient>
-<linearGradient id="paint1_linear_1_9801" x1="12.9282" y1="12" x2="12.9282" y2="14" gradientUnits="userSpaceOnUse">
-<stop stop-color="#A57C15"/>
-<stop offset="0.255" stop-color="#FFD568"/>
-<stop offset="0.5" stop-color="#FFE9B0"/>
-<stop offset="0.77" stop-color="#FFD874"/>
-<stop offset="1" stop-color="#AE810E"/>
-</linearGradient>
-</defs>
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+  <circle cx="12" cy="12" r="12" fill="url(#paint0_linear_45_969)"/>
+  <path d="M7.38452 13.1539V10.8463H16.6153V13.1539H7.38452Z" fill="#0C0C0C"/>
+  <defs>
+    <linearGradient id="paint0_linear_45_969" x1="12" y1="0" x2="12" y2="24" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E0C07F"/>
+      <stop offset="1" stop-color="#947034"/>
+    </linearGradient>
+  </defs>
 </svg>

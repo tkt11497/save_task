@@ -106,16 +106,21 @@ defineExpose({})
 
 <style lang="scss" scoped>
 .policy_container {
+	background-image: url("@/assets/images/background/sbg_2.png");
+	background-position:  top;
+	background-size: 100% 100%;
+	min-height: 100vh;
 	.font {
 		padding: 0 60px 30px;
 		font-size: 23px;
-		color: #000;
+		color: #4EC2D8;
 		margin-top: 50px;
 
 		.title {
 			margin-top: 44px;
 			font-size: 28px;
 			font-weight: 600;
+			color: #00DCFF;
 			line-height: normal;
 			letter-spacing: -0.98px;
 		}
@@ -125,7 +130,7 @@ defineExpose({})
 		}
 
 		.text {
-			color: #585858;
+			color: #4EC2D8;
 			font-size: 24px;
 			font-style: normal;
 			font-weight: 600;

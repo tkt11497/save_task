@@ -152,7 +152,9 @@ input {
 		}
 	}
 }
-
+.van-list__finished-text{
+	color:#00DCFF
+}
 .van-button.custom-button {
 	font-size: 14px;
 	background: #fff;
@@ -200,8 +202,8 @@ input {
 		font-size: 22px;
 		flex: 1;
 		max-width: calc(100vw - 60px);
-		color: var(--vt-header-black);
-		font-weight: 590;
+		color: #E9E9E9;
+		font-weight: 600;
 		height: 30px;
 		line-height: 30px;
 		text-align: center;
