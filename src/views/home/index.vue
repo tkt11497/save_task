@@ -43,7 +43,6 @@
 		</div>
 		<!-- 智能合约 -->
 		<SmartContract />
-		<div class="bg_mask">
 			<div class="total">
 					<div>{{ t('总收入') }}</div>
 					<div class="number">{{ plusDecimal(accountFundTransaction.balance || 0) }} {{ accountFundTransaction.tokenName }}</div>
@@ -110,7 +109,6 @@
 					</div>
 				</div>
 			</div>
-		</div>
 		<AnnouncementPop v-if="address" ref="announcementPopRef" />
 
 		<van-popup v-model:show="currencyPopup" position="bottom" class="currency-popup">
@@ -322,7 +320,7 @@ defineExpose({})
 	padding-top: 40px;
 	background-image: url("../../assets/images/background/sbg_2.png");
 	background-position:  top;
-	background-size: 140% 110%;
+	background-size: 100% 100%;
 
 	.header {
 		width: 100%;
@@ -348,28 +346,28 @@ defineExpose({})
 
 		.title {
 			font-size: 42px;
-			font-weight: 600;
+			font-weight: 700;
 			margin-left: -220px;
 			line-height: 48px;
 			margin-top: -2px;
-			color: var(--vt-header-black);
+			color: #E9E9E9;
 		}
 
 		.input {
 			width: 196px;
 			height: 64px;
 			line-height: 64px;
+			border-radius: 15px;
 
-			border-radius: 52px;
-			border: 1px solid #FF8008;
-			background: #FFF;
+			border: 1px solid #FFF;
+			background: linear-gradient(180deg, #5CE7FF 0%, #27727F 77.5%, #50CDCD 100%);
+			box-shadow: 4.9px -4.9px 4.9px 0px rgba(165, 165, 165, 0.10) inset;
+			backdrop-filter: blur(6.199999809265137px);
 			cursor: pointer;
-
-			box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.13);
-			padding: 0 24px;
-			font-size: 26px;
-			color: #7B757F;
-			font-weight: 500;
+			padding: 0 22px;
+			font-size: 24px;
+			color: #E9E9E9;
+			font-weight: 700;
 			text-align: center;
 		}
 	}
@@ -398,9 +396,9 @@ defineExpose({})
 			}
 
 			.title {
-				font-weight: 500;
+				font-weight: 700;
 				font-size: 28px;
-				color: var(--vt-header-black);
+				color: #E9E9E9;
 			}
 		}
 
@@ -418,15 +416,15 @@ defineExpose({})
 			justify-content: space-between;
 
 			.title2 {
-				color: var(--vt-header-black);
+				color: #E9E9E9;
 				font-size: 26px;
-				font-weight: 500;
+				font-weight: 600;
 			}
 
 			.number {
 				font-size: 62px;
-				font-weight: 600;
-				color: var(--vt-header-black);
+				font-weight: 700;
+				color: #E9E9E9;
 				height: 86px;
 
 				.amount {
@@ -436,7 +434,7 @@ defineExpose({})
 				}
 				.unit {
 					font-size: 30px;
-					color: var(--vt-header-black);
+					color: #E9E9E9;
 					font-weight: 600;
 					position: relative;
 					top: -13px;
@@ -482,41 +480,43 @@ defineExpose({})
 			}
 
 			.trends {
-				color: var(--vt-sub-black);
+				color: #E9E9E9;
 				font-size: 22px;
 				margin-left: 16px;
-				font-weight: 500;
+				font-weight: 700;
 			}
 
 			.day {
-				color: var(--vt-sub-black);
+				color: #E9E9E9;
 				font-size: 22px;
-				font-weight: normal;
+				font-weight: 700;
 				margin-left: 6px;
 			}
 		}
 
 	}
-	.bg_mask{
-		background: rgba(217, 217, 217, 0.08);
-		backdrop-filter: blur(25.368999481201172px);
-		margin-top: -93px;
+
 		.total {
-				width: 100%;
-				margin-left: 0px;
-				height: 130px;
+				border-radius: 60px 60px 0 0;
+				width: 80%;
+				margin: -70px auto 0px;
+				background: rgba(53, 53, 53, 0.10);
+				box-shadow: 12.967px -12.967px 12.967px 0px rgba(40, 40, 40, 0.10) inset, -12.967px 12.967px 12.967px 0px rgba(255, 255, 255, 0.10) inset;
+				backdrop-filter: blur(12.966666221618652px);
+				height: 140px;
 				display: flex;
-				align-items: center;
+				align-items: top;
 				justify-content: space-between;
 				font-size: 24px;
-				color: var(--vt-header-black);
-				font-weight: 600;
-				padding: 0 46px;
+				color: #E9E9E9;
+				font-weight: 700;
+				padding: 30px 46px;
+				z-index: -1;
 
 				.number {
-					color: #FFF7FF;
+					color: #E9E9E9;
 					font-size: 26px;
-					font-weight: 600;
+					font-weight: 700;
 				}
 			}
 
@@ -528,32 +528,36 @@ defineExpose({})
 				justify-content: space-between;
 				align-items: center;
 				height: 48px;
+				margin-top: -56px;
 				margin-bottom: 10px;
 				padding-left: 20px;
 				padding-right: 20px;
+				
 
 				.title {
 					font-size: 30px;
-					font-weight: 600;
-					color: var(--vt-header-black);
+					font-weight: 700;
+					color: #00DCFF;
+					z-index: 3;
 				}
 
 				.all {
 					font-size: 26px;
-					color: #387EFF;
+					color: #00DCFF;
 					font-weight: 500;
-					line-height: 40px;
+					line-height: 70px;
 					cursor: pointer;
+					z-index: 3;
 				}
 			}
 
 			.list_info {
-				border-radius:  20px;
-				border-top: 1.5px solid #FFF;
-				background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
-				box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
+				border-radius: 24px;
+				border: 1px solid #CAB37D;
+				background: linear-gradient(99deg, #90C9C6 14.79%, #2194AA 76.69%);
+				box-shadow: 3px 6px 4px 0px rgba(0, 0, 0, 0.25);
 
-				padding: 0 18px;
+				padding: 12px 18px;
 				overflow: hidden;
 
 				.item {
@@ -578,14 +582,14 @@ defineExpose({})
 
 					.coin {
 						flex: 0 0 140px;
-						color: var(--vt-sub-black);
+						color: #8D8D8D;
 						font-size: 22px;
-						font-weight: 500;
+						font-weight: 700;
 						margin-right: 20px;
 
 						.name {
 							font-size: 25px;
-							font-weight: 600;
+							font-weight: 700;
 							color: var(--vt-header-black);
 							margin-top: 2px;
 						}
@@ -640,20 +644,19 @@ defineExpose({})
 			}
 			.info_box {
 				width: 220px !important;
-				//height: 224px;
+				height: 234px !important;
 				//background: #fff;
 				//border-radius: 24px;
 				//padding-top: 32px;
 				//padding-bottom: 32px;
 				//margin-right: 20px;
 				display: flex;
-				align-items: center;
 				justify-content: center;
 				flex-direction: column;
-				border-radius:  8px;
-				border-top: 1.5px solid #FFF;
-				background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
-				box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
+				border-radius: 18px;
+				border: 1px solid  #CAB37D;
+				background: linear-gradient(99deg, #90C9C6 14.79%, #2194AA 76.69%);
+				box-shadow: 3px 6px 4px 0px rgba(0, 0, 0, 0.25);
 
 				padding: 15px;
 				height: 99%;
@@ -668,12 +671,12 @@ defineExpose({})
 				}
 
 				.content {
-					margin-top: 22px;
+					margin-top: 12px;
 					font-weight: 500;
 					font-size: 28px;
 					line-height: 35px;
-					text-align: center;
-					color: var(--vt-header-black);
+					text-align: left;
+					color: #C7F7FF;
 				}
 			}
 		}
@@ -682,10 +685,10 @@ defineExpose({})
 			margin: 0 42px 48px;
 			padding: 32px 22px;
 
-			border-radius: 8px;
-			border-top: 1.5px solid #FFF;
-			background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
-			box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
+			border-radius: 14px;
+			border: 1px solid  #CAB37D;
+			background: linear-gradient(99deg, #90C9C6 14.79%, #2194AA 76.69%);
+			box-shadow: 3px 6px 4px 0px rgba(0, 0, 0, 0.25);
 
 			.rate_title {
 				display: flex;
@@ -706,7 +709,7 @@ defineExpose({})
 				span {
 					font-size: 26px;
 					color: #000;
-					font-weight: 600;
+					font-weight: 700;
 				}
 			}
 
@@ -771,7 +774,7 @@ defineExpose({})
 				}
 			}
 		}
-	}
+	
 }
 
 .currency-popup {
@@ -786,9 +789,9 @@ defineExpose({})
 
 	.title2 {
 		font-size: 28px;
-		font-weight: 600;
+		font-weight: 500;
 		text-align: left;
-		color:var(--vt-header-black);
+		color:#00DCFF;
 		margin-top: 36px;
 	}
 }
@@ -812,12 +815,12 @@ defineExpose({})
 			font-size: 32px;
 			font-weight: 600;
 			line-height: 50px;
-			color: var(--vt-header-black);
+			color: #fff;
 		}
 
 		p {
 			line-height: 44px;
-			color: var(--vt-sub-black);
+			color: #90C9C6;
 			font-size: 24px;
 		}
 	}
@@ -827,7 +830,7 @@ defineExpose({})
 		margin-top: 72px;
 		font-size: 25px;
 		font-weight: 500;
-		color: var(--vt-header-black);
+		color: #00DCFF;
 	}
 
 	.currency-currency-selected {
@@ -835,12 +838,6 @@ defineExpose({})
 		display: flex;
 		align-items: center;
 		padding: 8px 18px 7px 18px;
-
-		border-radius: 8px;
-		border-top: 1.5px solid #FFF;
-		background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
-		box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
-
 		.icon {
 			flex: 0 0 60px;
 			width: 60px;
@@ -850,17 +847,17 @@ defineExpose({})
 
 		.text {
 			font-size: 28px;
-			color: var(--vt-header-black);
-			font-weight: 500;
+			color: #fff;
+			font-weight: 700;
 		}
 
 		button {
 			border-radius: 41px;
-			border-top: 0.5px solid #FFF;
-			background:  linear-gradient(180deg, #F4F8F9 0%, #92CFEC 83%, #35DCE8 100%);
+			background: linear-gradient(180deg, #E3FF43 0%, #27797F 100%);
+			box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.25);
 			margin-left: auto;
 			height: 54px;
-			color: #0152FF;
+			color: #fff;
 			font-weight: 500;
 			font-size: 24px;
 			padding: 0 32px;

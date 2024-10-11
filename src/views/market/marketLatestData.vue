@@ -68,15 +68,18 @@ onUnmounted(() => {
 	font-size: 24px;
 
 	.close {
-		font-size: 29px;
-		font-weight: 500;
-		color: var(--vt-header-black);
+		font-size: 26px;
+		font-weight: 700;
+		color: #292929;
 	}
 
 	.trend {
-		color: #387EFF;
-		font-size: 28px;
-		//font-weight: 400;
+		background: linear-gradient(99deg, #D7FFC5 14.79%, #72FF62 62.76%, #5CFF4E 76.69%);
+		background-clip: text;
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		font-size: 25px;
+		font-weight: 700;
 	}
 
 	.red {

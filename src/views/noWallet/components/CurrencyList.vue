@@ -138,6 +138,7 @@ defineOptions({ name: 'CurrencyList' })
 				width: 100%;
 				background-image: url('@/assets/images/background/border.png');
 				background-repeat: no-repeat;
+				background-size: 100% 14px;
 				background-position: center bottom;
 			}
 	}

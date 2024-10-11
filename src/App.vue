@@ -106,7 +106,7 @@ onUnmounted(() => {
 }
 
 .withnav {
-	height: calc(100% - 140px);
+	height: calc(100% - 120px);
 }
 
 :deep(.no-address-pop) {
