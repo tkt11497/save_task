@@ -3,7 +3,7 @@
 		<div>
 			<van-nav-bar :fixed="true" :title="t('语言')" @click-left="onClickLeft">
 				<template #left>
-					<van-icon :name="arrow" size="18" />
+					<van-icon :name="arrow" size="23" />
 				</template>
 			</van-nav-bar>
 		</div>
@@ -19,7 +19,12 @@
 					:class="{ 'isChecked': item.code === checked }"
 				>
 					<template #right-icon>
-						<van-radio :name="item.code" />
+						<van-radio :name="item.code" >
+							<template #icon="props">
+								<img class="img-icon" :src="props.checked ? active : inactive" />
+							</template>
+						</van-radio>
+
 					</template>
 				</van-cell>
 			</van-cell-group>
@@ -42,7 +47,8 @@ import arrow from '@/assets/images/market/back.svg'
 import useLoading from '@/hooks/useLoading.js'
 import { changLang } from '@/i18n/index.js'
 import LANS from '@/i18n/lang.js'
-
+import active from '@/assets/images/user/active.svg'
+import inactive from '@/assets/images/user/inactive.svg'
 const { t } = useI18n()
 
 // 初始化仓库
@@ -82,16 +88,21 @@ defineExpose({})
 .lang_container {
 	// 单选框
 	.van-cell-group--inset {
-		margin: 0;
+		margin: 20px 10px 0 10px;
+		border-radius: 14px 14px 14px 14px;
+		border-top: 1.5px solid #FFF;
+		background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
+		box-shadow: 0px 2px 4.4px 2px rgba(0, 0, 0, 0.15);
 	}
 	.van-cell {
 		padding: 15px 20px;
+		background: transparent;
 
-		&:active {
-			background-color: #fff;
-		}
+		// &:active {
+		// 	background-color: #fff;
+		// }
 		&.isChecked {
-			color: #82a8f9;
+			color: #FB9200;
 		}
 	}
 
@@ -125,8 +136,14 @@ defineExpose({})
 		bottom: var(--vt-nav-bar-height);
 		width: 100%;
 		overflow: hidden;
-		background-color: #fff;
+		background-color: transparent;
 		padding: 30px 30px 50px;
+		.van-button{
+			background-image: url("@/assets/images/market/p_button.png");
+			background-position:  center;
+			background-size: 110% 130%;
+			border:none;
+		}
 	}
 }
 </style>
