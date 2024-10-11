@@ -115,7 +115,7 @@ const value = ref('')
 // General
 const generalList = ref([
 	{
-		icon: getImageUrl('user/notification-icon.png'),
+		icon: getImageUrl('user/notification-icon.svg'),
 		title: t('通知'),
 		path: '/notifications',
 	},
@@ -376,12 +376,19 @@ defineExpose({})
 				justify-content: center;
 
 				.img {
-					width: 44px;
-					height: 44px;
+					width: 74px;
+					height: 74px;
+					border-radius: 50px;
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					background: rgba(217, 217, 217, 0.25);
+					box-shadow: 0px -1px 0px 0px rgba(0, 0, 0, 0.25) inset, 0px 1px 0px 0px rgba(252, 252, 252, 0.25) inset;
+
 
 					img {
-						width: 100%;
-						height: 100%;
+						width: 62%;
+						height: 62%;
 						vertical-align: middle;
 					}
 				}

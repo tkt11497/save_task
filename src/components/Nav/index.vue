@@ -111,10 +111,8 @@ defineExpose({})
 
 <style lang="scss" scoped>
 :deep(.van-tabbar) {
-	border-radius: 16px 16px 0px 0px;
-	border-top: 1.5px solid #FFF;
-	background: linear-gradient(90deg, rgba(99, 99, 99, 0.30) 0%, rgba(211, 211, 211, 0.30) 50.5%, rgba(99, 99, 99, 0.30) 100%);
-	box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
+	border-radius:  0px;
+	background: #124D57;
 
 	// backdrop-filter: blur(30px);
 	// border-color: transparent;
@@ -122,6 +120,9 @@ defineExpose({})
 	//padding-bottom: 10px;
 	//padding-top: 16px;
 	//padding-bottom: 4px;
+	&::after{
+		border:none;
+	}
 	.van-tabbar-item {
 		padding: 8px 0;
 		background: transparent;

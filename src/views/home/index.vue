@@ -725,10 +725,10 @@ defineExpose({})
 					display: flex;
 					align-items: center;
 					.img {
-						width: 54px;
-						height: 54px;
+						width: 17px;
+						height: 17px;
 						display: inline-block;
-						margin-top: -12px;
+						margin-top: -30px;
 
 						img {
 							width: 100%;
@@ -751,9 +751,10 @@ defineExpose({})
 					min-width: 220px;
 
 					.dot {
-						width: 38px;
-						height: 38px;
+						width: 17px;
+						height: 17px;
 						display: inline-block;
+						margin-top: -27px;
 						margin-left: 7px;
 
 						img {
