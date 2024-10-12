@@ -81,7 +81,7 @@ export default {
 	'充值': 'Deposit',
 	'提款': 'Withdraw',
 	'交易': 'Exchange',
-	'赚取利息': 'Earn Interset',
+	'赚取利息': 'Earn Interest',
 	'账户': 'Account',
 	'什么是自动交易？': 'What is Automated Trading?',
 	'了解如何赚取利息': 'Learn About Earning Interest',

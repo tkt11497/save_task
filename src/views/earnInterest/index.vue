@@ -371,15 +371,15 @@ defineExpose({})
 
 <style lang="scss" scoped>
 .confirm1-btn{
-	background-image: url("../../assets/images/market/p_button.png");
-	background-position:  center;
-	background-size: 110% 130%;
-	border:none;
+	border-radius: 14px;
+	border: 1px solid  #FFF;
+	background: linear-gradient(180deg, #5CE7FF 0%, #27727F 77.5%, #50CDCD 100%);
+	box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.25);
 }
 .earn_onterset_container {
 	background-image: url("../../assets/images/background/sbg_2.png");
 	background-position:  top;
-	background-size: 140% 110%;
+	background-size: 100% 100%;
 	//width: 90%;
 	padding: 48px;
 	position: relative;
@@ -393,14 +393,14 @@ defineExpose({})
 		.left {
 			.time {
 				font-size: 24px;
-				font-weight: 500;
-				color: var(--vt-sub-black);
+				font-weight: 700;
+				color: #00DCFF;
 			}
 
 			.title {
 				font-size: 40px;
-				color: var(--vt-header-black);
-				font-weight: 600;
+				color: #E9E9E9;
+				font-weight: 700;
 				margin-top: 0px;
 				position: relative;
 				//height: 28px;
@@ -425,10 +425,10 @@ defineExpose({})
 			justify-content: space-between;
 
 			span {
-				font-weight: 500;
+				font-weight: 700;
 				font-size: 28px;
 				margin-top: 20px;
-				color: var(--vt-sub-black);
+				color: #000;
 			}
 
 			.img {
@@ -451,13 +451,13 @@ defineExpose({})
 		box-sizing: border-box;
 		background: url('../../assets/images/home/card_all.png') no-repeat;
 		background-size: 100%;
-		color: var(--vt-header-black);
+		color: #FBFBFB;
 		position: relative;
 		margin-top: 30px;
 		padding: 48px;
 
 		.title {
-			font-weight: 500;
+			font-weight: 600;
 			font-size: 28px;
 		}
 
@@ -490,12 +490,12 @@ defineExpose({})
 			.trends {
 				margin-left: 3px;
 				margin-right: 3px;
-				color: var(--vt-sub-black);
-				font-weight: 500;
+				color: #FBFBFB;
+				font-weight: 700;
 			}
 			.day{
-				color: var(--vt-sub-black);
-				font-weight: 500;
+				color: #FBFBFB;
+				font-weight: 700;
 			}
 		}
 	}
@@ -506,10 +506,9 @@ defineExpose({})
 		display: flex;
 		align-items: center;
 
-		border-top: 1.5px solid #FFF;
-		background: linear-gradient(270deg, rgba(153, 153, 153, 0.7) 0%, rgba(255, 255, 255, 0.7) 100%);
-		backdrop-filter: blur(25.368999481201172px);
-		box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
+		border: 1px solid #CAB37D;
+		background: linear-gradient(99deg, #90C9C6 14.79%, #2194AA 76.69%);
+		box-shadow: 4px 4px 17px 0px rgba(1, 3, 246, 0.12);
 
 		border-radius: 0.33333rem;
 		padding: 25px;
@@ -546,15 +545,15 @@ defineExpose({})
 			.question {
 				font-weight: 600;
 				font-size: 24px;
-				color: var(--vt-header-black);
+				color: #000;
 				line-height: normal;
 			}
 
 			.info {
-				color: var(--vt-sub-black);
+				color: #E0E0E0;
 				background: transparent;
 				backdrop-filter: none;
-				font-weight: 500;
+				font-weight: 400;
 				font-size: 20px;
 				padding: 0;
 				margin-top: 12px;
@@ -563,12 +562,12 @@ defineExpose({})
 
 		.next {
 			position: absolute;
-			right: 40px;
+			right: 10px;
 			top: 50%;
 			transform: translateY(-50%);
 			display: inline-flex;
-			width: 30px;
-			height: 30px;
+			width: 70px;
+			height: 70px;
 
 			img {
 				width: 100%;
@@ -580,8 +579,8 @@ defineExpose({})
 
 .scroll_title {
 	font-size: 32px;
-	font-weight: 600;
-	color: var(--vt-header-black);
+	font-weight: 700;
+	color: #E9E9E9;
 	margin-top: 100px;
 	position: relative;
 	line-height: 28px;
@@ -603,8 +602,6 @@ defineExpose({})
 			padding: 24px 8px 36px;
 			display: flex;
 			justify-content: space-between;
-			background: rgba(217, 217, 217, 0.05);
-			backdrop-filter: blur(25.368999481201172px);
 
 			:deep(.van-swipe-item) {
 				padding-right: 20px;
@@ -612,14 +609,14 @@ defineExpose({})
 			}
 			.info_box {
 				width: 220px !important;
+				height: 234px !important;
 				display: flex;
-				align-items: center;
 				justify-content: center;
 				flex-direction: column;
-				border-radius:  8px;
-				border-top: 1.5px solid #FFF;
-				background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
-				box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
+				border-radius: 18px;
+				border: 1px solid  #CAB37D;
+				background: linear-gradient(99deg, #90C9C6 14.79%, #2194AA 76.69%);
+				box-shadow: 3px 6px 4px 0px rgba(0, 0, 0, 0.25);
 
 				padding: 15px;
 				height: 99%;
@@ -634,27 +631,26 @@ defineExpose({})
 				}
 
 				.content {
-					margin-top: 22px;
+					margin-top: 12px;
 					font-weight: 500;
 					font-size: 28px;
 					line-height: 35px;
-					text-align: center;
-					color: var(--vt-header-black);
+					text-align: left;
+					color: #C7F7FF;
 				}
 			}
 		}
 
 .footer {
-	border-top: 1.5px solid #FFF;
-	background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
-	box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
+	border: 1px solid #CAB37D;
+	background: linear-gradient(99deg, #90C9C6 14.79%, #2194AA 76.69%);
 	border-radius: 42px;
 	padding: 10px 50px 30px;
 
 	.title {
 		font-size: 23px;
-		color: var(--vt-sub-black);
-		font-weight: 500;
+		color: #226764;
+		font-weight: 600;
 		margin-top: 20px;
 		margin-bottom: 16px;
 	}
@@ -680,13 +676,13 @@ defineExpose({})
 		:deep(.el-icon) {
 			width: 35px;
 			height: 35px;
-			color: #000;
+			color: #fff;
 		}
 
 		:deep(.el-icon svg) {
 			width: 40px;
 			height: 40px;
-			color: #000;
+			color: #fff;
 		}
 	}
 
@@ -741,7 +737,7 @@ defineExpose({})
 			display: inline-flex;
 			.van-cell-group{
 				background: transparent;
-				box-shadow: 0px 2px 4.4px 1px rgba(0, 0, 0, 0.15);
+				box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
 			}
 
 			:deep(.van-field__control) {
@@ -751,6 +747,9 @@ defineExpose({})
 				width: 100%;
 				padding: 10px;
 				font-size: 16px;
+				&::placeholder{
+					color: #E9E9E9;
+				}
 			}
 
 			:deep(.van-field, .van-field__body, .van-field__control) {
@@ -759,13 +758,15 @@ defineExpose({})
 
 			:deep(.van-field__control) {
 				border-width: 0;
+				color:#E9E9E9 ;
+				font-weight: 500;
 			}
 
 			:deep(.van-cell) {
 				padding: 0px;
 				display: flex;
 				align-items: center;
-				background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
+				background: #134D57;
 			}
 
 			:deep(.van-cell-group--inset) {
@@ -778,17 +779,32 @@ defineExpose({})
 		font-size: 27px;
 		padding-top: 48px;
 		font-weight: 600;
-		color: var(--vt-header-black);
+		color: #4E4E4E;
 
 		.yield,
 		.limit {
+			position: relative;
 			display: flex;
 			justify-content: space-between;
 			// background: #F8F9FB;
 			height: 80px;
-			padding: 20px 36px;
+			padding: 20px 6px;
 			// border-bottom: 0.1px dashed rgb(206, 241, 241);
 			width: 98%;
+		}
+		.yield{
+			&::after {
+				content: "";
+				position: absolute;
+				bottom:-8px;
+				left:0;
+				height: 20px;
+				width: 100%;
+				background-image: url('@/assets/images/background/border.png');
+				background-repeat: no-repeat;
+				background-size: 100% 14px;
+				background-position: center bottom;
+			}
 		}
 
 		.limit {
@@ -796,7 +812,7 @@ defineExpose({})
 		}
 
 		.title {
-			color: var(--vt-sub-black);
+			color: #0C0C0C;
 			margin-top: 0;
 			margin-bottom: 0;
 			font-weight: 600;
@@ -806,10 +822,10 @@ defineExpose({})
 	.subscribe {
 		margin-top: 30px;
 		.van-button{
-			background-image: url("../../assets/images/market/p_button.png");
-			background-position:  center;
-			background-size: 110% 130%;
-			border:none;
+			border-radius: 14px;
+			border: 1px solid  #FFF;
+			background: linear-gradient(180deg, #5CE7FF 0%, #27727F 77.5%, #50CDCD 100%);
+			box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.25);
 		}
 	}
 }
@@ -817,22 +833,22 @@ defineExpose({})
 .divider {
 	position: absolute;
 	left: 0px;
-	top: 6px;
+	top: 0px;
 	width: 1px;
-	height: 55px;
-	background: #d8b45a;
+	height: 75px;
+	background: #226764;
 }
 
 .order_status {
 	text-align: center;
-	color: var(--vt-header-black);
+	color: #E9E9E9;
 	font-size: 40px;
-	font-weight: 600;
+	font-weight: 700;
 }
 
 .order_info {
 	text-align: center;
-	color: var(--vt-sub-black);
+	color: #00DCFF;
 	font-weight: 500;
 	margin-top: 10px;
 	margin-bottom: 25px;
@@ -843,7 +859,7 @@ defineExpose({})
 	padding: 66px 48px;
 	background-image: url("../../assets/images/background/sbg_2.png");
 	background-position:  top;
-	background-size: 500% 500%;
+	background-size: 100% 300%;
 
 	.dialog-title {
 		text-align: center;
@@ -864,11 +880,11 @@ defineExpose({})
 			justify-content: space-between;
 			margin-bottom: 0.16rem;
 			font-weight: 500;
-			color: var(--vt-sub-black);
+			color: #90C9C6;
 
 			.right-text {
 				font-weight: 500;
-				color: var(--vt-header-black);
+				color: #E9E9E9;
 			}
 		}
 	}
@@ -897,7 +913,6 @@ defineExpose({})
 	.el-select {
 		.el-select__wrapper {
 			border: none;
-			color: var(--vt-header-black);
 			font-weight: 500;
 			border-radius: 10px;
 			/* Optional: rounded corners */
@@ -905,10 +920,20 @@ defineExpose({})
 			width: 100%;
 			font-size: 27px;
 
-			background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
-			box-shadow: 0px 2px 4.4px 1px rgba(0, 0, 0, 0.15);
+			background: #134D57;
+			box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
 			// padding: 10px 32px;
 			text-align: center;
+				.el-select__placeholder{
+				color:#fff;
+				font-weight: 500;
+				}
+				.el-select__suffix{
+					background: #124D57;
+					box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.30), -2px -2px 8px rgba(198, 166, 166, 0.25);
+					padding: 7px;
+					border-radius: 100%;
+				}
 		}
 	}
 }

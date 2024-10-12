@@ -504,12 +504,12 @@ defineExpose({})
 
 			.next {
 				position: absolute;
-				right: 40px;
+				right: 10px;
 				top: 50%;
 				transform: translateY(-50%);
 				display: inline-flex;
-				width: 30px;
-				height: 30px;
+				width: 70px;
+				height: 70px;
 
 				img {
 					width: 100%;
@@ -733,10 +733,10 @@ defineExpose({})
 	.divider {
 		position: absolute;
 		left: 0px;
-		top: 6px;
+		top: 0px;
 		width: 1px;
-		height: 55px;
-		background: #d8b45a;
+		height: 75px;
+		background: #226764;
 	}
 }
 
