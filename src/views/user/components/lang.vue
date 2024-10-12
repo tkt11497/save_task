@@ -86,23 +86,42 @@ defineExpose({})
 
 <style lang="scss" scoped>
 .lang_container {
+	background-image: url("@/assets/images/background/sbg_2.png");
+	background-position:  top;
+	background-size: 100% 100%;
+	min-height: 100vh;
 	// 单选框
 	.van-cell-group--inset {
-		margin: 20px 10px 0 10px;
-		border-radius: 14px 14px 14px 14px;
-		border-top: 1.5px solid #FFF;
-		background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
-		box-shadow: 0px 2px 4.4px 2px rgba(0, 0, 0, 0.15);
+		margin: 30px 0px 0 0px;
+		background: transparent;
+		// border-radius: 14px 14px 14px 14px;
+		// background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
+		// box-shadow: 0px 2px 4.4px 2px rgba(0, 0, 0, 0.15);
 	}
 	.van-cell {
 		padding: 15px 20px;
 		background: transparent;
+		color: #CBCBCB;
 
+		&::after {
+				content: "";
+				position: absolute;
+				bottom:0;
+				left:50%;
+				transform: translateX(-50%);
+				height: 20px;
+				width: 96%;
+				border-bottom: 0px;
+				background-image: url('@/assets/images/background/border.png');
+				background-repeat: no-repeat;
+				background-size: 100% 6px;
+				background-position: center bottom;
+			}
 		// &:active {
 		// 	background-color: #fff;
 		// }
 		&.isChecked {
-			color: #FB9200;
+			color: #04F;
 		}
 	}
 
@@ -139,10 +158,9 @@ defineExpose({})
 		background-color: transparent;
 		padding: 30px 30px 50px;
 		.van-button{
-			background-image: url("@/assets/images/market/p_button.png");
-			background-position:  center;
-			background-size: 110% 130%;
-			border:none;
+			border-radius: 12px;
+			border: 1px solid  #FFF;
+			background: linear-gradient(180deg, #5CE7FF 0%, #27727F 77.5%, #50CDCD 100%);
 		}
 	}
 }
