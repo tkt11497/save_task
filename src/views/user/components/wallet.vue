@@ -16,7 +16,7 @@
 						</div>
 						<div class="title break-word">
 							<div >{{ item.tokenName }}</div>
-							<div style="color: #645A6F;font-weight: 400;">{{ item.tokenAbbr }}</div>
+							<div style="color: #676767;font-weight: 500;">{{ item.tokenAbbr }}</div>
 						</div>
 					</div>
 					<div class="right">
@@ -108,8 +108,12 @@ defineOptions({
 .wallet_container {
 	position: relative;
 	//padding: 80px 30px 0px;
-	padding-left: 38px;
-	padding-right: 38px;
+	padding-left: 18px;
+	padding-right: 18px;
+	background-image: url("@/assets/images/background/sbg_2.png");
+	background-position:  top;
+	background-size: 100% 100%;
+	min-height: 100vh;
 	.back-css {
 				width: 47px;
 				height: 47px;
@@ -128,14 +132,13 @@ defineOptions({
 				justify-content: space-between;
 				align-items: center;
 				font-size: 28px;
-				padding: 8px 18px 7px 18px;
-				margin: 32px 0;
+				padding: 22px 18px 20px 18px;
+				margin: 12px 0;
 
-				border-radius: 15px;
-				border-top: 1.5px solid #FFF;
-				background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
-				box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
-
+				border-radius: 18px;
+				border: 1px solid #CAB37D;
+				background: linear-gradient(99deg, #90C9C6 14.79%, #2194AA 76.69%);
+				box-shadow: 3px 6px 4px 0px rgba(0, 0, 0, 0.25);
 				.left {
 					display: flex;
 					align-items: center;
@@ -156,7 +159,7 @@ defineOptions({
 					display: flex;
 					flex-direction: column;
 					justify-content: center;
-					color: var(--vt-header-black);
+					color: #000;
 					font-weight: 700;
 					margin-left: 20px;
 				}
@@ -164,7 +167,7 @@ defineOptions({
 				.right {
 					//flex-direction: column;
 					//align-items: flex-end;
-					color: var(--vt-header-black);
+					color: #000;
 					font-size: 26px;
 					font-weight: 600;
 					margin-left: 40px;
@@ -175,8 +178,8 @@ defineOptions({
 					text-align: right;
 
 					.usd {
-						color: #387EFF;
-						font-weight: 500;
+						color: #04F;
+						font-weight: 600;
 					}
 
 					span {
