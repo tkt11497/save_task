@@ -45,6 +45,10 @@ defineExpose({})
 
 <style lang="scss" scoped>
 .stake_container {
+	background-image: url("@/assets/images/background/sbg_2.png");
+	background-position:  top;
+	background-size: 100% 100%;
+	min-height: 100vh;
 	.back-css {
 				width: 48px;
 				height: 48px;
@@ -52,7 +56,7 @@ defineExpose({})
 	.font {
 		padding: 0 56px 0px;
 		font-size: 25px;
-		color: #000000;
+		color: #E9E9E9;
 		font-weight: 500;
 		line-height: 48px;
 

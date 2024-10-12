@@ -102,10 +102,10 @@
 				<van-cell-group inset>
 					<van-field v-model="stakeAmount" :disabled="selectedPledge === '1'" type="number" center :clearable="false" label="" placeholder="">
 						<template #left-icon>
-							<img src="@/assets/images/market/decrease.svg" @click="minusStepper" alt="minus" />
+							<img src="@/assets/images/poofStake/minus.svg" @click="minusStepper" alt="minus" />
 						</template>
 						<template #right-icon>
-							<img src="@/assets/images/market/increase.svg" @click="plusStepper" alt="plus" />
+							<img src="@/assets/images/poofStake/plus.svg" @click="plusStepper" alt="plus" />
 						</template>
 					</van-field>
 				</van-cell-group>
@@ -361,7 +361,7 @@ defineExpose({})
 .poof_stake_container {
 	background-image: url("../../assets/images/background/sbg_2.png");
 	background-position:  top;
-	background-size: 140% 110%;
+	background-size: 100% 100%;
 	padding: 48px;
 	position: relative;
 
@@ -372,14 +372,14 @@ defineExpose({})
 		.left {
 			.time {
 				font-size: 24px;
-				font-weight: 500;
-				color: var(--vt-sub-black);
+				font-weight: 700;
+				color: #00DCFF;
 			}
 
 			.title {
 				font-size: 40px;
-				color: var(--vt-header-black);
-				font-weight: 600;
+				color: #E9E9E9;
+				font-weight: 700;
 				margin-top: 0px;
 				position: relative;
 				line-height: 68px;
@@ -391,10 +391,10 @@ defineExpose({})
 			justify-content: space-between;
 
 			span {
-				font-weight: 500;
+				font-weight: 700;
 				font-size: 28px;
 				margin-top: 20px;
-				color: var(--vt-sub-black);
+				color: #000;
 			}
 
 			.img {
@@ -416,7 +416,7 @@ defineExpose({})
 		height: 440px;
 		background: url('../../assets/images/home/card_all.png') no-repeat;
 		background-size: 100%;
-		color: var(--vt-header-black);
+		color: #FBFBFB;
 		position: relative;
 		margin-top: 30px;
 		padding: 48px;
@@ -462,10 +462,9 @@ defineExpose({})
 			display: flex;
 			align-items: center;
 			
-			border-top: 1.5px solid #FFF;
-			background: linear-gradient(270deg, rgba(153, 153, 153, 0.7) 0%, rgba(255, 255, 255, 0.7) 100%);
-			backdrop-filter: blur(25.368999481201172px);
-			box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
+			border: 1px solid  #CAB37D;
+			background: linear-gradient(99deg, #90C9C6 14.79%, #2194AA 76.69%);
+			box-shadow: 4px 4px 17px 0px rgba(1, 3, 246, 0.12);
 
 			border-radius: 0.33333rem;
 			padding: 25px;
@@ -483,7 +482,7 @@ defineExpose({})
 
 			.right_font {
 				padding-left: 30px;
-				color: var(--vt-header-black);
+				color: #000;
 				flex: 1;
 				position: relative;
 				margin-right: 30px;
@@ -491,13 +490,13 @@ defineExpose({})
 				.question {
 					font-weight: 600;
 					font-size: 24px;
-					color: var(--vt-header-black);
+					color: #000;
 					line-height: normal;
 				}
 
 				.info {
-					color: var(--vt-sub-black);
-					font-weight: 500;
+					color: #CBCBCB;
+					font-weight: 400;
 					font-size: 20px;
 				}
 			}
@@ -521,8 +520,8 @@ defineExpose({})
 
 	.scroll_title {
 		font-size: 30px;
-		font-weight: 600;
-		color: var(--vt-header-black);
+		font-weight: 700;
+		color: #00DCFF;
 		margin-top: 60px;
 		margin-bottom: 28px;
 		position: relative;
@@ -532,12 +531,7 @@ defineExpose({})
 	}
 
 	.footer {
-		border-top: 1.5px solid #FFF;
-		background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
-		box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
-
-		border-radius: 32px;
-		padding: 44px;
+		padding: 2px;
 
 		.buttons {
 			.btn {
@@ -555,40 +549,30 @@ defineExpose({})
 					min-height: 80px;
 					font-size: 24px;
 					text-align: center;
-					color: var(--vt-sub-black);
-					font-weight: 600;
-
-					border-radius: 12px;
-					background-image: url("../../assets/images/poofStake/stake_inactive.png");
-					background-position:  center;
-					background-size: 110% 130%;
-					border:none;
-					box-shadow: 0px -2px 0px 0px rgba(0, 0, 0, 0.10) inset, 0px 2px 4px 0px rgba(0, 0, 0, 0.25);
+					color: #124D57;
+					font-weight: 500;
 
 					letter-spacing: -0.08px;
 					margin: 0 10px;
 
 					&.selectPledge {
-						border-radius: 12px;
-						background-image: url("../../assets/images/poofStake/stake_active.png");
-						background-position:  center;
-						background-size: 110% 130%;
-						border:none;
-						box-shadow: 0px -2px 0px 0px rgba(0, 0, 0, 0.10) inset, 0px 2px 4px 0px rgba(0, 0, 0, 0.25);
+						border-radius: 24px;
+						border: 1px solid var(--Grays-White, #FFF);
+						background: linear-gradient(180deg, #5CE7FF 0%, #27727F 77.5%, #50CDCD 100%);
 						color: #fff;
 					}
 				}
 			}
 
 			.introduce {
-				background: linear-gradient(90deg, rgba(217, 229, 251, 0.75) 0%, rgba(116, 165, 255, 0.75) 100%);
+				background:  #90C9C6;
 				margin-top: 30px;
 				font-size: 20px;
 				padding: 20px;
-				color: var(--vt-sub-black);
+				color: #5EFFF6;
 				font-weight: 500;
 				border-radius: 20px;
-				border: 1px dashed #646464;
+				border: 1px dashed #CAB37D;
 			}
 		}
 
@@ -604,12 +588,12 @@ defineExpose({})
 
 			.title {
 				font-weight: 500;
-				color: var(--vt-sub-black);
+				color: #00DCFF;
 			}
 
 			.title_value {
 				font-weight: 500;
-				color: #387EFF;
+				color: #00DCFF;
 			}
 		}
 
@@ -619,22 +603,21 @@ defineExpose({})
 			:deep .van-dropdown-menu__bar {
 				border-radius: 10px;
 				height: 55px;
-				border-top: 1.5px solid #FFF;
-				background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
-				box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
+				background: #124D57;
 			}
 
 			:deep(.van-dropdown-menu__title:after) {
 				right: -70px;
-				border-color: transparent transparent #000000 #000000;
+				border-color: transparent transparent #fff #fff;
 				width: 10px;
 				height: 10px;
-				border-bottom: 2px solid black;
+				border-bottom: 2px solid #fff;
 				font-size: 40px;
 			}
 
 			:deep(.van-dropdown-menu__title) {
 				font-size: 13px;
+				color: #E9E9E9;
 			}
 
 			:deep(.van-cell__title) {
@@ -667,11 +650,9 @@ defineExpose({})
 
 			:deep(.van-cell-group.van-cell-group--inset) {
 				background: transparent;
-				box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
 				margin: 0;
 				.van-cell {
-					border-top: 1.5px solid #FFF;
-					background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
+					background: #124D57;
 					padding: 0 18px;
 					height: 56px;
 				}
@@ -679,10 +660,11 @@ defineExpose({})
 				.van-field__control {
 					text-align: center;
 					font-size: 14px;
+					color: #E9E9E9;
 
 					&:disabled {
-						color: var(--van-field-input-text-color);
-						-webkit-text-fill-color: var(--van-field-input-text-color);
+						color: #E9E9E9;
+						-webkit-text-fill-color: #E9E9E9;
 					}
 				}
 
@@ -719,13 +701,14 @@ defineExpose({})
 		.stake {
 			.van-button--primary {
 				width: 100%;
-				background-image: url("../../assets/images/market/p_button.png");
-				background-position:  center;
-				background-size: 110% 130%;
-				border:none;
+				border: 1px solid #FFF;
+				border-radius: 12px;
+				background: linear-gradient(180deg, #5CE7FF 0%, #27727F 77.5%, #50CDCD 100%);
+				box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.25);
 				height: 40px;
 				font-size: 13px;
-				font-weight: 600;
+				color: #fff;
+				font-weight: 500;
 			}
 		}
 	}
@@ -735,21 +718,21 @@ defineExpose({})
 		left: 0px;
 		top: 0px;
 		width: 1px;
-		height: 75px;
+		height: 95px;
 		background: #226764;
 	}
 }
 
 .order_status {
 	text-align: center;
-	color: var(--vt-header-black);
+	color: #E9E9E9;
 	font-size: 40px;
-	font-weight: 600;
+	font-weight: 700;
 }
 
 .order_info {
 	text-align: center;
-	color: var(--vt-sub-black);
+	color: #00DCFF;
 	font-weight: 500;
 	margin-top: 10px;
 	margin-bottom: 25px;
@@ -808,12 +791,12 @@ defineExpose({})
 .right-text {
 	font-size: 26px;
 	font-weight: 500;
-	color:  var(--vt-sub-black);
+	color:  #90C9C6;
 }
 
 .right-text {
 	font-weight: 600;
-	color: var(--vt-header-black);
+	color: #E9E9E9;
 }
 
 /* Ensure dialog footer content is centered */
@@ -823,10 +806,10 @@ defineExpose({})
 	padding: 10px;
 	width: 100%;
 	.confirm1-btn{
-				background-image: url("../../assets/images/market/p_button.png");
-				background-position:  center;
-				background-size: 110% 130%;
-				border:none;
+		border-radius: 22px;
+		border: 1px solid  #FFF;
+		background: linear-gradient(180deg, #5CE7FF 0%, #27727F 77.5%, #50CDCD 100%);
+		box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.25);
 			}
 }
 
@@ -835,7 +818,7 @@ defineExpose({})
 	padding: 66px 48px;
 	background-image: url("../../assets/images/background/sbg_2.png");
 	background-position:  top;
-	background-size: 500% 500%;
+	background-size: 100% 100%;
 	.el-dialog__header.show-close {
 		padding-right:0 ;
 	}
@@ -845,7 +828,9 @@ defineExpose({})
 			height: 76px;
 		}
 	}
-
+	.el-dialog__close{
+		color:#fff
+	}
 	.content {
 		padding-top: 56px;
 		padding-bottom: 56px;
