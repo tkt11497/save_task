@@ -11,7 +11,7 @@
 		<div class="transaction_details">
 			<div class="transaction_details_left" @click="handleRouter('/records')">
 				<div class="icon-box">
-					<img src="@/assets/images/user/card.png" />
+					<img src="@/assets/images/user/card.svg" />
 				</div>
 				<div>
 					<div class="title">{{ t('交易详情') }}</div>
@@ -19,7 +19,8 @@
 				</div>
 			</div>
 			<div>
-				<van-icon name="arrow" color="#000" size="15" @click="handleRouter('/records')" />
+				<img src="@/assets/images/user/right_arrow.png" @click="handleRouter('/records')" alt="right-icon"/>
+				<!-- <van-icon name="arrow" color="#000" size="15" @click="handleRouter('/records')" /> -->
 			</div>
 		</div>
 		<div class="tab-box">
@@ -609,7 +610,7 @@ defineExpose({})
 	font-size: 30px;
 	background-image: url("@/assets/images/background/sbg_2.png");
 	background-position:  top;
-	background-size: 250% 250%;
+	background-size: 100% 100%;
 	//padding-top: 0;
 	padding-bottom: 40px;
 	height: 100vh;
@@ -619,30 +620,32 @@ defineExpose({})
 	}
 
 	:deep .van-tabs__nav {
-		background: #DFDFDF;
+		background: transparent;
 		overflow-x: auto;
 	}
 
 	:deep .van-tabs__wrap {
-		height: 40px;
-		border-radius: 9px;
+		height: 35px;
 	}
 
 	:deep .van-tab {
-		font-size: 14px;
-		color: var(--vt-sub-black);
-		font-weight: 500;
-		margin: 0 0.5px;
-		padding: 0 16px;
+		font-size: 13px;
+		color:#000;
+		border-radius: 12px;
+		border: 1px solid #E3FF43;
+		opacity: 0.5;
+		font-weight: 400;
+		margin: 0 10px;
+		padding: 0 10px;
 		flex: auto;
 		flex: none;
 		white-space: nowrap;
 	}
 
 	:deep .van-tab--active {
-		border-radius: 7px;
-		background: var(--1233456, linear-gradient(180deg, rgba(216, 228, 252, 0.80) 0%, rgba(21, 177, 220, 0.80) 78%, rgba(60, 150, 223, 0.80) 100%));
-		box-shadow: 0px 3px 8px 0px rgba(0, 0, 0, 0.12), 0px 3px 1px 0px rgba(0, 0, 0, 0.04);
+		border-radius: 12px;
+		background:  linear-gradient(180deg, #E3FF43 0%, #27797F 100%);
+		opacity: 1;
 		color: #fff;
 	}
 
@@ -651,11 +654,10 @@ defineExpose({})
 		justify-content: space-between;
 		margin: 0 40px;
 		align-items: center;
-		border-top: 1.5px solid #FFF;
-		background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
-		box-shadow: 0px 2px 4.4px 2px rgba(0, 0, 0, 0.15);
-		border-radius: 15px;
-		padding: 20px 30px;
+		border: 1px solid  #CAB37D;
+		background:  #90C9C6;
+		border-radius: 18px;
+		padding: 40px 30px;
 		margin-top: 20px;
 
 		.transaction_details_left {
@@ -675,7 +677,7 @@ defineExpose({})
 			}
 
 			.title {
-				color: var(--vt-header-black);
+				color: #222;
 				font-weight: 500;
 			}
 
@@ -768,12 +770,12 @@ defineExpose({})
 			font-size: 26px;
 
 			.title {
-				color: var(--vt-header-black);
+				color: #00DCFF;
 				font-weight: 500;
 			}
 
 			.text {
-				color: #387EFF;
+				color: #04F;
 			}
 		}
 
@@ -804,8 +806,8 @@ defineExpose({})
 		}
 
 		.receive-title {
-			color: var(--vt-sub-black);
-			font-weight: 500;
+			color: #00DCFF;
+			font-weight: 400;
 			padding: 30px 0;
 		}
 
@@ -816,22 +818,26 @@ defineExpose({})
 			margin-top: 48px;
 
 			.title {
-				color: var(--vt-header-black);
-				font-weight: 500;
+				color: #00DCFF;
+				font-weight: 400;
 				margin-right: 20px;
 			}
 
 			.text {
 				display: flex;
+				color: #000;
+				font-weight: 500;
 
 				span {
-					color: #387EFF;
+					color: #04F;
 				}
 			}
 		}
 
 		.centent {
 			margin-top: 40px;
+			color: #CBCBCB;
+			font-weight: 400;
 		}
 
 		:deep(.address-box) {
@@ -841,25 +847,25 @@ defineExpose({})
 			.van-cell {
 				width: 100%;
 				border-radius: 12px;
-				border-top: 1.5px solid #FFF;
-				background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
-				box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
+				border: 1px solid #CAB37D;
+				background:  #90C9C6;
 			}
 		}
 
 		.rate-box {
 			font-size: 26px;
-			color: #121212;
+			color: #555;
 			text-align: center;
 			margin-top: 40px;
+			font-weight: 600;
 
 			span {
-				color: #387EFF;
+				color: #04F;
 			}
 		}
 
 		.input-box {
-			background: #f9fafb;
+			background: transparent;
 			border-radius: 20px;
 			margin-top: 20px;
 			position: relative;
@@ -879,13 +885,13 @@ defineExpose({})
 			}
 
 			:deep .van-field {
-				border-top: 1.5px solid #FFF;
-				background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
-				box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
+				border: 1px solid  #CAB37D;
+				background:  #90C9C6;
 				border-radius: 13px;
 
 				.van-field__right-icon {
-					color: var(--vt-header-black);
+					color: #E9E9E9;
+					font-weight: 500;
 				}
 
 				.van-field__left-icon {
@@ -909,9 +915,9 @@ defineExpose({})
 
 		.address-box {
 			.van-field__right-icon {
-				color: #222;
+				color: #E9E9E9;
 				font-size: 16px;
-				font-weight: 500;
+				font-weight: 700;
 			}
 		}
 	}
@@ -931,12 +937,10 @@ defineExpose({})
 
 			:deep .van-button--normal {
 				width: 100%;
-				border-radius: 30px;
 				height: 56px;
-				background-image: url("@/assets/images/market/p_button.png");
-				background-position:  center;
-				background-size: 110% 130%;
-				border:none;
+				border-radius: 15px;
+				border: 1px solid  #FFF;
+				background: linear-gradient(180deg, #5CE7FF 0%, #27727F 77.5%, #50CDCD 100%);
 			}
 		}
 	}
