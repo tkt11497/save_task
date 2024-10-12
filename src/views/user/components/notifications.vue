@@ -91,6 +91,10 @@ defineExpose({})
 
 <style lang="scss" scoped>
 .notifications_container {
+	background-image: url("@/assets/images/background/sbg_2.png");
+	background-position:  top;
+	background-size: 100% 100%;
+	min-height: 100vh;
 	.container {
 		//width: 100%;
 		//display: flex;
@@ -111,7 +115,7 @@ defineExpose({})
 
 		.title {
 			font-size: 42px;
-			color: var(--vt-header-black);
+			color: #000;
 			font-weight: 700;
 			margin: 30px 0px;
 		}
@@ -125,15 +129,14 @@ defineExpose({})
 }
 
 .datahave {
-	margin: 32px 60px;
+	margin: 32px 35px;
 
 	.each-block {
 		margin-bottom: 44px;
 		padding: 25px 0 24px;
 		border-radius: 14px;
-		border-top: 1.5px solid #FFF;
-		background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
-		box-shadow: 0px 2px 4.4px 2px rgba(0, 0, 0, 0.15);
+		border: 1px solid  #CAB37D;
+		background:  linear-gradient(99deg, #90C9C6 14.79%, #2194AA 76.69%);
 
 		.each-container {
 			position: relative;
@@ -156,11 +159,12 @@ defineExpose({})
 			.day-text {
 				font-size: 26px;
 				font-style: normal;
-				font-weight: 600;
-				color: var(--vt-header-black);
+				font-weight: 700;
+				color: #000;
 				line-height: 44px;
 				position: relative;
-				padding-left: 26px;
+				margin-left: 20px;
+				padding-left: 20px;
 				&::before {
 					content: '';
 					position: absolute;
@@ -169,7 +173,7 @@ defineExpose({})
 					width: 8px;
 					height: 40px;
 					border-radius: 26px;
-					background: linear-gradient(180deg, rgba(216, 228, 252, 0.80) 0%, rgba(21, 177, 220, 0.80) 78%, rgba(60, 150, 223, 0.80) 100%);
+					background:#2295AA;
 				}
 			}
 		}
@@ -182,21 +186,22 @@ defineExpose({})
 		.content-row1 {
 			margin-bottom: 24px;
 			.contentcss {
-				color: var(--vt-sub-black);
+				color: #2F2F2F;
 				padding-left: 24px;
 				font-size: 26px;
 				font-style: normal;
-				font-weight: 500;
+				font-weight: 600;
 				line-height: 44px;
 				min-height: 106px;
 			}
 		}
 		.content-row {
+			margin-left: 20px;
 			.date-left {
-				color: #7B757F;
+				color: #555;
 				font-size: 23.2px;
 				font-style: normal;
-				font-weight: 400;
+				font-weight: 600;
 				line-height: 44px; /* 189.655% */
 			}
 
@@ -208,10 +213,10 @@ defineExpose({})
 				}
 
 				.time {
-					color: #7B757F;
+					color: #555;
 					font-size: 22.4px;
 					font-style: normal;
-					font-weight: 400;
+					font-weight: 600;
 					line-height: 44px; /* 196.429% */
 
 					position: relative;
