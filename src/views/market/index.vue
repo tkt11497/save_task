@@ -81,11 +81,9 @@
 						<template #footer>
 							<van-space :size="10" class="item-block">
 								<van-button type="primary" round block class="up-btn" @click="popupFromLower('0')">
-									<img src="../../assets/images/market/window.svg" alt="win" class="b_win" />
 									{{ t('上涨') }}
 								</van-button>
 								<van-button type="primary" round block class="down-btn" @click="popupFromLower('1')">
-									<img src="../../assets/images/market/windowred.svg" alt="win" class="b_win" />
 									{{ t('下跌') }}
 								</van-button>
 							</van-space>
@@ -124,6 +122,7 @@
 									</p>
 								</div>
 							</div>
+							<van-divider />
 						</div>
 						<div v-if="selectTab === 'option'">
 							<p class="time-css">{{ t('时间') }}</p>
@@ -163,10 +162,10 @@
 									<div class="step-input">
 										<el-input-number v-model="buyAmount" :min="0" class="custom-input-number" @blur="formatterNumVal" >
 											<template #increase-icon>
-												<img src="../../assets/images/market/increase.svg" alt="plus"  />
+												<img src="../../assets/images/market/increase.png" alt="plus"  />
 											</template>
 											<template #decrease-icon>
-												<img src="../../assets/images/market/decrease.svg" alt="minus"  />
+												<img src="../../assets/images/market/decrease.png" alt="minus"  />
 											</template>
 										</el-input-number>
 									</div>
@@ -186,7 +185,7 @@
 											<p class="p2">ROI:{{ selectProductFinalConfig.oddsRate * 100 }}%</p>
 										</div>
 										<div class="progress">
-											<van-progress :percentage="optionOrderProgress" :show-pivot="false" track-color="#F4F4F4" color="#82A9F9" stroke-width="8px" />
+											<van-progress :percentage="optionOrderProgress" :show-pivot="false" track-color="#F4F4F4" color="#ad9467" stroke-width="8px" />
 										</div>
 									</template>
 									<div v-else class="num" :class="{ up: expectedSymbol === '+' }">{{ expectedSymbol }}${{ optionOrderData.profitLossAmount }}</div>
@@ -902,22 +901,22 @@ defineExpose({})
 
 <style lang="scss" scoped>
 .c-backdrop{
-	background: rgba(217, 217, 217, 0.08);
-	backdrop-filter: blur(25.368999481201172px);
+	margin: 0 20px 0 20px;
 }
 .market_container {
 	// position: relative;
 	height: 100%;
-	padding: 42px 42px 0;
+	padding: 42px 12px 0;
 	background-image: url("../../assets/images/background/sbg_2.png");
 	background-position:  top;
-	background-size: 140% 110%;
+	background-size: 100% 100%;
 
 	.header {
 		height: 80px;
+		padding-left: 20px;
 		font-size: 48px;
 		font-weight: 600;
-		color: var(--vt-header-black);
+		color: #E9E9E9;
 	}
 
 	.market_list {
@@ -934,14 +933,14 @@ defineExpose({})
 			.item {
 					display: flex;
 
-					border-radius:  20px;
-					border-top: 1.5px solid #FFF;
-					background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
-					box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
+					border-radius: 18px;
+					border: 1px solid #CAB37D;
+					background: linear-gradient(99deg, #90C9C6 14.79%, #2194AA 76.69%);
+					box-shadow: 3px 6px 4px 0px rgba(0, 0, 0, 0.25);
 
 					font-size: 25px;
-					padding: 18px;
-					margin-top: 20px;
+					padding: 25px 18px 25px 18px;
+					margin-top: 10px;
 
 					.item_img {
 						flex: 0 0 76px;
@@ -959,15 +958,15 @@ defineExpose({})
 
 					.coin {
 						flex: 0 0 140px;
-						color: var(--vt-sub-black);
+						color: #8D8D8D;
 						font-size: 22px;
 						font-weight: 500;
 						margin-right: 20px;
 
 						.name {
 							font-size: 25px;
-							font-weight: 600;
-							color: var(--vt-header-black);
+							font-weight: 700;
+							color: #0C0C0C;
 							margin-top: 2px;
 						}
 					}
@@ -1020,18 +1019,12 @@ defineExpose({})
 				}
 
 				.charts-top {
-					background: rgba(217, 217, 217, 0.08);
-					backdrop-filter: blur(25.368999481201172px);
-					margin-top: 30px;
+					margin-top: 0px;
 					padding: 40px 48px;
 				}
 
 				.coin-info {
-					border-radius:  8px;
-					border-top: 1.5px solid #FFF;
-					background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
-					box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
-					padding: 24px 24px 12px 24px;
+					padding: 24px 0px 12px 0px;
 				}
 
 				.coin-row {
@@ -1046,13 +1039,13 @@ defineExpose({})
 							font-size: 28px;
 							font-weight: 500;
 							margin-left: 20px;
-							color: var(--vt-sub-black);
+							color: #000;
 
 							.name {
 								font-size: 28px;
 								font-weight: 600;
 								margin-top: 10px;
-								color: var(--vt-header-black);
+								color: #00DCFF;
 							}
 						}
 					}
@@ -1061,12 +1054,12 @@ defineExpose({})
 						.coin-price {
 							font-size: 30px;
 							font-weight: 500;
-							color: var(--vt-header-black);
+							color: #292929;
 							text-align: right;
 						}
 
 						.coin-percent {
-							color: #387EFF;
+							color: #04F;
 							font-size: 30px;
 							font-weight: 400;
 							text-align: right;
@@ -1080,19 +1073,18 @@ defineExpose({})
 
 				.open-high {
 					//padding: 0 44px;
-					margin-top: 50px;
+					margin-top: 15px;
 
 					.high-txt {
-						color: #999;
+						color: #E9E9E9;
 						font-size: 24px;
 						font-weight: 500;
-						color: var(--vt-sub-black);
 					}
 
 					.num-txt {
-						color: var(--vt-header-black);
+						color: #292929;
 						font-size: 30px;
-						font-weight: 500;
+						font-weight: 400;
 						margin-top: 10px;
 					}
 				}
@@ -1115,39 +1107,25 @@ defineExpose({})
 				}
 
 				.title-text {
-					color: var(--vt-header-black);
+					color: #E9E9E9;
 					font-size: 40px;
 					font-weight: 600;
 				}
 
 				.up-btn {
-					border-radius: 24px;
-					background: linear-gradient(180deg, rgba(12, 217, 152, 0.80) 0%, rgba(21, 177, 220, 0.80) 78%, rgba(60, 150, 223, 0.80) 100%);
-					box-shadow: 0px -2px 0px 0px rgba(0, 0, 0, 0.10) inset, 0px 2px 4px 0px rgba(0, 0, 0, 0.25);
+					border-radius: 12px;
+					background: linear-gradient(180deg, #E3FF43 0%, #27797F 100%);
+					box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.25);
 					border: none;
 					overflow: hidden;
-					.b_win{
-						position: absolute;
-						width:90px ;
-						height: 90px;
-						top:-10px;
-						left: 40px;
-					}
 				}
 
 				.down-btn {
-					border-radius: 24px;
-					background: linear-gradient(180deg, rgba(232, 80, 57, 0.80) 0%, rgba(255, 34, 0, 0.80) 78%, rgba(232, 118, 57, 0.80) 100%);
-					box-shadow: 0px -2px 0px 0px rgba(0, 0, 0, 0.10) inset, 0px 2px 4px 0px rgba(0, 0, 0, 0.25);
+					border-radius: 12px;
+					background: linear-gradient(180deg, #FF4346 0%, #7F275C 100%);
+					box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.25);
 					border: none;
 					overflow: hidden;
-					.b_win{
-						position: absolute;
-						width:90px ;
-						height: 90px;
-						top:-10px;
-						left: 40px;
-					}
 				}
 			}
 		}
@@ -1204,10 +1182,7 @@ defineExpose({})
 		width: 100%;
 	}
 	.el-dialog__footer {
-		padding: 40px 26px 20px;
-		padding-top: 150px;
-		background: rgba(217, 217, 217, 0.08);
-		backdrop-filter: blur(25.368999481201172px);
+		padding: 140px 26px 20px;
 	}
 
 	.dialog-title {
@@ -1261,9 +1236,9 @@ defineExpose({})
 		display: flex;
 		justify-content: space-around;
 
-		border-radius: 8px;
-		background: linear-gradient(90deg, rgba(222, 222, 222,0.3) 0%, rgba(140, 140, 140,0.3) 100%);
-		box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.25);
+		border-radius: 18px;
+		background: #134D57;
+		box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
 
 		padding: 18px;
 		margin-top: 20px;
@@ -1273,7 +1248,8 @@ defineExpose({})
 			position: relative;
 			flex: 1;
 			padding: 10px 20px;
-			color: var(--vt-sub-black);
+			color: #E9E9E9;
+			font-weight: 400;
 			font-size: 26px;
 			margin-right: 25px;
 
@@ -1294,13 +1270,12 @@ defineExpose({})
 		}
 
 		.active-measure {
-			border-radius:  20px;
-			border: 2px solid  #d7a11a;
-			background: linear-gradient(180deg, rgba(244, 248, 249, 0.60) 0%, rgba(123, 197, 233, 0.60) 100%);
-			box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.20);
+			border-radius: 18px;
+			background: #124D57;
+			box-shadow: -6px -6px 6px 0px rgba(255, 255, 255, 0.25) inset, 4px 4px 4px 0px rgba(0, 0, 0, 0.25) inset;
 
 			font-weight: 500;
-			color: #0152FF;
+			color: #E9E9E9;
 		}
 	}
 
@@ -1339,7 +1314,9 @@ defineExpose({})
 		width: 100vw;
 		margin: 0;
 		padding: 0;
-		background:  linear-gradient(176deg, rgba(251,229,173,1) 41%, rgba(242,242,242,1) 82%);
+		background-image: url("@/assets/images/background/sbg_2.png");
+		background-position:  top;
+		background-size: 100% 200%;
 		//height: 1200px;
 		min-height: 800px;
 		box-sizing: border-box;
@@ -1357,11 +1334,10 @@ defineExpose({})
 	}
 
 	.line-css {
-		border-radius:  8px;
-		border-top: 1.5px solid #FFF;
-		background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
-		box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
-		padding: 24px 24px 24px 24px;
+		padding: 20px 0px 0px 0px;
+		.van-divider{
+			background: linear-gradient(270deg, #CAB37D 0%, #947034 19.32%, #FFD77A 50.45%, #947034 82.28%, #CAB37D 100%);
+		}
 	}
 
 	.parentcss {
@@ -1433,12 +1409,12 @@ defineExpose({})
 			.coin-name {
 				font-size: 28px;
 				font-weight: 500;
-				color: var(--vt-sub-black);
+				color: #4EC2D8;
 
 				.name {
 					font-size: 28px;
 					font-weight: 600;
-					color: var(--vt-header-black);
+					color: #E9E9E9;
 				}
 			}
 		}
@@ -1447,7 +1423,7 @@ defineExpose({})
 			padding-right: 12px;
 
 			.coin-price {
-				color: var(--vt-header-black);
+				color: #292929;
 				font-size: 28px;
 				font-weight: 500;
 			}
@@ -1459,25 +1435,25 @@ defineExpose({})
 			}
 
 			.up {
-				color: #387EFF;
+				color: #04F;
 			}
 		}
 	}
 
 	.time-css {
-		color: #000;
+		color: #00DCFF;
 		font-size: 28px;
 		font-weight: 600;
-		margin-top: 28px;
+		margin-top: 0px;
 		margin-bottom: 26px;
 	}
 
 	.countdown {
 		border-radius: 20px;
 
-		border-top: 1.5px solid #FFF;
-		background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
-		box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
+		border: 1px solid #CAB37D;
+		background: linear-gradient(99deg, #90C9C6 14.79%, #2194AA 76.69%);
+		box-shadow: 0px 1px 17px 0px rgba(1, 3, 246, 0.12);
 		
 		display: flex;
 		align-items: center;
@@ -1490,7 +1466,7 @@ defineExpose({})
 			margin-right: 64px;
 
 			.p1 {
-				color: #292929;
+				color: #FFF;
 				font-size: 30px;
 				font-weight: 500;
 				margin-bottom: 6px;
@@ -1498,12 +1474,14 @@ defineExpose({})
 				align-items: center;
 
 				.van-count-down {
+					color: #FFF;
+					font-weight: 500;
 					margin-right: 3px;
 				}
 			}
 
 			.p2 {
-				color: #a9aaab;
+				color: #8D8D8D;
 				font-size: 24px;
 				font-weight: 500;
 			}
@@ -1522,16 +1500,16 @@ defineExpose({})
 		}
 
 		.up {
-			color: #7ba9ff;
+			color: #04F;
 		}
 	}
 
 	.statics-block {
 		border-radius: 24px;
 
-		border-top: 1.5px solid #FFF;
-		background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
-		box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
+		border: 1px solid #CAB37D;
+			background: linear-gradient(99deg, #90C9C6 14.79%, #2194AA 76.69%);
+			box-shadow: 0px 1px 17px 0px rgba(1, 3, 246, 0.12);
 
 		padding: 40px;
 		display: grid;
@@ -1544,14 +1522,14 @@ defineExpose({})
 			align-items: center;
 
 			.p1 {
-				color: var(--vt-sub-black);
+				color: #E9E9E9;
 				font-size: 24px;
 				margin-bottom: 6px;
 				font-weight: 500;
 			}
 
 			.p2 {
-				color: var(--vt-header-black);
+				color: #8D8D8D;
 				font-size: 28px;
 				font-weight: 600;
 			}
@@ -1585,10 +1563,10 @@ defineExpose({})
 			display: flex;
 			flex-direction: column;
 			justify-content: space-around;
-			border-radius: 24px;
-
-			background: linear-gradient(180deg, rgba(244, 248, 249, 0.60) 0%, rgba(123, 197, 233, 0.60) 100%);
-			box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.20);
+			border-radius: 30px;
+			border: 1px solid  #CAB37D;
+			background: linear-gradient(99deg, rgba(144, 201, 198, 0.50) 14.79%, rgba(33, 148, 170, 0.50) 76.69%);
+			box-shadow: 0px 1px 17px 0px rgba(1, 3, 246, 0.12);
 
 			text-align: center;
 			padding: 12px 8px 20px;
@@ -1598,21 +1576,28 @@ defineExpose({})
 			height: 140px;
 
 			.upper-txt {
-				color: var(--vt-header-black);
+				color: rgba(255, 255, 255, 0.50);
 				font-size: 28px;
-				font-weight: 500;
+				font-weight: 600;
 			}
 
 			.lower-txt {
-				color: var(--vt-sub-black);
+				color: #222;
 				font-size: 24px;
-				font-weight: 500;
+				font-weight: 400;
 				margin-top: 4px;
 			}
 		}
 
 		.activeTime {
-			border: 2px solid  #d7a11a;;
+			background: linear-gradient(99deg, #DEFFFD 14.79%, #2194AA 76.69%);
+			.upper-txt {
+				color: #fff;
+			}
+
+			.lower-txt {
+				color: #555;
+			}
 		}
 	}
 
@@ -1645,15 +1630,15 @@ defineExpose({})
 		padding-left: 20px;
 
 		.transaction-css {
-			color: var(--vt-header-black);
+			color: #00DCFF;
 			font-size: 24px;
-			font-weight: 500;
+			font-weight: 400;
 		}
 
 		.transaction-amount {
-			color: #387EFF;
+			color: #04F;
 			font-size: 26px;
-			font-weight: 500;
+			font-weight: 400;
 		}
 	}
 
@@ -1732,11 +1717,10 @@ defineExpose({})
 				border-color: transparent;
 
 				.el-input__wrapper {
-					box-shadow: none;
 					border-radius: 28px;
-					border: 1px solid #dcdada;
-					background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
-					box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
+					border: 1px solid #FFF;
+					background: linear-gradient(180deg, #5CE7FF 0%, #27727F 77.5%, #50CDCD 100%);
+					box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
 					font-weight: 510;
 				}
 			}
@@ -1981,20 +1965,19 @@ defineExpose({})
 	//
 	.buy-btn {
 		color: #fff;
-		font-weight: 600;
+		font-weight: 500;
 		width: 100%;
 		height: 110px;
 		font-size: 28px;
-		border-radius: 60px;
 
-		background-image: url("../../assets/images/market/p_button.png");
-		background-position:  center;
-		background-size: 110% 130%;
-		border:none;
+		border-radius: 22px;
+		border: 1px solid #FFF;
+		background: linear-gradient(180deg, #5CE7FF 0%, #27727F 77.5%, #50CDCD 100%);
+		box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.25);
 		margin-bottom: 100px;
 	}
 	.down-btn {
-		background:  linear-gradient(180deg, rgba(232, 80, 57, 0.80) 0%, rgba(255, 34, 0, 0.80) 78%, rgba(232, 118, 57, 0.80) 100%);
+		background: linear-gradient(180deg, #5CE7FF 0%, #27727F 77.5%, #50CDCD 100%);
 		box-shadow: 0px -2px 0px 0px rgba(0, 0, 0, 0.10) inset, 0px 2px 4px 0px rgba(0, 0, 0, 0.25);
 	}
 
@@ -2023,6 +2006,8 @@ defineExpose({})
 	/* Remove any box-shadow */
 	background-color: transparent !important;
 	/* Set background color */
+	color:#292929;
+	font-weight: 500;
 }
 
 .el-input-number .el-input-number__controls {
@@ -2064,13 +2049,25 @@ defineExpose({})
 	.el-select__wrapper {
 		padding: 32px 16px;
 
-		border: 1px solid #dcdada;
-		background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
-		box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
+		background: #134D57;
+		box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+
 
 		border-radius: 20px;
 		height: 110px;
-
+		.el-select__placeholder{
+			color:#fff;
+			font-weight: 500;
+		}
+		.el-select__suffix{
+			background: #124D57;
+			box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.30), -2px -2px 8px rgba(198, 166, 166, 0.25);
+			padding: 7px;
+			border-radius: 100%;
+			.el-select__caret{
+				color:#fff;
+			}
+		}
 		.image2 {
 			width: 32px;
 			height: 32px;
