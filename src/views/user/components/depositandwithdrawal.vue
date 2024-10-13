@@ -849,6 +849,9 @@ defineExpose({})
 				border-radius: 12px;
 				border: 1px solid #CAB37D;
 				background:  #90C9C6;
+				.van-icon-clear{
+					color:#E9E9E9
+					}
 			}
 		}
 
@@ -893,6 +896,9 @@ defineExpose({})
 					color: #E9E9E9;
 					font-weight: 500;
 				}
+				.van-icon-clear{
+				color:#E9E9E9
+				}
 
 				.van-field__left-icon {
 					margin-right: 10px;
@@ -918,6 +924,9 @@ defineExpose({})
 				color: #E9E9E9;
 				font-size: 16px;
 				font-weight: 700;
+			}
+			.van-icon-clear{
+				color:#E9E9E9
 			}
 		}
 	}

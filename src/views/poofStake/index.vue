@@ -606,18 +606,30 @@ defineExpose({})
 				background: #124D57;
 			}
 
-			:deep(.van-dropdown-menu__title:after) {
-				right: -70px;
-				border-color: transparent transparent #fff #fff;
-				width: 10px;
-				height: 10px;
-				border-bottom: 2px solid #fff;
-				font-size: 40px;
-			}
-
 			:deep(.van-dropdown-menu__title) {
 				font-size: 13px;
 				color: #E9E9E9;
+				&:after{
+					right: -68.5px;
+					border-color: transparent transparent #fff #fff;
+					border-width: 2px;
+					width: 10px;
+					height: 10px;
+					border-bottom: 2px solid #fff;
+					font-size: 40px;
+				}
+				&:before{
+					content: '';
+					position: absolute;
+					right: -76px;
+					top: 3%;
+					display: block;
+					background: #124D57;
+					box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.30), -1px -1px 4px rgba(198, 166, 166, 0.25);
+					width: 25px;
+					height: 25px;
+					border-radius: 100px;
+				}
 			}
 
 			:deep(.van-cell__title) {

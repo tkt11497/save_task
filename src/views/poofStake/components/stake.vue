@@ -71,7 +71,7 @@ defineExpose({})
 		}
 
 		.normal {
-			color: rgb(124, 123, 123);
+			color: #E9E9E9;
 			font-size: 23px;
 		}
 	}

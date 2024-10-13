@@ -257,11 +257,11 @@ defineExpose({})
 .records_container {
 	position: relative;
 
-	padding-left: 48px;
-	padding-right: 48px;
+	padding-left: 38px;
+	padding-right: 38px;
 	background-image: url("@/assets/images/background/sbg_2.png");
 	background-position:  top;
-	background-size: 140% 110%;
+	background-size: 100% 100%;
 
 	//.loan-title {
 	//	margin-top: 20px;
@@ -274,7 +274,7 @@ defineExpose({})
 		background: url('@/assets/images/home/card_all.png') no-repeat;
 		background-size: 100%;
 		font-size: 25px;
-		color: var(--vt-header-black);
+		color: #FBFBFB;
 		padding: 48px;
 		// padding-top: 40px;
 		// padding-left: 30px;
@@ -288,33 +288,35 @@ defineExpose({})
 		.introduce {
 		}
 		.range {
-			border-top: 1.5px solid #FFF;
-			background: linear-gradient(270deg, rgba(153, 153, 153, 0.7) 0%, rgba(255, 255, 255, 0.7) 100%);
-			backdrop-filter: blur(25.368999481201172px);
-			box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
+			background: rgba(53, 53, 53, 0.10);
+			box-shadow: 12.967px -12.967px 12.967px 0px rgba(40, 40, 40, 0.10) inset, -12.967px 12.967px 12.967px 0px rgba(255, 255, 255, 0.10) inset;
+			backdrop-filter: blur(12.966666221618652px);
 
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
-			margin: 48px 0 0px;
+			margin: 17px 0 0px;
 			padding: 24px;
-			border-radius: 0.33333rem;
+			border-radius: 60px 60px 0 0;
 			// transform: translateX(-52%);
 
 			.right_font {
 				flex: 1;
-				color: var(--vt-header-black);
+				color: #0C0C0C;
 				font-weight: 500;
 
 				.question {
 					font-weight: 500;
 					font-size: 26px;
-					margin-bottom: 10px;
+					margin-bottom: 0px;
+					margin-top: 2px;
 				}
 
 				.info {
-					font-size: 25px;
-					color: var(--vt-sub-black);
+					font-size: 20px;
+					margin-top: 0;
+					font-weight: 400;
+					color: #CBCBCB;
 				}
 			}
 
@@ -325,7 +327,7 @@ defineExpose({})
 				min-width: 96px;
 				height: 54px;
 				line-height: 54px;
-				background: linear-gradient(180deg, #93B6FF 0%, #75D3FF 83%, #35DCE8 100%);
+				background: linear-gradient(180deg, #E3FF43 0%, #27797F 100%);
 				color: #fff;
 				border-radius: 40px;
 				text-align: center;
@@ -344,7 +346,10 @@ defineExpose({})
 
 	.wrapper {
 		border-radius: 32px;
-		background: transparent;
+		padding: 40px 40px 1px 40px;
+		border-radius: 14px;
+		border: 1px solid  #CAB37D;
+		background:  linear-gradient(99deg, #90C9C6 14.79%, #2194AA 76.69%);
 	}
 
 	.amount,
@@ -353,26 +358,32 @@ defineExpose({})
 			font-size: 24px;
 			margin-bottom: 16px;
 			font-weight: 500;
-			color: var(--vt-sub-black);
+			color: #0C0C0C;
 		}
 
 		.van-cell-group--inset {
 			margin: 0px;
 			background: transparent;
-			box-shadow: 0px 2px 4.4px 1px rgba(0, 0, 0, 0.15);
+			box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
 			border-radius: 8px;
 
 			.van-cell {
-				background: linear-gradient(270deg, rgba(153, 153, 153, 0.50) 0%, rgba(255, 255, 255, 0.50) 100%);
+				background: #134D57;
 				height: 48px;
 				:deep(.van-cell__value .van-field__body) {
 					height: 100%;
+					.van-field__control {
+						color: #E9E9E9;
+						&::placeholder{
+							color: #8D8D8D;
+						}
+					}
 				}
 			}
 		}
 
 		.loanToken {
-			color: var(--vt-header-black);
+			color: #E9E9E9;
 			font-weight: 500;
 		}
 		::v-deep .van-icon__image {
@@ -390,19 +401,35 @@ defineExpose({})
 			border-radius: var(--van-cell-group-inset-radius);
 		}
 
-		:deep(.van-dropdown-menu__title:after) {
-			border-color: transparent transparent #000000 #000000;
-			right: -70px;
-			width: 12px;
-			height: 12px;
-			margin-top: -7px;
+		:deep(.van-dropdown-menu__title) {
+			color:#E9E9E9 ;
+			&:after{
+				border-color: transparent transparent #fff #fff;
+				border-width: 2px;
+				right: -68.3px;
+				width: 10px;
+				height: 10px;
+				margin-top: -4.8px;
+			}
+			&:before{
+				content: '';
+				position: absolute;
+				right: -76px;
+				top: 3%;
+				display: block;
+				background: #124D57;
+				box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.30), -1px -1px 4px rgba(198, 166, 166, 0.25);
+				width: 25px;
+				height: 25px;
+				border-radius: 100px;
+			}
 		}
+
 
 		:deep .van-dropdown-menu__bar {
 			border-radius: 10px;
-			border-top: 1.5px solid #FFF;
-			background: linear-gradient(270deg, rgba(153, 153, 153, 0.3) 0%, rgba(255, 255, 255, 0.3) 100%);
-			box-shadow: 0px 2px 4.4px 0px rgba(0, 0, 0, 0.15);
+			background: #134D57;
+			box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
 		}
 
 		:deep .van-dropdown-item {
@@ -416,22 +443,34 @@ defineExpose({})
 
 	.performce {
 		font-size: 24px;
-		color: var(--vt-sub-black);
+		color: #8D8D8D;
 		font-weight: 500;
 		margin-top: 54px;
 
 		div {
 			display: flex;
+			position: relative;
 			justify-content: space-between;
 			padding-bottom: 30px;
 			margin-bottom: 34px;
-			border-bottom: 1px solid #645A6F;
+			&:after {
+				content: "";
+				position: absolute;
+				bottom:-3px;
+				left:0;
+				height: 20px;
+				width: 100%;
+				background-image: url('@/assets/images/background/border.png');
+				background-repeat: no-repeat;
+				background-size: 100% 12px;
+				background-position: center bottom;
+			}
 		}
 	}
 
 	.info {
 		font-size: 20px;
-		color: var(--vt-sub-black);
+		color: #555;
 		font-weight: 500;
 		margin-top: 10px;
 	}
@@ -440,10 +479,10 @@ defineExpose({})
 		margin-top: 30px;
 		margin-bottom: 80px;
 		.van-button{
-			background-image: url("@/assets/images/market/p_button.png");
-			background-position:  center;
-			background-size: 110% 130%;
-			border:none;
+			border-radius: 12px;
+			border: 1px solid  #FFF;
+			background:  linear-gradient(180deg, #5CE7FF 0%, #27727F 77.5%, #50CDCD 100%);
+			box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.25);
 		}
 	}
 }
