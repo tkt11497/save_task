@@ -113,9 +113,8 @@ onMounted(() => {
 	width: calc(100% - 80px);
 	margin: 20px auto 94px;
 	border-radius: 24px;
-	border-top: 1.5px solid #FFF;
-	background: linear-gradient(270deg, rgba(153, 153, 153, 0.50) 0%, rgba(255, 255, 255, 0.50) 100%);
-	box-shadow: 0px 2px 4.4px 2px rgba(0, 0, 0, 0.15);
+	border: 1px solid  #CAB37D;
+	background:  linear-gradient(99deg, #90C9C6 14.79%, #2194AA 76.69%);
 	padding: 46px 48px;
 
 	.block1 {
@@ -135,7 +134,7 @@ onMounted(() => {
 				font-weight: 600;
 				line-height: 44px;
 				text-align: left;
-				color: var(--vt-header-black);
+				color: #E9E9E9;
 			}
 
 			.p2 {
