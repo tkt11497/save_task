@@ -787,7 +787,7 @@ defineExpose({})
 	padding-bottom: 20px;
 	background-image: url("@/assets/images/background/sbg_2.png");
 	background-position:  top;
-	background-size: 250% 250%;
+	background-size: 100% 100%;
 	min-height: 100vh;
 
 	.container {
@@ -830,9 +830,8 @@ defineExpose({})
 
 		.each-block {
 			border-radius: 14px;
-			border-top: 1.5px solid #FFF;
-			background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
-			box-shadow: 0px 2px 4.4px 2px rgba(0, 0, 0, 0.15);
+			border: 1px solid  #CAB37D;
+			background:  linear-gradient(99deg, #90C9C6 14.79%, #2194AA 76.69%);
 			position: relative;
 			padding: 34px;
 			margin-bottom: 32px;
@@ -862,14 +861,14 @@ defineExpose({})
 				margin-bottom: 20px;
 
 				.day-text {
-					color: var(--vt-header-black);
+					color: #E9E9E9;
 					font-size: 28px;
 					font-weight: 600;
 				}
 
 				.img-css {
-					width: 48px;
-					height: 48px;
+					width: 36px;
+					height: 44px;
 					margin-right: 20px;
 
 					&.success-img {
@@ -885,14 +884,14 @@ defineExpose({})
 
 				.left-text {
 					font-size: 24px;
-					font-weight: 500;
-					color: var(--vt-header-black);
+					font-weight: 600;
+					color: #0C0C0C;
 				}
 
 				.right-text {
 					font-size: 24px;
 					font-weight: 600;
-					color: var(--vt-header-black);
+					color: #555;
 				}
 
 				.uptext {
@@ -1023,22 +1022,24 @@ defineExpose({})
 	}
 
 	:deep(.van-tab) {
-		font-size: 14px;
-		color: var(--vt-sub-black);
+		font-size: 12px;
+		color: #000;
 		font-weight: 500;
-		margin: 0px 0.5px;
-		padding: 5px 20px;
-		border-radius: 26px;
+		margin: 0px 6px;
+		padding: 5px 10px;
+		border-radius: 12px;
+		border: 1px solid  #E3FF43;
+		opacity: 0.5;
 		flex: none;
 	}
 
 	:deep(.van-tab--active) {
 		//padding: 5px 20px;
 		//border-radius: 26px;
-		border-radius: 7px;
-		background: var(--1233456, linear-gradient(180deg, rgba(216, 228, 252, 0.80) 0%, rgba(21, 177, 220, 0.80) 78%, rgba(60, 150, 223, 0.80) 100%));
-		box-shadow: 0px 3px 8px 0px rgba(0, 0, 0, 0.12), 0px 3px 1px 0px rgba(0, 0, 0, 0.04);
+		border-radius: 12px;
+		background:  linear-gradient(180deg, #E3FF43 0%, #27797F 100%);
 		color: #fff;
+		opacity: 1;
 	}
 
 	:deep(.van-tabs__line) {
@@ -1047,7 +1048,7 @@ defineExpose({})
 
 	:deep(.van-tabs__nav) {
 		padding-left:0px ;
-		background: #DFDFDF;
+		background: transparent;
 		overflow-x: auto;
 	}
 }

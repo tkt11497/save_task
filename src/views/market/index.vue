@@ -1325,7 +1325,7 @@ defineExpose({})
 	}
 
 	.bg {
-		background: linear-gradient(176deg, rgb(251, 229, 173) 41%, rgb(242, 242, 242) 82%);
+		// background: linear-gradient(176deg, rgb(251, 229, 173) 41%, rgb(242, 242, 242) 82%);
 	}
 
 	.el-dialog__body {
