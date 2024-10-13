@@ -301,18 +301,21 @@ onMounted(() => {
 <style lang="scss" scoped>
 .loan-detail {
 	height: 100%;
+	background-image: url("@/assets/images/background/sbg_2.png");
+	background-position:  top;
+	background-size: 100% 100%;
 	.block1 {
 		margin-bottom: 66px;
 
 		.p1 {
-			color: #21272f;
+			color: #E9E9E9;
 			font-size: 32px;
-			font-weight: 600;
+			font-weight: 700;
 			margin-bottom: 16px;
 		}
 
 		.p2 {
-			color: var(--vt-sub-black);
+			color: #CBCBCB;
 			font-size: 24px;
 			font-weight: 500;
 		}
@@ -327,9 +330,8 @@ onMounted(() => {
 		padding: 26px;
 
 		border-radius: 14px;
-		border-top: 1.5px solid #FFF;
-		background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
-		box-shadow: 0px 2px 4.4px 2px rgba(0, 0, 0, 0.15);
+		border: 1px solid #CAB37D;
+		background: linear-gradient(99deg, #90C9C6 14.79%, #2194AA 76.69%);
 
 		.item {
 			display: flex;
@@ -338,7 +340,7 @@ onMounted(() => {
 			margin-bottom: 28px;
 
 			.label {
-				color: var(--vt-sub-black);
+				color: #7E7E7E;
 				font-size: 24px;
 				font-weight: 500;
 			}
@@ -347,7 +349,7 @@ onMounted(() => {
 				text-align: right;
 				font-size: 24px;
 				font-weight: 600;
-				color: var(--vt-header-black);
+				color: #000;
 			}
 		}
 	}
@@ -358,10 +360,9 @@ onMounted(() => {
 		bottom:-20px;
 		position: relative;
 		.van-button{
-			background-image: url("@/assets/images/market/p_button.png");
-			background-position:  center;
-			background-size: 110% 130%;
-			border:none;
+			border-radius: 14px;
+			border: 1px solid  #FFF;
+			background: linear-gradient(180deg, #5CE7FF 0%, #27727F 77.5%, #50CDCD 100%);
 		}
 	}
 
@@ -369,12 +370,12 @@ onMounted(() => {
 		padding: 20px 48px 0;
 
 		.tips {
-			color: var(--vt-sub-black);
+			color: #CBCBCB;
 			font-size: 22px;
 			font-weight: 500;
 
 			span {
-				color: #387EFF;
+				color: #04F;
 				font-size: 22px;
 				font-weight: 600;
 			}
@@ -386,9 +387,8 @@ onMounted(() => {
 
 		.block2 {
 			border-radius: 20px;
-			border-top: 1.5px solid #FFF;
-			background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
-			box-shadow: 0px 2px 4.4px 2px rgba(0, 0, 0, 0.15);
+			border: 1px dashed  #CAB37D;
+			background:  linear-gradient(99deg, #90C9C6 14.79%, #2194AA 76.69%);
 			//padding: 30px 30px 30px 20px;
 			height: calc(100% - 200px);
 			overflow: hidden;
@@ -426,25 +426,24 @@ onMounted(() => {
 
 		.block2 {
 			border-radius: 28px;
-			background: #cdddfe;
+			border: 1px solid  #CAB37D;
+			background:  linear-gradient(99deg, #90C9C6 14.79%, #2194AA 76.69%);
 			height: 520px;
 		}
 		.van-button--primary{
 			color: #fff;
 			border-radius: 12px;
-			background-image: url("@/assets/images/poofStake/stake_active.png");
-			background-position:  center;
-			background-size: 110% 140%;
+			background:  linear-gradient(180deg, #E3FF43 0%, #27797F 100%);
+			box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.25);
 			border:none;
 
 		}
 		.van-button--primary.van-button--plain{
-			color: #645A6F;
+			color: #226764;
 			border-radius: 12px;
-			background-image: url("@/assets/images/poofStake/stake_inactive.png");
-			background-position:  center;
-			background-size: 110% 140%;
-			border:none;
+			background: transparent;
+			border: 1px solid  #E3FF43;
+			box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.25);
 		}
 	}
 
@@ -474,19 +473,17 @@ onMounted(() => {
 		.van-button--primary{
 			color: #fff;
 			border-radius: 12px;
-			background-image: url("@/assets/images/poofStake/stake_active.png");
-			background-position:  center;
-			background-size: 110% 140%;
+			background:  linear-gradient(180deg, #E3FF43 0%, #27797F 100%);
+			box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.25);
 			border:none;
 
 		}
 		.van-button--primary.van-button--plain{
-			color: #645A6F;
+			color: #226764;
 			border-radius: 12px;
-			background-image: url("@/assets/images/poofStake/stake_inactive.png");
-			background-position:  center;
-			background-size: 110% 140%;
-			border:none;
+			background: transparent;
+			border: 1px solid  #E3FF43;
+			box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.25);
 		}
 	}
 
@@ -510,22 +507,21 @@ onMounted(() => {
 		}
 
 		.p1 {
-			color: var(--vt-header-black);
+			color: #E9E9E9;
 			font-size: 40px;
 			font-weight: 700;
 			margin-bottom: 40px;
 		}
 
 		.p2 {
-			color: var(--vt-sub-black);
+			color:#CBCBCB;
 			font-size: 24px;
 			font-weight: 600;
 		}
 		.van-button{
-			background-image: url("@/assets/images/market/p_button.png");
-			background-position:  center;
-			background-size: 110% 130%;
-			border:none;
+			border-radius: 12px;
+			border: 1px solid  #FFF;
+			background: linear-gradient(180deg, #5CE7FF 0%, #27727F 77.5%, #50CDCD 100%);
 		}
 	}
 }
@@ -538,7 +534,7 @@ onMounted(() => {
 			text-decoration: underline;
 		}
 		&-wrap {
-			color: #000;
+			color: #645A6F;
 			font-size: 22px;
 			font-weight: 500;
 			line-height: 31px;

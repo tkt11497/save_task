@@ -287,34 +287,34 @@ onMounted(() => {
 	padding-bottom: 20px;
 	padding-left: 48px;
 	padding-right: 48px;
-	background: transparent;
+	background-image: url("@/assets/images/background/sbg_2.png");
+	background-position:  top;
+	background-size: 100% 100%;
 
 	.content {
 		margin: 32px 0;
 		.each-block {
-			border-top: 1.5px solid #FFF;
-			background: linear-gradient(270deg, rgba(153, 153, 153, 0.30) 0%, rgba(255, 255, 255, 0.30) 100%);
-			box-shadow: 0px 2px 4.4px 2px rgba(0, 0, 0, 0.15);
+			border: 1px solid  #CAB37D;
+			background:  linear-gradient(99deg, #90C9C6 14.79%, #2194AA 76.69%);
 			padding: 34px;
 			margin-bottom: 32px;
 			border-radius: 32px;
 
 			.van-button--primary{
 			color: #fff;
+			font-weight: 700;
 			border-radius: 12px;
-			background-image: url("@/assets/images/poofStake/stake_active.png");
-			background-position:  center;
-			background-size: 110% 140%;
-			border:none;
+			border: none;
+			background:  linear-gradient(180deg, #E3FF43 0%, #27797F 100%);
+
 
 		}
 		.van-button--primary.van-button--plain{
-			color: #645A6F;
+			color: #226764;
+			font-weight: 700;
 			border-radius: 12px;
-			background-image: url("@/assets/images/poofStake/stake_inactive.png");
-			background-position:  center;
-			background-size: 110% 140%;
-			border:none;
+			border: 1px solid  #E3FF43;
+			background: transparent;
 		}
 
 			.each-container {
@@ -331,9 +331,9 @@ onMounted(() => {
 				margin-bottom: 20px;
 
 				.day-text {
-					color: #000;
+					color: #E9E9E9;
 					font-size: 28px;
-					font-weight: 500;
+					font-weight: 700;
 				}
 				.order-status {
 					margin-left: auto;
@@ -356,13 +356,13 @@ onMounted(() => {
 				.left-text {
 					font-size: 24px;
 					font-weight:500;
-					color: var(--vt-sub-black);
+					color: #0C0C0C;
 				}
 
 				.right-text {
 					font-size: 24px;
 					font-weight: 600;
-					color: var(--vt-header-black);
+					color: #555;
 				}
 
 				.uptext {
@@ -554,7 +554,9 @@ onMounted(() => {
 	.agreement {
 		padding: 100px 48px 48px;
 		height: calc(100vh - 100px);
-		background: linear-gradient(5deg, rgba(251,229,173,1) 41%, rgba(242,242,242,1) 82%);
+		background-image: url("@/assets/images/background/sbg_2.png");
+		background-position:  top;
+		background-size: 100% 100%;
 
 		.tips {
 			color: var(--vt-sub-black);
@@ -572,14 +574,14 @@ onMounted(() => {
 			margin-bottom: 66px;
 
 			.p1 {
-				color: #21272f;
+				color: #E9E9E9;
 				font-size: 32px;
-				font-weight: 600;
+				font-weight: 700;
 				margin-bottom: 16px;
 			}
 
 			.p2 {
-				color: #797979;
+				color: #CBCBCB;
 				font-size: 28px;
 				font-weight: 500;
 			}
@@ -587,8 +589,8 @@ onMounted(() => {
 
 		.block2 {
 			border-radius: 20px;
-			border: 2px dashed #363636;
-			background: #d9e5fb;
+			border: 1px dashed  #CAB37D;
+			background:  linear-gradient(99deg, #90C9C6 14.79%, #2194AA 76.69%);
 			//padding: 30px 30px 30px 20px;
 			height: calc(100% - 400px);
 			overflow: hidden;
@@ -630,7 +632,7 @@ onMounted(() => {
 			text-decoration: underline;
 		}
 		&-wrap {
-			color: #000;
+			color: #645A6F;
 			font-size: 22px;
 			font-weight: 500;
 			line-height: 31px;
