@@ -452,10 +452,8 @@ onMounted(() => {
 	min-height: 400px;
 	border-radius: 26px;
 	.van-button{
-		background-image: url("@/assets/images/market/p_button.png");
-		background-position:  center;
-		background-size: 110% 130%;
-		border:none;
+		border: 1px solid  #FFF;
+		background: linear-gradient(180deg, #5CE7FF 0%, #27727F 77.5%, #50CDCD 100%);
 	}
 
 	.node-add {
@@ -465,6 +463,9 @@ onMounted(() => {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
+		background-image: url("@/assets/images/background/sbg_2.png");
+		background-position:  top;
+		background-size: 100% 100%;
 
 		.icon {
 			width: 80px;
@@ -478,13 +479,13 @@ onMounted(() => {
 			flex-direction: column;
 			justify-content: center;
 			align-items: center;
-			color: #999;
+			color: #CBCBCB;
 			font-size: 24px;
 
 			.h1 {
 				font-size: 40px;
 				font-weight: 600;
-				color: #000;
+				color: #E9E9E9;
 				margin-bottom: 8px;
 			}
 		}
@@ -507,7 +508,7 @@ onMounted(() => {
 				.right-text {
 					font-size: 24px;
 					font-weight: 500;
-					color: #999;
+					color: #CBCBCB;
 				}
 
 				.right-text {
