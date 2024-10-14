@@ -244,14 +244,6 @@ const quickPayHandle = async () => {
 			return
 		}
 
-		loading.loading()
-		const chainBalance = await getChainBalanceByTokenName(selectCoinInfo.value.tokenName)
-		loading.loading()
-		if (compareNumber(chainBalance, quickPayParams.value.rechargeAmount) === -1) {
-			showToast({ message: t('操作失败，您的代币余额不足'), icon: 'info' })
-			return
-		}
-
 		quickPayParams.value.rechargeToken = selectCoinInfo.value.tokenName
 		loading.loading()
 		await walletSpeedRechargeApi(quickPayParams.value)
@@ -536,24 +528,23 @@ const handleRouter = (path) => {
 }
 
 const active = ref('')
-const tabList = ref([
-	{
-		label: t('快捷充值'),
-		value: 'QuickPay',
-	},
-	{
-		label: t('充值'),
-		value: 'Deposit',
-	},
-	{
-		label: t('提款'),
-		value: 'Withdraw',
-	},
-	{
-		label: t('交易'),
-		value: 'Exchange',
-	},
-])
+// {
+//   label: t('快捷充值'),
+//       value: 'QuickPay',
+// },
+// {
+//   label: t('充值'),
+//       value: 'Deposit',
+// },
+// {
+//   label: t('提款'),
+//       value: 'Withdraw',
+// },
+// {
+//   label: t('交易'),
+//       value: 'Exchange',
+// },
+const tabList = ref([])
 const tabChange = (tab) => {
 	if (tab === 'Withdraw' || tab === 'Exchange') {
 		getPlatformBalance()
