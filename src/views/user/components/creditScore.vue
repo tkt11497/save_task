@@ -17,7 +17,7 @@
 
 			<div class="details-wrap">
 				<div class="time">{{ t('信用评估时间', { time: formatDate(Date.now(), 'YYYY MM DD') }) }}</div>
-				<loan-treaty v-if="isLoaded" form="template" :user-data="userData" :loan-data="loanData" />
+				<loan-treaty form="template" :user-data="userData" :loan-data="loanData" />
 			</div>
 		</div>
 	</div>
@@ -30,7 +30,6 @@ import { useI18n } from 'vue-i18n'
 import LoanTreaty from '@/views/user/loan/loan-treaty.vue'
 import useLoading from '@/hooks/useLoading.js'
 import { formatDate } from '@/utils/index.js'
-import { fetchUserKycApi } from '@/apis/user.js'
 import { storeToRefs } from 'pinia'
 
 const usersStore = userStore()
@@ -53,7 +52,7 @@ const onClickLeft = () => {
 	usersStore.SET_PATH_DATA('yes')
 }
 
-const isLoaded = ref(true)
+const { userInfo } = storeToRefs(usersStore)
 const userData = ref({
 	firstName: '#n1',
 	lastName: '#n2',
@@ -74,62 +73,17 @@ const loanData = ref({
 async function getLoadInfo() {
 	try {
 		loading.loading()
-		const res = await fetchUserKycApi()
+		await usersStore.loginAction()
 		loading.clearLoading()
-		if (res.data) {
-			const responseData = res.data
-			creditScore.value = responseData.creditScore || 0
-			// userData.value = {
-			//   firstName: responseData.firstName,
-			//   lastName: responseData.lastName,
-			//   detailAddress: responseData.detailAddress,
-			//   phone: responseData.phone
-			// }
-			// loanData.value = {
-			//   lenderName: 'XXXX', // 贷方名称
-			//   loanDate: '#a1', // 贷款日期
-			//   loanAmount:  '#a6', // 贷款金额
-			//   repaymentAmount: '#a7', // 还款金额
-			//   loanDayRatio: '#a8',  // 贷款天数比率
-			//   loanDays: '#a9', // 贷款金额
-			//   interest: '#b1', // 利息
-			//   latePaymentFee: '#b2', // 滞纳金
-			//   signImg: '#b3' // 签名图片地址
-			// }
-		}
+		creditScore.value = userInfo.value.creditScore || 0
 	} catch (e) {
 		console.log(e)
 	}
 }
 
-const { userInfo } = storeToRefs(usersStore)
-// 默认是0 ，上传了是 2  审核了是 1
-const userKycRecordData = ref({
-	approvalStatus: '0',
-})
-// 查询用户是否申请过kyc
-const userKycRecord = async () => {
-	try {
-		loading.loading()
-		await usersStore.loginAction()
-		userKycRecordData.value.approvalStatus = userInfo.value.isKyc + ''
-		loading.clearLoading()
-	} catch (error) {
-		console.log(error)
-	}
-}
-
 onMounted(() => {
 	usersStore.SET_PATH_DATA('no')
-	// userKycRecord()
-	// 	.then(() => {
-	// 		if (userKycRecordData.value.approvalStatus === '1') {
-	// 			return getLoadInfo()
-	// 		}
-	// 	})
-	// 	.finally(() => {
-	// 		isLoaded.value = true
-	// 	})
+	getLoadInfo()
 })
 </script>
 <style lang="scss" scoped>
