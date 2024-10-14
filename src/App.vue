@@ -61,34 +61,10 @@ const confirm = () => {
 	router.push('/noWallet')
 }
 
-const toastTimer = ref(null)
-const clearToastTimer = () => {
-	toastTimer.value && clearTimeout(toastTimer.value)
-}
-watch(
-	() => route.name,
-	(val) => {
-		console.info('app---', val)
-
-		if (val && val !== 'noWallet') {
-			if (!address.value) {
-				// showPop.value = true
-
-				clearToastTimer()
-				toastTimer.value = setTimeout(() => {
-					showToast({ message: t('请正确连接你的钱包'), icon: 'info' })
-				}, 1000)
-			}
-		}
-	}
-)
-
 onBeforeMount(async () => {
 	await web3Store.initUserAccountAndWallet()
 })
-onUnmounted(() => {
-	clearToastTimer()
-})
+onUnmounted(() => {})
 </script>
 
 <style lang="scss" scoped>
