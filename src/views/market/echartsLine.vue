@@ -62,6 +62,10 @@ const colorMap = {
 		color1: '#7BA9FF',
 		color2: '#7BA9FF',
 	},
+	default: {
+		color1: '#F89A29',
+		color2: '#F89A29',
+	},
 }
 let data = []
 let now = new Date(1997, 9, 3)
@@ -172,8 +176,9 @@ watch(
 		if (val) {
 			try {
 				let code = val.split('/')[0].toLowerCase() || 'btc'
-				option.value.series[0].lineStyle.color = colorMap[code].color1
-				option.value.series[0].areaStyle.color.colorStops[0].color = colorMap[code].color1
+				let colorData = colorMap[code] || colorMap.default
+				option.value.series[0].lineStyle.color = colorData.color1
+				option.value.series[0].areaStyle.color.colorStops[0].color = colorData.color1
 				// option.value.series[0].areaStyle.color.colorStops[1].color = colorMap[code].color1
 			} catch (error) {
 				console.log(error)
