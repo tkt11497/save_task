@@ -1,8 +1,8 @@
 import request from '@/utils/request.js'
 
 // 连接页面/钱包页面-获取平台代币列表
-export const getAllCoinTypeApi = () => {
-	return request.get('/wallet/getAllToken')
+export const getAllCoinTypeApi = (data) => {
+	return request.get('/wallet/getAllToken', { params: data })
 }
 
 // 获取所有链上钱包余额

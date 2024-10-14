@@ -58,7 +58,9 @@ const onClickLeft = () => {
 const getPlatformCoinTypeList = async () => {
 	try {
 		loading.loading()
-		const response = await getAllCoinTypeApi()
+		const response = await getAllCoinTypeApi({
+			isLogin: false,
+		})
 		loading.clearLoading()
 		coinList.value = response.data
 	} catch (err) {
