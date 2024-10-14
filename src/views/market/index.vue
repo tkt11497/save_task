@@ -325,7 +325,7 @@ import { showToast } from 'vant'
 import { useI18n } from 'vue-i18n'
 import useLoading from '@/hooks/useLoading.js'
 import { onClickOutside } from '@vueuse/core'
-import { dividedForValueDecimal, getImageUrl, plusDecimal, timesDecimal, timesForValueDecimal } from '@/utils'
+import { dividedForValueDecimal, formatDate, getImageUrl, plusDecimal, timesDecimal, timesForValueDecimal } from '@/utils'
 import {
 	buyOptionApi,
 	fetchKlineListApi,
@@ -820,9 +820,9 @@ const getKlineList = async () => {
 		loading.loading()
 		const res = await fetchKlineListApi(params)
 		loading.clearLoading()
-		klineHistoryList.value = res.data || []
+		klineHistoryList.value = res.data?.sort((a, b) => a.unixTime - b.unixTime) || []
 		await nextTick()
-		echartsMarketRef.value && echartsMarketRef.value.updateChart(res.data || [])
+		echartsMarketRef.value && echartsMarketRef.value.updateChart(klineHistoryList.value || [])
 
 		getSocket()
 	} catch (err) {
@@ -845,7 +845,7 @@ const getSocket = () => {
 		if (typeof e.data === 'string') {
 			let message = JSON.parse(e.data)
 
-			console.log('getSocket----', message)
+			// console.log('getSocket----', message)
 
 			if (klineHistoryList.value.length > 300) {
 				klineHistoryList.value = klineHistoryList.value.slice(100)
@@ -853,13 +853,18 @@ const getSocket = () => {
 			symbolInfo.value = message
 			const targetIndex = klineHistoryList.value.findIndex((item) => item.unixTime === message.unixTime)
 			// console.log('targetIndex----', targetIndex)
-			if (typeof targetIndex === 'number' && targetIndex !== -1) {
+			if (targetIndex !== -1) {
 				klineHistoryList.value.splice(targetIndex, 1, message)
 				// console.log('ddd', klineHistoryList.value)
 			} else {
 				klineHistoryList.value.push(message)
 			}
 			nextTick(() => {
+				console.log(
+					formatDate(message.unixTime * 1000, 'YYYY-MM-DD HH:mm'),
+					message.close,
+					klineHistoryList.value[klineHistoryList.value.length - 1].close
+				)
 				echartsMarketRef.value && echartsMarketRef.value.updateChart(klineHistoryList.value)
 			})
 		}
