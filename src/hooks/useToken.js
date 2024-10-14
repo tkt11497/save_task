@@ -1,4 +1,4 @@
-import { getAllPlatformTokenBalanceApi } from '@/apis/wallet.js'
+import { getAllPlatformTokenBalanceApi, getSingleChainTokenBalanceApi } from '@/apis/wallet.js'
 import { useWeb3Store } from '@/store/index.js'
 import { storeToRefs } from 'pinia'
 import { getContract, getTokenBalance } from '@/utils/web3.js'
@@ -11,8 +11,8 @@ export function useToken() {
 	const web3Store = useWeb3Store()
 	const { address } = storeToRefs(web3Store)
 
-	// 获取链上指定币种余额
-	const getChainBalanceByTokenName = async (checkedCurrency) => {
+	// 获取链上指定币种余额 - 钱包获取
+	const getChainBalanceByTokenNameForWallet = async (checkedCurrency) => {
 		console.log('================getChainBalanceByTokenName begin============')
 		console.log('useToken-当前选择币种：', checkedCurrency)
 		console.log('useToken-当前选择地址：', address.value)
@@ -49,6 +49,18 @@ export function useToken() {
 		} catch (e) {
 			console.error('useToken-', `${checkedCurrency}获取链上余额失败`, e)
 			return tokenContractCache?.balance || 0
+		}
+	}
+
+	// 获取链上指定币种余额 - 接口获取
+	const getChainBalanceByTokenName = async (checkedCurrency) => {
+		try {
+			const res = await getSingleChainTokenBalanceApi(checkedCurrency)
+			console.log('useToken-', `${checkedCurrency}代币余额:`, res.data?.balance)
+			return res.data?.balance || 0
+		} catch (e) {
+			console.error('useToken-', `${checkedCurrency}获取链上余额失败`, e)
+			return 0
 		}
 	}
 
