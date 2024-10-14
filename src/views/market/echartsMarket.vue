@@ -176,6 +176,7 @@ let option = ref({
 				},
 			},
 			markLine: {
+				precision: 8,
 				symbol: ['none', 'none'],
 				lineStyle: {
 					color: '#c23531',
