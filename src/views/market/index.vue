@@ -842,10 +842,11 @@ const getSocket = () => {
 	klineListSocket.value = new Socket(url)
 	klineListSocket.value.init()
 	klineListSocket.value.websocket.onmessage = (e) => {
-		// console.log('getSocket----', e.data)
-
 		if (typeof e.data === 'string') {
 			let message = JSON.parse(e.data)
+
+			console.log('getSocket----', message)
+
 			if (klineHistoryList.value.length > 300) {
 				klineHistoryList.value = klineHistoryList.value.slice(100)
 			}
