@@ -80,14 +80,8 @@
 						</div>
 						<template #footer>
 							<van-space :size="10" class="item-block">
-								<van-button type="primary" round block class="up-btn" @click="popupFromLower('0')">
-									<img src="../../assets/images/market/window.svg" alt="win" class="b_win" />
-									{{ t('上涨') }}
-								</van-button>
-								<van-button type="primary" round block class="down-btn" @click="popupFromLower('1')">
-									<img src="../../assets/images/market/windowred.svg" alt="win" class="b_win" />
-									{{ t('下跌') }}
-								</van-button>
+								<van-button type="primary" round block class="up-btn" @click="popupFromLower('1')">{{ t('上涨') }}</van-button>
+								<van-button type="primary" round block class="down-btn" @click="popupFromLower('0')">{{ t('下跌') }}</van-button>
 							</van-space>
 						</template>
 					</el-dialog>
@@ -214,7 +208,7 @@
 									</div>
 									<div class="item1">
 										<span class="p1">{{ t('类型') }}</span>
-										<span class="p2 ellipsis">{{ priceChanDir === '0' ? t('上涨') : t('下跌') }}</span>
+										<span class="p2 ellipsis">{{ priceChanDir === '1' ? t('上涨') : t('下跌') }}</span>
 									</div>
 								</div>
 							</template>
@@ -307,10 +301,10 @@
 										block
 										round
 										class="buy-btn"
-										:class="{ 'down-btn': priceChanDir === '1' }"
+										:class="{ 'down-btn': priceChanDir === '0' }"
 										@click="buyOptionFunc()"
 									>
-										{{ priceChanDir === '0' ? t('买涨') : t('买跌') }}
+										{{ priceChanDir === '1' ? t('买涨') : t('买跌') }}
 									</van-button>
 									<van-button v-else type="primary" block round class="buy-btn" @click="continueHandle">{{ t('继续') }}</van-button>
 								</template>
@@ -681,7 +675,7 @@ const stopLossPrice = ref('')
 // 比如用户买涨，要判断止盈价格需要大于买入价格，止跌价格小于买入价格。
 const onTakeProfitStopLossChange = (val) => {
 	if (val) {
-		if (priceChanDir.value === '1') {
+		if (priceChanDir.value === '0') {
 			profitPrice.value = (symbolInfo.value.close * 1 * 0.9).toFixed(2)
 			stopLossPrice.value = (symbolInfo.value.close * 1 * 1.1).toFixed(2)
 		} else {
@@ -763,7 +757,7 @@ const computedExpectedPrice = () => {
 	if (optionOrderData.value?.orderNo) {
 		expectedSymbol.value = optionOrderData.value.profitLossAmount * 1 >= 0 ? '+' : ''
 	} else {
-		if (priceChanDir.value === '0') {
+		if (priceChanDir.value === '1') {
 			expectedSymbol.value = symbolInfo.value.close * 1 >= symbolInfo.value.open * 1 ? '+' : '-'
 		} else {
 			expectedSymbol.value = symbolInfo.value.close * 1 >= symbolInfo.value.open * 1 ? '-' : '+'
@@ -1994,8 +1988,8 @@ defineExpose({})
 		margin-bottom: 100px;
 	}
 	.down-btn {
-		background:  linear-gradient(180deg, rgba(232, 80, 57, 0.80) 0%, rgba(255, 34, 0, 0.80) 78%, rgba(232, 118, 57, 0.80) 100%);
-		box-shadow: 0px -2px 0px 0px rgba(0, 0, 0, 0.10) inset, 0px 2px 4px 0px rgba(0, 0, 0, 0.25);
+		background-color: #e85039;
+		border-color: #e85039;
 	}
 
 	.el-input__wrapper {

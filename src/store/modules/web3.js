@@ -83,6 +83,7 @@ export const useWeb3Store = defineStore('web3', () => {
 				return
 			}
 			if (!address.value) {
+				console.log('useWeb3Store-initUserAccountAndWallet', '未正确链接钱包')
 				showToast({ message: i18n.global.t('请正确连接你的钱包'), icon: 'info' })
 				resetAccount()
 				return
@@ -169,6 +170,7 @@ export const useWeb3Store = defineStore('web3', () => {
 
 		if (!currentOwnerAddress) {
 			const timeout = setTimeout(() => {
+				console.log('useWeb3Store-onChangeCurrency', '未正确链接钱包')
 				showToast({ message: i18n.global.t('请正确连接你的钱包'), icon: 'info' })
 				clearTimeout(timeout)
 			}, 700)
