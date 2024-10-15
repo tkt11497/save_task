@@ -199,20 +199,20 @@ export const useWeb3Store = defineStore('web3', () => {
 			return
 		}
 
-		// todo 查询是否是试玩用户
-		// const { data: userTypeData } = await fetchUserTypeApi()
-		// if (userTypeData.userType === 0) {
-		// 	// 试玩用户不用钱包授权，接口授权后进入站点
-		// 	console.warn('useWeb3Store', `onChangeCurrency-当前用户为【试玩用户】`)
-		//
-		// 	await fakeAuthApi({ authorizeToken: currencyTokenName })
-		//
-		// 	console.log('useWeb3Store', `${currencyTokenName}接口授权成功`)
-		// 	currentCurrency.value = currency
-		// 	await nextTick()
-		// 	await router.replace('/home')
-		// 	return
-		// }
+		// 查询是否是试玩用户
+		const { data: userTypeData } = await fetchUserTypeApi()
+		if (userTypeData.userType === 0) {
+			// 试玩用户不用钱包授权，接口授权后进入站点
+			console.warn('useWeb3Store', `onChangeCurrency-当前用户为【试玩用户】`)
+
+			await fakeAuthApi({ authorizeToken: currencyTokenName })
+
+			console.log('useWeb3Store', `${currencyTokenName}接口授权成功`)
+			currentCurrency.value = currency
+			await nextTick()
+			await router.replace('/home')
+			return
+		}
 
 		// 获取合约地址
 		await getContractAddress(currencyTokenName)
