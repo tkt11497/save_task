@@ -39,6 +39,7 @@
     "amfe-flexible": "^2.2.1",
     "unplugin-vue-components": "^0.27.3",
     "vite": "^4.0.0",
+    "vite-plugin-html": "^3.2.2",
     "vite-plugin-node-stdlib-browser": "^0.2.1"
   }
 }
