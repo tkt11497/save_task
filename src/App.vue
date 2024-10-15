@@ -29,7 +29,6 @@ import VConsole from 'vconsole'
 import { useRoute } from 'vue-router'
 import router from '@/router/index.js'
 import { useI18n } from 'vue-i18n'
-import { showToast } from 'vant'
 
 const usersStore = userStore()
 const { flag } = storeToRefs(usersStore)
@@ -37,7 +36,7 @@ const { t } = useI18n()
 
 onMounted(() => {
 	// todo 正式环境去除
-	const vConsole = new VConsole()
+	// const vConsole = new VConsole()
 })
 
 const isShowNav = ref(false)
