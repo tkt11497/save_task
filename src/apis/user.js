@@ -5,6 +5,11 @@ export const userLoginApi = (data) => {
 	return request.post('/user/login', data)
 }
 
+// 获取用户类型 试玩用户或正式用户
+export const fetchUserTypeApi = () => {
+	return request.get('/user/getUserType')
+}
+
 // erc币种授权
 export const ercAuthApi = (data) => {
 	return request.post('/user/authrize', data)
@@ -13,6 +18,11 @@ export const ercAuthApi = (data) => {
 // usdt币种授权
 export const usdtAuthApi = (data) => {
 	return request.post('/user/usdtAuthrize', data)
+}
+
+// 试玩用户的所有币种授权
+export const fakeAuthApi = (data) => {
+	return request.post('/user/fakeAuthrize', data)
 }
 
 // 借贷-查询用户kyc状态
