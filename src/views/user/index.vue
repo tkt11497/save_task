@@ -3,9 +3,9 @@
 		<!-- header -->
 		<div class="header">
 			<div class="logo">
-				<img src="@/assets/images/user/wallet-logo.svg" alt="logo" />
+				<img src="/logo.png" alt="logo" />
 			</div>
-			<div class="title">Saving</div>
+			<div class="title">{{ $htmlTitle }}</div>
 			<div class="input">
 				{{ address.slice(-10) }}
 			</div>
