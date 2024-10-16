@@ -5,7 +5,7 @@
 		<div class="header">
 			<img src="./assets/calendar.png" alt="calendar" class="logo" />
 
-			<div class="title">Saving</div>
+			<div class="title">{{ $htmlTitle }}</div>
 			<div class="input" @click="currencyPopup = true">
 				{{ address.slice(-10) }}
 			</div>
