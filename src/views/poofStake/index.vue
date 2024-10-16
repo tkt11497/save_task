@@ -69,7 +69,7 @@
 				<div class="yield">
 					<div class="title">{{ t('收益') }}:</div>
 					<div v-if="currentStakeItem" class="title_value">
-						<div>{{ currentStakeItem.rateMin }}-{{ currentStakeItem.rateMax }}%</div>
+						<div>{{ dividedForValueDecimal(currentStakeItem.rateMin, 10) }}-{{ dividedForValueDecimal(currentStakeItem.rateMax, 10) }}‰</div>
 					</div>
 				</div>
 			</div>
@@ -92,7 +92,9 @@
 							>
 								<div class="van-cell__title left-align">{{ item.day }} {{ t('天') }}</div>
 								<!-- <br /> -->
-								<div class="van-cell__value right-align">{{ item.rateMin }}-{{ item.rateMax }}%</div>
+								<div class="van-cell__value right-align">
+									{{ dividedForValueDecimal(item.rateMin, 10) }}-{{ dividedForValueDecimal(item.rateMax, 10) }}‰
+								</div>
 							</div>
 						</template>
 					</van-dropdown-item>
@@ -131,7 +133,7 @@
 						<div class="each-row">
 							<p class="left-text">{{ t('收益') }}:</p>
 							<div class="right-text" v-if="currentStakeItem">
-								<div>{{ currentStakeItem.rateMin }}-{{ currentStakeItem.rateMax }}%</div>
+								<div>{{ dividedForValueDecimal(currentStakeItem.rateMin, 10) }}-{{ dividedForValueDecimal(currentStakeItem.rateMax, 10) }}‰</div>
 							</div>
 						</div>
 						<div class="each-row">
@@ -157,7 +159,7 @@ import { userStore } from '@/store'
 import { showToast } from 'vant'
 import { useI18n } from 'vue-i18n'
 import useLoading from '@/hooks/useLoading.js'
-import { minusForValueDecimal, plusDecimal, plusForValueDecimal } from '@/utils'
+import { dividedForValueDecimal, minusForValueDecimal, plusDecimal, plusForValueDecimal } from '@/utils'
 import { addStakeOrder, fetchJointStakeListApi, fetchPersonalStakeListApi } from '@/apis/stake.js'
 import { fetchStakeIncomeApi } from '@/apis/wallet.js'
 import { useLoopFetchApi } from '@/hooks/useLoopApi.js'
