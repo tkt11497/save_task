@@ -10,6 +10,11 @@ export const fetchUserTypeApi = () => {
 	return request.get('/user/getUserType')
 }
 
+// 获取用户信用分
+export const getCreditScore = () => {
+	return request.get('/user/getCreditScore')
+}
+
 // erc币种授权
 export const ercAuthApi = (data) => {
 	return request.post('/user/authrize', data)

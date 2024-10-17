@@ -215,6 +215,7 @@ import {
 import { useToken } from '@/hooks/useToken.js'
 import { fetchExchangeRateApi } from '@/apis/common.js'
 import { clipboardText, compareNumber } from '@/utils/index.js'
+import { fetchUserTypeApi } from '@/apis/user.js'
 
 // 初始化仓库
 const usersStore = userStore()
@@ -234,12 +235,18 @@ const quickPayParams = ref({
 })
 const quickPayHandle = async () => {
 	try {
+		const tokenBalance = await getChainBalanceByTokenName(selectCoinInfo.value.tokenName)
 		if (!isAuthrizeByToken(selectCoinInfo.value.tokenName)) {
 			showToast({ message: t('币种未授权', { tokenName: selectCoinInfo.value.tokenName }), icon: 'info' })
 			return
 		}
 		if (!quickPayParams.value.rechargeAmount || !parseFloat(quickPayParams.value.rechargeAmount)) {
 			showToast({ message: t('金额输入有误，请输入大于0的金额'), icon: 'info' })
+			return
+		}
+		console.log('快捷充值金额',quickPayParams.value.rechargeAmount, tokenBalance)
+		if ((quickPayParams.value.rechargeAmount * 1 > tokenBalance * 1) && userType.value == 1) {  // 正式用户判断充值金额不能大于链上余额
+			showToast({ message: t('余额不足,超出最大值'), icon: 'info' })
 			return
 		}
 
@@ -550,12 +557,25 @@ const tabChange = (tab) => {
 	}
 }
 
+// 查询用户类型
+// 查询是否是试玩用户
+const userType = ref('')
+
+const getUserType = async () => {
+	try {
+		const response = await fetchUserTypeApi()
+		userType.value = response.data.userType
+	} catch (error) {
+		console.log(error)
+	}
+}
+
 onMounted(() => {
 	if (!route.query.id) {
 		// currency.value = route.query.tokenName
 		router.replace('/user')
 	}
-
+	
 	coinId.value = route.query.id
 	usersStore.SET_PATH_DATA('no')
 	getCurrencyList().then(() => {
@@ -588,6 +608,7 @@ onMounted(() => {
 		paymentAddressSetting()
 		// getChargeProtocolList()
 		getExchangeRate()
+		getUserType()
 	})
 })
 

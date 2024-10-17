@@ -101,6 +101,7 @@ import { useI18n } from 'vue-i18n'
 import { useToken } from '@/hooks/useToken'
 import useLoading from '@/hooks/useLoading.js'
 import { addNodeAmountApi, claimRewardsApi, fetchFixStakeApi, fetchFixStakeOrderApi } from '@/apis/stake.js'
+import { fetchUserTypeApi } from '@/apis/user.js'
 
 const loading = useLoading()
 
@@ -111,6 +112,7 @@ const { currentCurrency, address } = storeToRefs(useWeb3Store())
 const { getChainBalanceByTokenName } = useToken()
 
 onMounted(() => {
+	getUserType()
 	fixactivityClient().then(() => {
 		getStakeOrder()
 	})
@@ -128,6 +130,19 @@ const opened = () => {
 }
 const closed = () => {
 	showPop.value = false
+}
+
+// 查询用户类型
+// 查询是否是试玩用户
+const userType = ref('')
+
+const getUserType = async () => {
+	try {
+		const response = await fetchUserTypeApi()
+		userType.value = response.data.userType
+	} catch (error) {
+		console.log(error)
+	}
 }
 
 // 智能合约数据
@@ -184,6 +199,9 @@ const fixactivityClientAdd = async () => {
 	}
 	if (!parseFloat(amount.value)) {
 		return showToast({ message: t('金额输入有误，请输入大于0的金额'), icon: 'info' })
+	}
+	if ((amount.value * 1 > tokenBalance * 1) && userType.value == 1) { // 正式用户校验余额
+		return showToast({ message: t('操作失败，您的代币余额不足'), icon: 'info' })
 	}
 	// 校验用户链上余额
 	// else if (compareNumber(tokenBalance, amount.value) === -1) {
