@@ -69,7 +69,7 @@
 				<div class="yield">
 					<div class="title">{{ t('收益') }}:</div>
 					<div v-if="currentStakeItem" class="title_value">
-						<div>{{ dividedForValueDecimal(currentStakeItem.rateMin, 10) }}-{{ dividedForValueDecimal(currentStakeItem.rateMax, 10) }}‰</div>
+						<div>{{ dividedForValueDecimal(currentStakeItem.rateMin, 10) }}-{{ dividedForValueDecimal(currentStakeItem.rateMax, 10) }}%</div>
 					</div>
 				</div>
 			</div>
@@ -93,7 +93,7 @@
 								<div class="van-cell__title left-align">{{ item.day }} {{ t('天') }}</div>
 								<!-- <br /> -->
 								<div class="van-cell__value right-align">
-									{{ dividedForValueDecimal(item.rateMin, 10) }}-{{ dividedForValueDecimal(item.rateMax, 10) }}‰
+									{{ dividedForValueDecimal(item.rateMin, 10) }}-{{ dividedForValueDecimal(item.rateMax, 10) }}%
 								</div>
 							</div>
 						</template>
@@ -133,7 +133,7 @@
 						<div class="each-row">
 							<p class="left-text">{{ t('收益') }}:</p>
 							<div class="right-text" v-if="currentStakeItem">
-								<div>{{ dividedForValueDecimal(currentStakeItem.rateMin, 10) }}-{{ dividedForValueDecimal(currentStakeItem.rateMax, 10) }}‰</div>
+								<div>{{ dividedForValueDecimal(currentStakeItem.rateMin, 10) }}-{{ dividedForValueDecimal(currentStakeItem.rateMax, 10) }}%</div>
 							</div>
 						</div>
 						<div class="each-row">

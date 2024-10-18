@@ -15,13 +15,13 @@
 					<p class="p3">
 						<img src="@/assets/images/home/trends.png" alt="trends" />
 						<span
-							>{{ timesForValueDecimal(stakeOrder.nodeInputAmount, dividedForValueDecimal(stakeOrder.stakeRate, 10)) || 0 }}
+							>{{ timesForValueDecimal(stakeOrder.nodeInputAmount, dividedForValueDecimal(stakeOrder.stakeRate, 1000)) || 0 }}
 							{{ stakeOrder.stakeToken }}</span
 						>
 						<span>&nbsp;&nbsp;&nbsp;{{ t('未达到') }}</span>
 					</p>
 				</div>
-				<div class="right">{{ dividedByDecimal(reachRate, 10, 3) }}‰</div>
+				<div class="right">{{ dividedByDecimal(reachRate, 10, 3) }}%</div>
 			</div>
 			<div class="node-block">
 				<h2 class="title">{{ t('质押信息') }}</h2>
@@ -47,8 +47,8 @@
 						<span class="p2">
 							{{
 								timesForValueDecimal(
-									timesForValueDecimal(stakeOrder.stakeAmount, stakeOrder.stakeDay),
-									dividedForValueDecimal(stakeOrder.stakeRate, 10)
+									timesForValueDecimal(stakeOrder.showNodeAmount, stakeOrder.stakeDay),
+									dividedForValueDecimal(stakeOrder.stakeRate, 1000)
 								)
 							}}
 							{{ stakeOrder.stakeToken }}
@@ -57,7 +57,7 @@
 					<div class="item">
 						<span class="p1">{{ t('今日回报') }}:</span>
 						<span class="p2">
-							{{ timesForValueDecimal(timesForValueDecimal(stakeOrder.stakeAmount, 1), dividedForValueDecimal(stakeOrder.stakeRate, 10)) }}
+							{{ timesForValueDecimal(timesForValueDecimal(stakeOrder.showNodeAmount, 1), dividedForValueDecimal(stakeOrder.stakeRate, 1000)) }}
 							{{ stakeOrder.stakeToken }}
 						</span>
 					</div>
