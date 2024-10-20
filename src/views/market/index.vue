@@ -1979,8 +1979,8 @@ defineExpose({})
 		margin-bottom: 100px;
 	}
 	.down-btn {
-		background-color: #e85039;
-		border-color: #e85039;
+		background: linear-gradient(180deg, #5CE7FF 0%, #27727F 77.5%, #50CDCD 100%);
+		box-shadow: 0px -2px 0px 0px rgba(0, 0, 0, 0.10) inset, 0px 2px 4px 0px rgba(0, 0, 0, 0.25);
 	}
 
 	.el-input__wrapper {
