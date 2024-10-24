@@ -22,7 +22,7 @@
 			</div>
 			<!-- Number -->
 			<div class="contant">
-				<div class="number">${{ plusDecimal(userStaticIncome.totalBalance || 0) }}</div>
+				<div class="number">${{ plusDecimal(userStaticIncome.totalBalance || 0, 0, 2) }}</div>
 
 				<!-- Precentage -->
 				<div class="precentage">
@@ -36,7 +36,7 @@
 					<img src="@/assets/images/home/trends.png" alt="trends" />
 				</div>
 				<div>
-					<span class="trends">${{ plusDecimal(userStaticIncome.totalDayIncome || '0') }}</span>
+					<span class="trends">${{ plusDecimal(userStaticIncome.totalDayIncome || 0, 0, 2) }}</span>
 					<!--					<span class="trends">{{ userStaticIncome.tokenName }}</span>-->
 					<span class="trends">{{ t('今日盈利') }}</span>
 				</div>
