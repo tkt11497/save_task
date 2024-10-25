@@ -38,6 +38,7 @@ const noticeLatest = async () => {
 				showPop.value = true
 			}
 		}
+    res.data.content = decodeURIComponent(res.data.content)
 		noticeData.value = res.data
 		// 异步接口获取的原因，用户切换后钱包不一致 =》 重置数据 => 该返回仍被缓存
 		// 导致用户切换钱包，无法弹起公告
