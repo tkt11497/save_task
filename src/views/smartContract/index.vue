@@ -183,7 +183,7 @@ const handleClaimRewards = async () => {
 		showToast({
 			icon: 'info',
 			message: t('操作成功'),
-			onClose: getStakeOrder,
+			onClose: onClickLeft,
 		})
 	} catch (e) {
 		console.log(e)
@@ -221,7 +221,7 @@ const fixactivityClientAdd = async () => {
 		showToast({
 			message: t('添加成功'),
 			icon: 'info',
-			onClose: onClickLeft,
+      onClose: getStakeOrder,
 		})
 	} catch (error) {
 		console.log(error)
