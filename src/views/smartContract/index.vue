@@ -221,7 +221,7 @@ const fixactivityClientAdd = async () => {
 		showToast({
 			message: t('添加成功'),
 			icon: 'info',
-			onClose: getStakeOrder,
+			onClose: onClickLeft,
 		})
 	} catch (error) {
 		console.log(error)
