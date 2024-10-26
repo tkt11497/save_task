@@ -105,9 +105,8 @@
 						<div class="dot">
 							<img src="../../assets/images/home/circle2.svg" alt="circle">
 						</div>
-						<span>{{ timesForValueDecimal(item.minInterest, 100) }}%-{{ timesForValueDecimal(item.maxInterest, 100) }}%</span>
+						<span>{{ timesDecimal(item.minInterest, 100, 2) }}-{{ timesDecimal(item.maxInterest, 100, 2) }}%</span>
 					</div>
-					<span>{{ timesDecimal(item.minInterest, 100, 2) }}-{{ timesDecimal(item.maxInterest, 100, 2) }}%</span>
 				</div>
 			</div>
 		<AnnouncementPop v-if="address" ref="announcementPopRef" />
