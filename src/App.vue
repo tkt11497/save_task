@@ -29,9 +29,7 @@ import VConsole from 'vconsole'
 import { useRoute } from 'vue-router'
 import router from '@/router/index.js'
 import { useI18n } from 'vue-i18n'
-import { showToast } from 'vant'
 import { flexible } from '@/utils/adjust_html_font.js'
-
 const usersStore = userStore()
 const { flag } = storeToRefs(usersStore)
 const { t } = useI18n()

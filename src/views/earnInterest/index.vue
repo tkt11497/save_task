@@ -136,12 +136,12 @@
 						${{
 							timesForValueDecimal(
 								stakeAmount,
-								timesForValueDecimal(currentFormatterDayInfo.day, dividedForValueDecimal(currentFormatterDayInfo.rateMin, 100))
+								timesForValueDecimal(currentFormatterDayInfo.day, dividedForValueDecimal(currentFormatterDayInfo.rateMin, 1000))
 							)
 						}}-{{
 							timesForValueDecimal(
 								stakeAmount,
-								timesForValueDecimal(currentFormatterDayInfo.day, dividedForValueDecimal(currentFormatterDayInfo.rateMax, 100))
+								timesForValueDecimal(currentFormatterDayInfo.day, dividedForValueDecimal(currentFormatterDayInfo.rateMax, 1000))
 							)
 						}}
 					</div>
@@ -312,7 +312,7 @@ const formattedDaysList = computed(() => {
 	return financialStakeList.value.stakeConfigs.map((item, index) => ({
 		...item,
 		leftText: `${item.day} ${t('天')}`,
-		rightText: `${item.rateMin}-${item.rateMax}%`,
+		rightText: `${dividedForValueDecimal(item.rateMin, 10)}-${dividedForValueDecimal(item.rateMax, 10)}%`,
 		amountRange: `${item.minAmount}-${item.maxAmount}`,
 		value: index,
 	}))

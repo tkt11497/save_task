@@ -107,6 +107,7 @@
 						</div>
 						<span>{{ timesForValueDecimal(item.minInterest, 100) }}%-{{ timesForValueDecimal(item.maxInterest, 100) }}%</span>
 					</div>
+					<span>{{ timesDecimal(item.minInterest, 100, 2) }}-{{ timesDecimal(item.maxInterest, 100, 2) }}%</span>
 				</div>
 			</div>
 		<AnnouncementPop v-if="address" ref="announcementPopRef" />
@@ -149,7 +150,7 @@ import EchartsLine from '@/views/market/echartsLine.vue'
 import CurrencyList from '@/views/noWallet/components/CurrencyList.vue'
 import MarketLatestData from '@/views/market/marketLatestData.vue'
 import { useI18n } from 'vue-i18n'
-import { getImageUrl, plusDecimal, timesForValueDecimal } from '@/utils'
+import { getImageUrl, plusDecimal, timesDecimal } from '@/utils';
 import useLoading from '@/hooks/useLoading.js'
 import { useToken } from '@/hooks/useToken'
 // 引入静态资源

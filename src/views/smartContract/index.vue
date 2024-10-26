@@ -15,13 +15,13 @@
 					<p class="p3">
 						<img src="@/assets/images/home/trends.png" alt="trends" />
 						<span
-							>{{ timesForValueDecimal(stakeOrder.nodeInputAmount, dividedForValueDecimal(stakeOrder.stakeRate, 100)) || 0 }}
+							>{{ timesForValueDecimal(stakeOrder.nodeInputAmount, dividedForValueDecimal(stakeOrder.stakeRate, 1000)) || 0 }}
 							{{ stakeOrder.stakeToken }}</span
 						>
 						<span>&nbsp;&nbsp;&nbsp;{{ t('未达到') }}</span>
 					</p>
 				</div>
-				<div class="right">{{ dividedByDecimal(reachRate, 100, 2) }}%</div>
+				<div class="right">{{ dividedByDecimal(reachRate, 10, 3) }}%</div>
 			</div>
 			<div class="node-block">
 				<h2 class="title">{{ t('质押信息') }}</h2>
@@ -36,7 +36,7 @@
 					</div>
 					<div class="item">
 						<span class="p1">{{ t('收益 / 回报') }}:</span>
-						<span class="p2">{{ toFixedDecimal(stakeOrder.stakeRate || 0, 2) }}%</span>
+						<span class="p2">{{ toFixedDecimal(stakeOrder.stakeRate || 0, 3) }}‰</span>
 					</div>
 					<div class="item">
 						<span class="p1">{{ t('奖励') }}:</span>
@@ -47,8 +47,8 @@
 						<span class="p2">
 							{{
 								timesForValueDecimal(
-									timesForValueDecimal(stakeOrder.stakeAmount, stakeOrder.stakeDay),
-									dividedForValueDecimal(stakeOrder.stakeRate, 100)
+									timesForValueDecimal(stakeOrder.showNodeAmount, stakeOrder.stakeDay),
+									dividedForValueDecimal(stakeOrder.stakeRate, 1000)
 								)
 							}}
 							{{ stakeOrder.stakeToken }}
@@ -57,7 +57,7 @@
 					<div class="item">
 						<span class="p1">{{ t('今日回报') }}:</span>
 						<span class="p2">
-							{{ timesForValueDecimal(timesForValueDecimal(stakeOrder.stakeAmount, 1), dividedForValueDecimal(stakeOrder.stakeRate, 100)) }}
+							{{ timesForValueDecimal(timesForValueDecimal(stakeOrder.showNodeAmount, 1), dividedForValueDecimal(stakeOrder.stakeRate, 1000)) }}
 							{{ stakeOrder.stakeToken }}
 						</span>
 					</div>
@@ -101,6 +101,7 @@ import { useI18n } from 'vue-i18n'
 import { useToken } from '@/hooks/useToken'
 import useLoading from '@/hooks/useLoading.js'
 import { addNodeAmountApi, claimRewardsApi, fetchFixStakeApi, fetchFixStakeOrderApi } from '@/apis/stake.js'
+import { fetchUserTypeApi } from '@/apis/user.js'
 
 const loading = useLoading()
 
@@ -111,6 +112,7 @@ const { currentCurrency, address } = storeToRefs(useWeb3Store())
 const { getChainBalanceByTokenName } = useToken()
 
 onMounted(() => {
+	getUserType()
 	fixactivityClient().then(() => {
 		getStakeOrder()
 	})
@@ -128,6 +130,19 @@ const opened = () => {
 }
 const closed = () => {
 	showPop.value = false
+}
+
+// 查询用户类型
+// 查询是否是试玩用户
+const userType = ref('')
+
+const getUserType = async () => {
+	try {
+		const response = await fetchUserTypeApi()
+		userType.value = response.data.userType
+	} catch (error) {
+		console.log(error)
+	}
 }
 
 // 智能合约数据
@@ -168,7 +183,7 @@ const handleClaimRewards = async () => {
 		showToast({
 			icon: 'info',
 			message: t('操作成功'),
-			onClose: getStakeOrder,
+			onClose: onClickLeft,
 		})
 	} catch (e) {
 		console.log(e)
@@ -184,6 +199,9 @@ const fixactivityClientAdd = async () => {
 	}
 	if (!parseFloat(amount.value)) {
 		return showToast({ message: t('金额输入有误，请输入大于0的金额'), icon: 'info' })
+	}
+	if ((amount.value * 1 > tokenBalance * 1) && userType.value == 1) { // 正式用户校验余额
+		return showToast({ message: t('操作失败，您的代币余额不足'), icon: 'info' })
 	}
 	// 校验用户链上余额
 	// else if (compareNumber(tokenBalance, amount.value) === -1) {
@@ -203,7 +221,7 @@ const fixactivityClientAdd = async () => {
 		showToast({
 			message: t('添加成功'),
 			icon: 'info',
-			onClose: getStakeOrder,
+      onClose: getStakeOrder,
 		})
 	} catch (error) {
 		console.log(error)

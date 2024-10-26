@@ -17,7 +17,8 @@
 
 			<div class="details-wrap">
 				<div class="time">{{ t('信用评估时间', { time: formatDate(Date.now(), 'YYYY MM DD') }) }}</div>
-				<loan-treaty form="template" :user-data="userData" :loan-data="loanData" />
+				<!-- <loan-treaty form="template" :user-data="userData" :loan-data="loanData" /> -->
+				 <div class="footer-div">The credit score is Ethereum's comprehensive assessment of the massive information data on the user's blockchain, which mainly includes the user's transaction behavior, breach of contract, and credit assessment. A higher reputation score can help users obtain more efficient and better services. For example: a higher credit score can earn a higher financial income with a lower withdrawal fee. A poor credit score may result in withdrawal failure and cancellation of financial management quota.</div>
 			</div>
 		</div>
 	</div>
@@ -31,6 +32,7 @@ import LoanTreaty from '@/views/user/loan/loan-treaty.vue'
 import useLoading from '@/hooks/useLoading.js'
 import { formatDate } from '@/utils/index.js'
 import { storeToRefs } from 'pinia'
+import { getCreditScore } from '@/apis/user.js'
 
 const usersStore = userStore()
 const { t } = useI18n()
@@ -75,9 +77,22 @@ async function getLoadInfo() {
 		loading.loading()
 		await usersStore.loginAction()
 		loading.clearLoading()
-		creditScore.value = userInfo.value.creditScore || 0
+		// creditScore.value = userInfo.value.creditScore || 0  
+		// 获取实时信用分
+		getCredit()
 	} catch (e) {
 		console.log(e)
+	}
+}
+
+// 获取信用分
+// getCreditScore
+const getCredit = async () => {
+	try {
+		const res = await getCreditScore()
+		creditScore.value = res.data
+	} catch (error) {
+		console.log(error)
 	}
 }
 
@@ -137,5 +152,8 @@ onMounted(() => {
 			}
 		}
 	}
+}
+.footer-div{
+	font-size: 28px;
 }
 </style>
