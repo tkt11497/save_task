@@ -21,7 +21,7 @@
 					</div>
 					<div class="right">
 						<span class="num">{{ toFixedDecimal(item.platformAccount?.balance || 0, 8) }}</span>
-						<span class="usd">${{ item.platformAccount?.exchangeUSDCBalance || 0 }}</span>
+						<span class="usd">${{ toFixedDecimal(item.platformAccount?.exchangeUSDCBalance || 0, 2) }}</span>
 					</div>
 				</div>
 			</div>

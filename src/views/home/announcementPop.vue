@@ -34,10 +34,12 @@ const noticeLatest = async () => {
 	try {
 		const res = await fetchLatestNoticeApi()
 		if (res.data && res.data.content) {
+      res.data.content = decodeURIComponent(res.data.content)
 			if (usersStore.firstNotice !== res.data.content) {
 				showPop.value = true
 			}
 		}
+
 		noticeData.value = res.data
 		// 异步接口获取的原因，用户切换后钱包不一致 =》 重置数据 => 该返回仍被缓存
 		// 导致用户切换钱包，无法弹起公告
